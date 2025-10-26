@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cross The Line | Asian Pop Novel</title>
+    <meta name="description" content="Discover beautifully asian popular novels. Read Lines We Cross, Rosemary and the Silent Heir, and more compelling stories.">
+    <meta name="keywords" content="asian novels, historical romance, novel translation, forbidden love, Edwardian romance, translated fiction">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            line-height: 1.7;
+            color: #2c3e50;
+            background: #fdfbf7;
+        }
+
+        /* Hero Section - Ghibli Style */
+        .hero {
+            position: relative;
+            min-height: 75vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            overflow: hidden;
+            background: 
+                
+                url('0.jpg');
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 900px;
+            padding: 0 2rem;
+            animation: fadeInUp 1.2s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            font-weight: 300;
+            margin-bottom: 1.5rem;
+            color: #5d4e37;
+            letter-spacing: 3px;
+            line-height: 1.2;
+            font-family: 'Georgia', serif;
+        }
+
+        .hero .tagline {
+            font-size: 1.4rem;
+            color: #7d6d5d;
+            margin-bottom: 3rem;
+            font-weight: 300;
+            line-height: 1.6;
+            font-style: italic;
+        }
+
+        /* Category Tabs */
+        .category-tabs {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(8px);
+            border-bottom: 2px solid #f0e6d2;
+            padding: 1.8rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 999;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.04);
+        }
+
+        .tabs-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .tabs-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tab {
+            padding: 0.8rem 2.5rem;
+            background: transparent;
+            border: 2px solid #d4c5b0;
+            border-radius: 50px;
+            color: #7d6d5d;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            white-space: nowrap;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: 'Georgia', serif;
+            letter-spacing: 1px;
+        }
+
+        .tab:hover {
+            border-color: #8b7355;
+            color: #5d4e37;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(139, 115, 85, 0.15);
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #8b7355, #6d5d4b);
+            border-color: transparent;
+            color: white;
+            box-shadow: 0 4px 15px rgba(139, 115, 85, 0.3);
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+        }
+
+        .content-header h2 {
+            font-size: 2.5rem;
+            font-weight: 300;
+            color: #5d4e37;
+            letter-spacing: 2px;
+            font-family: 'Georgia', serif;
+        }
+
+        .view-toggle {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .view-btn {
+            padding: 0.6rem 1.2rem;
+            background: white;
+            border: 2px solid #e8dcc8;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+            color: #7d6d5d;
+        }
+
+        .view-btn:hover {
+            border-color: #8b7355;
+            color: #5d4e37;
+        }
+
+        .view-btn.active {
+            background: #8b7355;
+            color: white;
+            border-color: #8b7355;
+        }
+
+        /* Magazine-Style Article Grid */
+        .articles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 2.5rem;
+            margin-bottom: 4rem;
+        }
+
+        .article-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid #f0e6d2;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .article-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #8b7355, #d4c5b0);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .article-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(139, 115, 85, 0.2);
+        }
+
+        .article-card:hover::before {
+            opacity: 1;
+        }
+
+        .article-image {
+            width: 100%;
+            height: 280px;
+            background: linear-gradient(135deg, #d4c5b0, #8b7355);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .article-image::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.1), transparent 60%),
+                linear-gradient(to bottom, transparent 60%, rgba(0, 0, 0, 0.3));
+        }
+
+        .article-category {
+            position: absolute;
+            top: 1.2rem;
+            right: 1.2rem;
+            z-index: 2;
+            padding: 0.5rem 1.3rem;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            border-radius: 25px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #8b7355;
+            letter-spacing: 1px;
+            border: 2px solid rgba(139, 115, 85, 0.2);
+        }
+
+        .article-content {
+            padding: 2rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .article-title {
+            font-size: 1.6rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #2c3e50;
+            line-height: 1.4;
+            font-family: 'Georgia', serif;
+        }
+
+        .article-excerpt {
+            color: #5d5d5d;
+            margin-bottom: 1.5rem;
+            font-size: 1rem;
+            line-height: 1.8;
+            flex: 1;
+        }
+
+        .read-more {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #8b7355;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+            letter-spacing: 0.5px;
+        }
+
+        .read-more:hover {
+            color: #6d5d4b;
+            gap: 1rem;
+        }
+
+        /* Reader Support Section */
+        .reader-support {
+            background: linear-gradient(135deg, rgba(139, 115, 85, 0.05), rgba(212, 197, 176, 0.05));
+            padding: 5rem 0;
+            margin-top: 4rem;
+            border-top: 2px solid #f0e6d2;
+            border-bottom: 2px solid #f0e6d2;
+        }
+
+        .support-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            text-align: center;
+        }
+
+        .support-container h2 {
+            font-size: 2.8rem;
+            font-weight: 300;
+            margin-bottom: 1.5rem;
+            color: #5d4e37;
+            font-family: 'Georgia', serif;
+            letter-spacing: 2px;
+        }
+
+        .support-subtitle {
+            font-size: 1.2rem;
+            color: #7d6d5d;
+            margin-bottom: 3rem;
+            line-height: 1.6;
+            font-style: italic;
+        }
+
+        .support-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .support-card {
+            background: white;
+            padding: 2.5rem 2rem;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid #f0e6d2;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .support-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 35px rgba(139, 115, 85, 0.2);
+            border-color: #8b7355;
+        }
+
+        .support-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .support-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #5d4e37;
+            font-family: 'Georgia', serif;
+            font-weight: 600;
+        }
+
+        .support-card p {
+            color: #7d6d5d;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        /* Footer */
+        footer {
+            background: #5d4e37;
+            color: #d4c5b0;
+            padding: 3rem 2rem 2rem;
+            margin-top: 5rem;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .footer-content p {
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: #d4c5b0;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: #f0e6d2;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero .tagline {
+                font-size: 1.1rem;
+            }
+
+            .articles-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .content-header {
+                flex-direction: column;
+                gap: 1.5rem;
+                align-items: flex-start;
+            }
+
+            .tabs-container {
+                justify-content: flex-start;
+            }
+
+            .support-buttons {
+                grid-template-columns: 1fr;
+            }
+
+            .category-tabs {
+                top: 68px;
+            }
+        }
+
+        /* Load More Button */
+        .load-more {
+            text-align: center;
+            margin-top: 3rem;
+        }
+
+        .btn-load {
+            padding: 1rem 3rem;
+            background: white;
+            color: #8b7355;
+            border: 2px solid #8b7355;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Georgia', serif;
+            letter-spacing: 1px;
+        }
+
+        .btn-load:hover {
+            background: #8b7355;
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(139, 115, 85, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section - Ghibli Style -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Cross The Line</h1>
+            <p class="tagline">Where stories transcend boundaries and hearts find their truth.<br>Discover novels that touch the soul.</p>
+        </div>
+    </section>
+
+    <!-- Category Tabs -->
+    <div class="category-tabs">
+        <div class="tabs-container">
+            <a href="#" class="tab active" data-category="all">All Stories</a>
+            <a href="#" class="tab" data-category="Epic Power">Epic Power</a>
+            <a href="#" class="tab" data-category="LGBTQ+">LGBTQ+</a>
+            <a href="#" class="tab" data-category="Other">Other</a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="content-header">
+            <h2>Featured Asian Pop Novels</h2>
+            <div class="view-toggle">
+                <button class="view-btn active" aria-label="Grid view">⊞</button>
+                <button class="view-btn" aria-label="List view">≡</button>
+            </div>
+        </div>
+
+        <!-- Articles Grid -->
+        <div class="articles-grid">
+            <!-- Article 1 - Rosemary and the Silent Heir -->
+            <article class="article-card" data-category="Epic Power">
+                <div class="article-image" style="
+                background: url('1.jpg'); /* 引用同级目录的 1.jpg */
+                background-size: cover; /* 图片覆盖整个区域 */
+                background-position: center; /* 图片居中显示 */
+                background-repeat: no-repeat; /* 避免图片重复 */">
+                    <span class="article-category">Epic Power</span>
+                </div>
+                <div class="article-content">
+                    <h3 class="article-title">Rosemary and the Silent Heir</h3>
+                    <p class="article-excerpt">A historical romance set in the Edwardian era—love, betrayal, and redemption intertwine in a tale of forbidden passion. When Rosemary, a spirited governess, meets the enigmatic heir of a crumbling estate, their worlds collide in ways neither could have imagined.</p>
+                    <a href="1_content.html" class="read-more">Read →</a>
+                </div>
+            </article>
+
+            <!-- Article 2 - Lines We Cross -->
+            <article class="article-card" data-category="LGBTQ+">
+                <div class="article-image" style="background: url('2.jpg'); /* 引用同级目录的 2.jpg */
+                background-size: cover; /* 图片覆盖整个区域 */
+                background-position: center; /* 图片居中显示 */
+                background-repeat: no-repeat; /* 避免图片重复 */">
+                    <span class="article-category">LGBTQ+</span>
+                </div>
+                <div class="article-content">
+                    <h3 class="article-title">Lines We Cross</h3>
+                    <p class="article-excerpt">A forbidden love story that challenges the boundaries between family and desire. In a world where love knows no rules, two souls find themselves drawn together by forces they cannot control—a connection that defies everything they thought they knew about morality and family.</p>
+                    <a href="2_content.html" class="read-more">Read →</a>
+                </div>
+            </article>
+
+            <!-- Article 3 - Placeholder -->
+            <article class="article-card" data-category="Other">
+                <div class="article-image" style="background: url('3.jpg'); /* 引用同级目录的 2.jpg */
+                background-size: cover; /* 图片覆盖整个区域 */
+                background-position: center; /* 图片居中显示 */
+                background-repeat: no-repeat; /* 避免图片重复 */">
+                    <span class="article-category">Other</span>
+                </div>
+                <div class="article-content">
+                    <h3 class="article-title">Whispers of the Manor</h3>
+                    <p class="article-excerpt">Set in Victorian England, a mysterious tale unfolds in an isolated manor. Lady Catherine discovers secrets hidden within the estate's walls, leading her down a path of intrigue, romance, and shocking revelations about her own family's past.</p>
+                    <a href="3_content.html" class="read-more">Read →</a>
+                </div>
+            </article>
+
+        
+    </main>
+
+    <!-- Reader Support Section -->
+    <section class="reader-support">
+        <div class="support-container">
+            <h2>Support Our Translations</h2>
+            <p class="support-subtitle">Your support helps us bring more beautiful stories to life.<br>Every contribution makes a difference in keeping these translations free and accessible.</p>
+            
+            <div class="support-buttons">
+                <a href="https://www.buymeacoffee.com" target="_blank" class="support-card" rel="noopener">
+                    <div class="support-icon">☕</div>
+                    <h3>Buy Me a Coffee</h3>
+                    <p>Support with a one-time coffee donation. Every cup fuels the next chapter!</p>
+                </a>
+                
+                <a href="https://ko-fi.com" target="_blank" class="support-card" rel="noopener">
+                    <div class="support-icon">💝</div>
+                    <h3>Ko-fi</h3>
+                    <p>Show your appreciation with a tip. Your generosity keeps the translations flowing.</p>
+                </a>
+                
+                <a href="https://www.patreon.com" target="_blank" class="support-card" rel="noopener">
+                    <div class="support-icon">🎨</div>
+                    <h3>Patreon</h3>
+                    <p>Become a patron for exclusive content, early access, and behind-the-scenes insights.</p>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2025 Cross The Line. All translations published with respect for original authors.</p>
+            <p style="font-size: 0.85rem; opacity: 0.8; margin-top: 1rem;">
+                Content Warning: Stories may contain mature themes. Reader discretion advised.
+            </p>
+            <div class="footer-links">
+                <a href="#">About</a>
+                <a href="#">Translation Policy</a>
+                <a href="#">Contact</a>
+                <a href="#">Privacy</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // View toggle functionality
+        const viewBtns = document.querySelectorAll('.view-btn');
+        const articlesGrid = document.querySelector('.articles-grid');
+        
+        viewBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                viewBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Toggle grid/list view (visual change only)
+                if (this.textContent.includes('≡')) {
+                    articlesGrid.style.gridTemplateColumns = '1fr';
+                } else {
+                    articlesGrid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(380px, 1fr))';
+                }
+            });
+        });
+
+        // Category tabs filtering
+        const tabs = document.querySelectorAll('.tab');
+        const articles = document.querySelectorAll('.article-card');
+        
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function(e) {
+                e.preventDefault();
+                tabs.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                const category = this.getAttribute('data-category');
+                
+                articles.forEach(article => {
+                    if (category === 'all' || article.getAttribute('data-category') === category) {
+                        article.style.display = 'flex';
+                        setTimeout(() => {
+                            article.style.opacity = '1';
+                            article.style.transform = 'scale(1)';
+                        }, 10);
+                    } else {
+                        article.style.opacity = '0';
+                        article.style.transform = 'scale(0.9)';
+                        setTimeout(() => {
+                            article.style.display = 'none';
+                        }, 300);
+                    }
+                });
+            });
+        });
+
+        // Smooth scroll for all anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const href = this.getAttribute('href');
+                if (href !== '#') {
+                    e.preventDefault();
+                    const target = document.querySelector(href);
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                }
+            });
+        });
+
+        // Load more button
+        document.querySelector('.btn-load').addEventListener('click', function() {
+            alert('More stories will be loaded here. In production, this would fetch additional articles.');
+        });
+    </script>
+</body>
+</html>
