@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Novels | Cross The Line</title>
+    <meta name="description" content="Browse all available Asian pop novel translations. Discover new stories and continue your reading journey.">
+    <meta name="keywords" content="asian novels, novel library, translated fiction, romance novels, LGBTQ+ novels">
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <a href="index.html" class="logo">Cross The Line</a>
+            <nav class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="novels.html" class="active">Novels</a>
+                <a href="index.html#support">Support</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="content-header">
+            <h2>All Novels</h2>
+        </div>
+
+        <!-- Category Filter -->
+        <div class="category-filter">
+            <div class="filter-container">
+                <button class="filter-tab active" data-category="ALL">ALL</button>
+                <button class="filter-tab" data-category="EPIC POWER">EPIC POWER</button>
+                <button class="filter-tab" data-category="LGBT+">LGBT+</button>
+                <button class="filter-tab" data-category="ROMANCE">ROMANCE</button>
+            </div>
+        </div>
+
+        <!-- Novels Grid -->
+        <div class="novels-grid">
+            <!-- Novel 1 - Rosemary and the Silent Heir -->
+            <a href="novels/novel1/index.html" class="novel-card" data-category="EPIC POWER">
+                <div class="novel-cover" style="background-image: url('assets/images/1.jpg');">
+                    <span class="novel-category">Epic Power</span>
+                </div>
+                <div class="novel-info">
+                    <h3 class="novel-title">Rosemary and the Silent Heir</h3>
+                    <p class="novel-excerpt">A historical romance set in the Edwardian era—love, betrayal, and redemption intertwine in a tale of forbidden passion. When Rosemary, a spirited governess, meets the enigmatic heir of a crumbling estate, their worlds collide in ways neither could have imagined.</p>
+                    <span class="read-btn">Read →</span>
+                </div>
+            </a>
+
+            <!-- Novel 2 - Lines We Cross -->
+            <a href="novels/novel2/index.html" class="novel-card" data-category="LGBT+">
+                <div class="novel-cover" style="background-image: url('assets/images/2.jpg');">
+                    <span class="novel-category">LGBT+</span>
+                </div>
+                <div class="novel-info">
+                    <h3 class="novel-title">Lines We Cross</h3>
+                    <p class="novel-excerpt">A forbidden love story that challenges the boundaries between family and desire. In a world where love knows no rules, two souls find themselves drawn together by forces they cannot control—a connection that defies everything they thought they knew about morality and family.</p>
+                    <span class="read-btn">Read →</span>
+                </div>
+            </a>
+
+            <!-- Novel 3 - Whispers of the Manor -->
+            <a href="novels/novel3/index.html" class="novel-card" data-category="ROMANCE">
+                <div class="novel-cover" style="background-image: url('assets/images/3.jpg');">
+                    <span class="novel-category">Romance</span>
+                </div>
+                <div class="novel-info">
+                    <h3 class="novel-title">Whispers of the Manor</h3>
+                    <p class="novel-excerpt">Set in Victorian England, a mysterious tale unfolds in an isolated manor. Lady Catherine discovers secrets hidden within the estate's walls, leading her down a path of intrigue, romance, and shocking revelations about her own family's past.</p>
+                    <span class="read-btn">Read →</span>
+                </div>
+            </a>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2025 Cross The Line. All translations published with respect for original authors.</p>
+            <div class="footer-links">
+                <a href="#">About</a>
+                <a href="#">Translation Policy</a>
+                <a href="#">Contact</a>
+                <a href="#">Privacy</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="assets/js/main.js"></script>
+    <script>
+        // Category filter functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterTabs = document.querySelectorAll('.filter-tab');
+            const novelCards = document.querySelectorAll('.novel-card');
+
+            filterTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // Remove active class from all tabs
+                    filterTabs.forEach(t => t.classList.remove('active'));
+                    // Add active class to clicked tab
+                    this.classList.add('active');
+
+                    // Get selected category
+                    const selectedCategory = this.getAttribute('data-category');
+
+                    // Filter novel cards
+                    novelCards.forEach(card => {
+                        const cardCategory = card.getAttribute('data-category');
+                        
+                        if (selectedCategory === 'ALL' || cardCategory === selectedCategory) {
+                            // Show card
+                            card.classList.remove('hidden');
+                        } else {
+                            // Hide card
+                            card.classList.add('hidden');
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+

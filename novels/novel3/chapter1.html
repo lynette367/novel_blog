@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 1: The Arrival | Whispers of the Manor</title>
+    <meta name="description" content="Read Chapter 1 of Whispers of the Manor - A mysterious Victorian romance novel. Asian pop novel translation by Cross The Line.">
+    <meta name="keywords" content="Whispers of the Manor chapter 1, Victorian romance, mystery novel, asian pop novel, historical fiction">
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <style>
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 4px;
+            background: linear-gradient(90deg, #8b7355, #d4c5b0);
+            z-index: 2001;
+            transition: width 0.1s ease;
+        }
+
+        .chapter-meta {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            color: #7d6d5d;
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .chapter-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Reading Progress Bar -->
+    <div class="progress-bar" id="progressBar"></div>
+
+    <!-- Top Navigation -->
+    <nav class="top-nav">
+        <div class="nav-container">
+            <a href="index.html" class="back-btn">← Back to Table of Contents</a>
+        </div>
+    </nav>
+
+    <!-- Chapter Header -->
+    <header class="chapter-header">
+        <div class="chapter-number-badge">Chapter 1</div>
+        <h1 class="chapter-title-page">The Arrival</h1>
+        <div class="chapter-meta">
+            <span>📅 Published: Oct 18, 2025</span>
+            <span>📖 10 min read</span>
+        </div>
+    </header>
+
+    <!-- Chapter Content -->
+    <article class="chapter-content">
+        <div class="chapter-text">
+            <p>The carriage rattled along the cobblestone path, each bump a reminder of the distance she had traveled from London. Lady Catherine gazed out the window at the approaching manor, its stone walls rising like a fortress against the gray sky. The estate had been in her family for generations, but she had never set foot here before.</p>
+
+            <p>Her mother had always spoken of Blackwood Manor with a strange mixture of reverence and fear. Now, as the carriage drew closer, Catherine understood why. The house seemed to watch her approach, its many windows like dark eyes observing her arrival.</p>
+
+            <p>"Are you certain about this, my lady?" her maid, Margaret, asked from across the carriage. "Your mother's letter was quite insistent that you not come here."</p>
+
+            <p>Catherine straightened her posture, determination steeling her resolve. "I must see what secrets this place holds. Mother's warnings only make me more curious."</p>
+
+            <p>The carriage came to a halt before the grand entrance. The driver opened the door, and Catherine stepped out into the cool autumn air. The manor loomed before her, its Victorian architecture both beautiful and foreboding.</p>
+
+            <p>As she approached the door, it swung open before she could knock. An elderly butler stood there, his face etched with lines of age and something else—something that might have been recognition, or perhaps it was merely the dim light playing tricks.</p>
+
+            <p>"Lady Catherine," he said, his voice carrying a note of surprise. "We were not expecting you. Your mother's instructions were quite clear—"</p>
+
+            <p>"My mother is no longer here to give instructions," Catherine interrupted gently. "I am the lady of this house now, and I will see what needs to be seen."</p>
+
+            <p>The butler's eyes widened slightly, but he stepped aside, allowing her to enter. "Very well, my lady. Welcome to Blackwood Manor. I am Mr. Graves, the head butler. If you need anything, I am at your service."</p>
+
+            <p>Catherine stepped across the threshold and into a grand foyer. The air inside was heavy with the scent of old wood and something else—something that made the hair on her arms stand up. She looked around at the portraits lining the walls, each face a reminder of the family history that had been kept from her.</p>
+
+            <p>One portrait in particular caught her eye. It showed a woman who looked remarkably like her, but with darker hair and eyes that held secrets. The plaque beneath it read: "Lady Elizabeth Blackwood, 1845."</p>
+
+            <p>"Who was she?" Catherine asked, pointing to the portrait.</p>
+
+            <p>Mr. Graves followed her gaze. "That is your great-grandmother, my lady. She was the last person to live in this manor before it was closed. There are... stories about her. Stories that perhaps should remain untold."</p>
+
+            <p>But Catherine had come here for answers, not to be frightened away by old stories. She would uncover the truth about her family's past, no matter what secrets lay hidden in the walls of Blackwood Manor.</p>
+
+            <p>As she explored the house that afternoon, she couldn't shake the feeling that she was being watched. Shadows seemed to move in the corners of her vision, and more than once she thought she heard whispers—voices from another time, perhaps, or merely the wind through the old house.</p>
+
+            <p>That evening, as she sat alone in the library, a letter fell from a book she had pulled from the shelf. It was addressed to her, written in her mother's handwriting, dated only a week before her death.</p>
+
+            <p>"My dearest Catherine," it began. "If you are reading this, you have come to Blackwood Manor despite my warnings. I cannot stop you from learning the truth, but I beg you—be careful. Some secrets are better left buried. Some truths can destroy everything you hold dear."</p>
+
+            <p>Catherine's hands trembled as she read on, the words revealing a family history darker than she could have imagined. By the time she finished, the sun had set, and the manor was shrouded in darkness.</p>
+
+            <p>Outside, the wind howled, and Catherine could have sworn she heard it whisper her name.</p>
+        </div>
+    </article>
+
+    <!-- Chapter Navigation -->
+    <nav class="chapter-nav">
+        <a href="#" class="nav-btn disabled">← Previous Chapter</a>
+        <a href="index.html" class="index-btn">📚 Table of Contents</a>
+        <a href="#" class="nav-btn">Next Chapter →</a>
+    </nav>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2025 Cross The Line. All translations published with respect for original authors.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Reading progress bar
+        window.addEventListener('scroll', () => {
+            const winScroll = document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById('progressBar').style.width = scrolled + '%';
+        });
+
+        // Track reading progress
+        window.addEventListener('load', () => {
+            // Mark chapter as read in localStorage
+            localStorage.setItem('whispers_chapter1_read', 'true');
+        });
+    </script>
+</body>
+</html>
+
