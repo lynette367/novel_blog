@@ -1,0 +1,22 @@
+{
+  "name": "cross-the-line-novels",
+  "version": "1.0.0",
+  "description": "Cross The Line - Asian Pop Novel Translation Platform",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "echo 'No build step required'"
+  },
+  "keywords": [
+    "novels",
+    "translation",
+    "asian-pop"
+  ],
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.x"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}
