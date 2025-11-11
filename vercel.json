@@ -1,22 +1,22 @@
 {
   "version": 2,
+  "buildCommand": null,
+  "outputDirectory": ".",
   "functions": {
     "api/**/*.js": {
       "runtime": "@vercel/node"
     }
   },
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/$1"
+    }
+  ],
   "routes": [
     {
       "src": "/api/(.*)",
       "dest": "/api/$1"
-    },
-    {
-      "src": "/admin/admin.html",
-      "dest": "/admin/admin.html"
-    },
-    {
-      "src": "/admin",
-      "dest": "/admin/index.html"
     },
     {
       "src": "/(.*)",
@@ -43,4 +43,3 @@
     }
   ]
 }
-
