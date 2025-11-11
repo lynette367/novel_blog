@@ -478,9 +478,9 @@ def generate_chapter_html(chapter, novel_title, novel_folder, total_chapters):
 
 def generate_index_html(novel_title, description, chapters, cover_image):
     """生成小说目录页"""
-    # 格式化简介
+    # 格式化简介（段落之间无空行）
     description_paragraphs = description.split('\n')
-    formatted_description = '<br><br>'.join([f'<p style="margin-bottom: 1rem;">{p}</p>' for p in description_paragraphs if p.strip()])
+    formatted_description = ''.join([f'<p style="margin-bottom: 0.5rem;">{p}</p>' for p in description_paragraphs if p.strip()])
     
     # 生成章节列表
     chapter_list_html = ""
