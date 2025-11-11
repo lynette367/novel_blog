@@ -1,0 +1,15 @@
+{
+  "name": "novel-blog",
+  "version": "1.0.0",
+  "description": "Novel blog with admin panel",
+  "scripts": {
+    "dev": "vercel dev"
+  },
+  "dependencies": {
+    "@octokit/rest": "^20.0.2"
+  },
+  "devDependencies": {
+    "@vercel/node": "^3.0.0"
+  }
+}
+
