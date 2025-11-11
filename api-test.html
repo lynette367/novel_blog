@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API 测试页面 - Cross The Line</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: linear-gradient(135deg, #f5f3f0 0%, #e8e4df 100%);
+            padding: 2rem;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #8b7355;
+            margin-bottom: 1rem;
+            font-size: 2rem;
+        }
+
+        .description {
+            color: #666;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .api-section {
+            margin-bottom: 2rem;
+        }
+
+        .api-section h2 {
+            color: #8b7355;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .test-button {
+            background: #8b7355;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+            transition: background 0.3s;
+        }
+
+        .test-button:hover {
+            background: #6d5a44;
+        }
+
+        .test-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .input-group {
+            margin: 1rem 0;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .input-group input, .input-group select {
+            width: 100%;
+            max-width: 400px;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .result-container {
+            margin-top: 1rem;
+            background: #f9f9f9;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 1rem;
+            display: none;
+        }
+
+        .result-container.show {
+            display: block;
+        }
+
+        .result-container h3 {
+            color: #8b7355;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .result-container pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .loading {
+            color: #8b7355;
+            font-style: italic;
+        }
+
+        .error {
+            color: #d32f2f;
+            font-weight: 500;
+        }
+
+        .success {
+            color: #388e3c;
+            font-weight: 500;
+        }
+
+        .endpoint-url {
+            background: #f5f5f5;
+            padding: 0.5rem;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            margin: 0.5rem 0;
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔌 Cross The Line API 测试页面</h1>
+        <p class="description">
+            这个页面用于测试后端 API 端点。在本地开发时，使用 <code>vercel dev</code> 运行服务器，
+            然后访问 <code>http://localhost:3000/api-test.html</code>。
+        </p>
+
+        <!-- API 索引 -->
+        <div class="api-section">
+            <h2>1. API 索引</h2>
+            <button class="test-button" onclick="testApiIndex()">测试 /api/index</button>
+            <div id="result-index" class="result-container"></div>
+        </div>
+
+        <!-- 小说列表 -->
+        <div class="api-section">
+            <h2>2. 小说列表</h2>
+            <button class="test-button" onclick="testNovels()">测试 /api/novels</button>
+            <div id="result-novels" class="result-container"></div>
+        </div>
+
+        <!-- 章节列表 -->
+        <div class="api-section">
+            <h2>3. 章节列表</h2>
+            <div class="input-group">
+                <label for="novel-id-chapters">小说 ID:</label>
+                <input type="text" id="novel-id-chapters" value="big_brother" placeholder="例如: big_brother">
+            </div>
+            <button class="test-button" onclick="testChaptersList()">测试章节列表</button>
+            <div id="result-chapters-list" class="result-container"></div>
+        </div>
+
+        <!-- 章节内容 -->
+        <div class="api-section">
+            <h2>4. 章节内容</h2>
+            <div class="input-group">
+                <label for="novel-id-content">小说 ID:</label>
+                <input type="text" id="novel-id-content" value="big_brother" placeholder="例如: big_brother">
+            </div>
+            <div class="input-group">
+                <label for="chapter-num">章节编号:</label>
+                <input type="number" id="chapter-num" value="1" min="1" placeholder="例如: 1">
+            </div>
+            <button class="test-button" onclick="testChapterContent()">测试章节内容</button>
+            <div id="result-chapter-content" class="result-container"></div>
+        </div>
+
+        <!-- 搜索 -->
+        <div class="api-section">
+            <h2>5. 搜索</h2>
+            <div class="input-group">
+                <label for="search-query">搜索关键词:</label>
+                <input type="text" id="search-query" value="brother" placeholder="至少2个字符">
+            </div>
+            <div class="input-group">
+                <label for="search-type">搜索类型:</label>
+                <select id="search-type">
+                    <option value="all">全部</option>
+                    <option value="novel">仅小说</option>
+                    <option value="chapter">仅章节</option>
+                </select>
+            </div>
+            <button class="test-button" onclick="testSearch()">测试搜索</button>
+            <div id="result-search" class="result-container"></div>
+        </div>
+
+        <!-- 统计信息 -->
+        <div class="api-section">
+            <h2>6. 统计信息</h2>
+            <button class="test-button" onclick="testStats()">测试 /api/stats</button>
+            <div id="result-stats" class="result-container"></div>
+        </div>
+    </div>
+
+    <script>
+        // 基础 URL（根据环境自动检测）
+        const BASE_URL = window.location.origin;
+
+        // 通用的 API 测试函数
+        async function testApi(endpoint, resultElementId, params = {}) {
+            const resultElement = document.getElementById(resultElementId);
+            resultElement.innerHTML = '<p class="loading">正在请求...</p>';
+            resultElement.classList.add('show');
+
+            try {
+                // 构建 URL
+                const url = new URL(endpoint, BASE_URL);
+                Object.keys(params).forEach(key => {
+                    if (params[key]) {
+                        url.searchParams.append(key, params[key]);
+                    }
+                });
+
+                // 显示请求的 URL
+                const urlDisplay = `<div class="endpoint-url">请求: ${url.toString()}</div>`;
+
+                // 发送请求
+                const startTime = performance.now();
+                const response = await fetch(url.toString());
+                const endTime = performance.now();
+                const data = await response.json();
+
+                // 显示结果
+                const status = response.ok ? 'success' : 'error';
+                const statusText = response.ok ? '成功' : '失败';
+                const responseTime = Math.round(endTime - startTime);
+
+                resultElement.innerHTML = `
+                    ${urlDisplay}
+                    <h3 class="${status}">状态: ${statusText} (${response.status}) - ${responseTime}ms</h3>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                resultElement.innerHTML = `
+                    <h3 class="error">错误</h3>
+                    <pre>${error.message}</pre>
+                `;
+            }
+        }
+
+        // 测试各个端点
+        function testApiIndex() {
+            testApi('/api/index', 'result-index');
+        }
+
+        function testNovels() {
+            testApi('/api/novels', 'result-novels');
+        }
+
+        function testChaptersList() {
+            const novelId = document.getElementById('novel-id-chapters').value;
+            testApi('/api/chapters', 'result-chapters-list', { novel_id: novelId });
+        }
+
+        function testChapterContent() {
+            const novelId = document.getElementById('novel-id-content').value;
+            const chapterNum = document.getElementById('chapter-num').value;
+            testApi('/api/chapters', 'result-chapter-content', {
+                novel_id: novelId,
+                chapter: chapterNum
+            });
+        }
+
+        function testSearch() {
+            const query = document.getElementById('search-query').value;
+            const type = document.getElementById('search-type').value;
+            testApi('/api/search', 'result-search', {
+                q: query,
+                type: type
+            });
+        }
+
+        function testStats() {
+            testApi('/api/stats', 'result-stats');
+        }
+    </script>
+</body>
+</html>

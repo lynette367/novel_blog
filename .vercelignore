@@ -1,0 +1,20 @@
+# Vercel ignore file
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.git/
+.gitignore
+README.md
+*.txt
+!requirements.txt
+.DS_Store
+.env
+.venv
+venv/
