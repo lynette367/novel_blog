@@ -2,6 +2,9 @@
   "name": "novel-blog",
   "version": "1.0.0",
   "description": "Novel blog with admin panel",
+  "engines": {
+    "node": "20.x"
+  },
   "scripts": {
     "dev": "vercel dev"
   },
