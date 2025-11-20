@@ -8,7 +8,84 @@
 import os
 import re
 import shutil
+import json
 from pathlib import Path
+
+PUBLIC_DIR = Path('public')
+ASSETS_DIR = PUBLIC_DIR / 'assets'
+IMAGES_DIR = ASSETS_DIR / 'images'
+NOVELS_DIR = PUBLIC_DIR / 'novels'
+DATA_DIR = Path('data')
+NOVELS_DATA_FILE = DATA_DIR / 'novels.json'
+DEFAULT_EXCERPT = ("A compelling story that explores themes of family, love, "
+                   "and personal growth. Follow the journey of complex characters as they navigate life's challenges.")
+
+
+def ensure_directories():
+    """Ensure output directories exist for the Next.js project."""
+    ASSETS_DIR.mkdir(parents=True, exist_ok=True)
+    IMAGES_DIR.mkdir(parents=True, exist_ok=True)
+    NOVELS_DIR.mkdir(parents=True, exist_ok=True)
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+
+
+def load_novel_data():
+    """Load the novels.json file if it exists."""
+    if NOVELS_DATA_FILE.exists():
+        with open(NOVELS_DATA_FILE, 'r', encoding='utf-8') as f:
+            try:
+                return json.load(f)
+            except json.JSONDecodeError:
+                pass
+    return {'novels': []}
+
+
+def write_novel_data(data):
+    """Persist novels.json to disk."""
+    with open(NOVELS_DATA_FILE, 'w', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+
+
+def build_excerpt(raw_description):
+    """Create a concise excerpt for the listing grid."""
+    if raw_description:
+        excerpt = re.sub(r'\s+', ' ', raw_description).strip()
+        if len(excerpt) > 220:
+            excerpt = excerpt[:217].rstrip() + '...'
+        return excerpt
+    return DEFAULT_EXCERPT
+
+
+def update_novels_json(title, novel_folder, cover_image, total_chapters, description):
+    """Update /data/novels.json so the Next.js pages can statically render."""
+    ensure_directories()
+    data = load_novel_data()
+    novels_list = data.get('novels', [])
+    excerpt = build_excerpt(description)
+
+    novel_payload = {
+        'title': title,
+        'slug': novel_folder,
+        'category': 'LGBT+',
+        'excerpt': excerpt,
+        'description': description.strip() or excerpt,
+        'coverImage': f"/assets/images/{cover_image}",
+        'path': f"/novels/{novel_folder}/index.html",
+        'totalChapters': total_chapters
+    }
+
+    updated = False
+    for idx, novel in enumerate(novels_list):
+        if novel.get('slug') == novel_folder:
+            novels_list[idx] = novel_payload
+            updated = True
+            break
+
+    if not updated:
+        novels_list.append(novel_payload)
+
+    data['novels'] = novels_list
+    write_novel_data(data)
 
 def extract_novel_info(txt_file):
     """从txt文件中提取小说信息"""
@@ -365,7 +442,7 @@ def generate_chapter_html(chapter, novel_title, novel_folder, total_chapters):
     <title>{chapter_title} | {novel_title}</title>
     <meta name="description" content="Read {chapter_title} of {novel_title} - A compelling Asian pop novel translation.">
     <meta name="keywords" content="{novel_title}, {chapter_title}, asian pop novel, translated fiction">
-    <link rel="stylesheet" href="../../assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
     <style>
         .progress-bar {{
             position: fixed;
@@ -509,20 +586,20 @@ def generate_index_html(novel_title, description, chapters, cover_image):
     <title>{novel_title} - Table of Contents | Cross The Line</title>
     <meta name="description" content="Complete chapter list for {novel_title}. Read all chapters of this compelling Asian pop novel translation.">
     <meta name="keywords" content="{novel_title} chapters, asian pop novel, translated fiction">
-    <link rel="stylesheet" href="../../assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
 </head>
 <body>
     <!-- Top Navigation -->
     <nav class="top-nav">
         <div class="nav-container">
-            <a href="../../novels.html" class="back-btn">← Back to Novels</a>
+            <a href="/novels" class="back-btn">← Back to Novels</a>
         </div>
     </nav>
 
     <div class="container">
         <!-- Novel Header -->
         <section class="novel-header">
-            <div class="novel-header-cover" style="background-image: url('../../assets/images/{cover_image}');"></div>
+            <div class="novel-header-cover" style="background-image: url('/assets/images/{cover_image}');"></div>
             <div class="novel-header-info">
                 <div>
                     <h1>{novel_title}</h1>
@@ -563,7 +640,7 @@ def generate_index_html(novel_title, description, chapters, cover_image):
         </div>
     </footer>
 
-    <script src="../../assets/js/main.js"></script>
+    <script src="/assets/js/main.js"></script>
 </body>
 </html>"""
     
@@ -799,6 +876,8 @@ def process_novel(txt_file, cover_image=None):
         print(f"Error: {txt_file} not found!")
         return
     
+    ensure_directories()
+
     # 提取小说信息
     print(f"Processing {txt_file}...")
     title, description, content = extract_novel_info(txt_file)
@@ -816,7 +895,7 @@ def process_novel(txt_file, cover_image=None):
     # 限制长度为100个字符
     if len(novel_folder) > 100:
         novel_folder = novel_folder[:100]
-    novel_dir = Path('novels') / novel_folder
+    novel_dir = NOVELS_DIR / novel_folder
     novel_dir.mkdir(parents=True, exist_ok=True)
     print(f"  Created folder: {novel_dir}")
     
@@ -829,7 +908,7 @@ def process_novel(txt_file, cover_image=None):
         cover_path = Path(cover_image)
         if cover_path.exists():
             # 移动图片到assets/images/，处理文件名中的空格
-            assets_images = Path('assets/images')
+            assets_images = IMAGES_DIR
             assets_images.mkdir(parents=True, exist_ok=True)
             # 将文件名中的空格替换为下划线
             safe_name = cover_path.name.replace(' ', '_')
@@ -872,7 +951,7 @@ def process_novel(txt_file, cover_image=None):
                     break
         
         if cover_path.exists():
-            assets_images = Path('assets/images')
+            assets_images = IMAGES_DIR
             assets_images.mkdir(parents=True, exist_ok=True)
             # 将文件名中的空格替换为下划线
             safe_name = cover_path.name.replace(' ', '_')
@@ -899,9 +978,8 @@ def process_novel(txt_file, cover_image=None):
             f.write(chapter_html)
         print(f"  Generated: {chapter_path}")
     
-    # 更新novels.html和index.html
-    update_novels_html(title, novel_folder, cover_image_name)
-    update_index_html(title, novel_folder, cover_image_name)
+    # 更新 Next.js 数据源
+    update_novels_json(title, novel_folder, cover_image_name, len(chapters), description)
     
     print(f"\n✓ Successfully processed {title}!")
     print(f"  Total chapters: {len(chapters)}")
@@ -934,4 +1012,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
