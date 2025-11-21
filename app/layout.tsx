@@ -49,6 +49,7 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <link rel="canonical" href={SITE_URL} />
+        <link rel="stylesheet" href="/assets/css/style.css" />
       </head>
       <body>{children}</body>
     </html>
