@@ -12,13 +12,13 @@ const pageDescription =
 const heroImage = absoluteUrl("/assets/images/Wife_are_paramount.png");
 
 export const metadata: Metadata = {
-  title: "Cross The Line | Asian Pop Novel Translation",
+  title: "Cross The Line | Asian BL Novel Translation",
   description: pageDescription,
   alternates: {
     canonical: "/",
   },
   openGraph: {
-    title: "Cross The Line | Asian Pop Novel Translation",
+    title: "Cross The Line | Asian BL Novel Translation",
     description: pageDescription,
     url: absoluteUrl("/"),
     siteName: SITE_NAME,
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Cross The Line | Asian Pop Novel Translation",
+    title: "Cross The Line | Asian BL Novel Translation",
     description: pageDescription,
     images: [heroImage],
   },
