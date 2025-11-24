@@ -1,6 +1,16 @@
 {
   "novels": [
     {
+      "title": "He Came From the Fire",
+      "slug": "he_came_from_the_fire",
+      "category": "ROMANCE",
+      "excerpt": "When sixteen-year-old Nanchu's home catches fire, she is trapped in her room and sees a firefighter coming through the flames to rescue her. Five years later, they reunite - she's now a star, and he's still fighting fires. A beautiful story of love, courage, and second chances.",
+      "coverImage": "/assets/images/He_Came_From_the_Fire.png",
+      "path": "/novels/he_came_from_the_fire/index.html",
+      "totalChapters": 77,
+      "description": "When sixteen-year-old Nanchu's home catches fire, she is trapped in her room and, in a daze, sees a man dressed in a uniform coming through the flames to rescue her.\n\nFive years later, Nanchu has become a famous actress, while Lin Luchu continues his work as a firefighter, fighting on the front lines of disaster areas. When they reunite, old feelings resurface, but both have changed.\n\nA captivating romance story that explores themes of love, courage, and personal growth. This beautifully written tale celebrates the selflessness of firefighters while telling a moving love story that will touch your heart."
+    },
+    {
       "title": "Wife are paramount",
       "slug": "wife_are_paramount",
       "category": "BL",

@@ -3,17 +3,27 @@ import "./globals.css";
 import { SITE_NAME, SITE_URL } from "@/lib/siteMetadata";
 
 const defaultDescription =
-  "Discover beautifully translated Asian popular novels, curated reading lists, and exclusive content from Cross The Line.";
+  "Your destination for high-quality Asian BL novel translations. Discover captivating danmei stories, updated regularly with premium English translations.";
 
 const defaultImage = `${SITE_URL}/assets/images/Wife_are_paramount.png`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Cross The Line | Asian BL Novel Translation",
+    default: "Cross The Line | Asian BL Novel Translation & Reviews",
     template: `%s | ${SITE_NAME}`,
   },
   description: defaultDescription,
+  keywords: [
+    "asian BL novel",
+    "danmei translation",
+    "BL fiction",
+    "yaoi novel",
+    "LGBT+ romance",
+    "Chinese BL",
+    "Korean BL",
+    "BL novel translation",
+  ],
   alternates: {
     canonical: "/",
   },
@@ -21,8 +31,9 @@ export const metadata: Metadata = {
     type: "website",
     url: SITE_URL,
     siteName: SITE_NAME,
+    locale: "en_US",
     title: "Cross The Line | Asian BL Novel Translation",
-    description: defaultDescription,
+    description: "High-quality Asian BL novel translations and danmei stories in English",
     images: [
       {
         url: defaultImage,
@@ -35,7 +46,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Cross The Line | Asian BL Novel Translation",
-    description: defaultDescription,
+    description: "Discover captivating Asian BL novels and danmei translations",
     images: [defaultImage],
   },
 };

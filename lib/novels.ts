@@ -17,7 +17,6 @@ type NovelDataFile = {
 };
 
 const DATA_PATH = path.join(process.cwd(), "data", "novels.json");
-const PUBLIC_NOVELS_DIR = path.join(process.cwd(), "public", "novels");
 
 async function readNovelsFile(): Promise<NovelDataFile> {
   try {
@@ -47,28 +46,63 @@ export async function getNovelBySlug(slug: string): Promise<Novel | undefined> {
   return novels.find((novel) => novel.slug === slug);
 }
 
-function extractChapterSection(html: string): string | null {
-  const match = html.match(/<section[^>]*class="[^"]*chapter-section[^"]*"[^>]*>[\s\S]*?<\/section>/i);
-  return match ? match[0] : null;
-}
 
-function normalizeChapterLinks(html: string, slug: string): string {
-  return html
-    .replace(/href=(['"])chapter/gi, (_match, quote: string) => `href=${quote}/novels/${slug}/chapter`)
-    .replace(/href=(['"])\.\.\/\.\.\/novels\.html\1/gi, (_match, quote: string) => `href=${quote}/novels${quote}`);
-}
+export type ChapterInfo = {
+  number: number;
+  title: string;
+  slug: string;
+};
 
-export async function getNovelChapterContent(slug: string): Promise<string | null> {
+export async function getNovelChapters(slug: string): Promise<ChapterInfo[]> {
   try {
-    const filePath = path.join(PUBLIC_NOVELS_DIR, slug, "index.html");
-    const html = await fs.readFile(filePath, "utf-8");
-    const section = extractChapterSection(html);
-    if (!section) {
-      return null;
+    const chaptersJsonPath = path.join(process.cwd(), "data", "novels", slug, "chapters.json");
+    const jsonData = await fs.readFile(chaptersJsonPath, "utf-8");
+    const data = JSON.parse(jsonData);
+    if (data.chapters && Array.isArray(data.chapters)) {
+      return data.chapters.map((ch: { number: number; title: string }) => ({
+        number: ch.number,
+        title: ch.title,
+        slug: ch.number.toString(),
+      }));
     }
-    return normalizeChapterLinks(section, slug);
+    return [];
   } catch (error) {
-    console.warn(`Unable to load chapter section for ${slug}`, error);
+    console.warn(`Unable to load chapters for ${slug}`, error);
+    return [];
+  }
+}
+
+export async function getChapterContent(
+  slug: string,
+  chapterNumber: number
+): Promise<{ title: string; content: string; chapterNumber: number } | null> {
+  try {
+    const chaptersJsonPath = path.join(process.cwd(), "data", "novels", slug, "chapters.json");
+    const jsonData = await fs.readFile(chaptersJsonPath, "utf-8");
+    const data = JSON.parse(jsonData);
+    if (data.chapters && Array.isArray(data.chapters)) {
+      const chapter = data.chapters.find(
+        (ch: { number: number }) => ch.number === chapterNumber
+      );
+      if (chapter) {
+        // Format content as HTML paragraphs
+        const paragraphs = chapter.content
+          .split('\n')
+          .map((para: string) => para.trim())
+          .filter((para: string) => para)
+          .map((para: string) => `<p>${para}</p>`)
+          .join('\n');
+
+        return {
+          title: chapter.title,
+          content: paragraphs,
+          chapterNumber: chapter.number,
+        };
+      }
+    }
+    return null;
+  } catch (error) {
+    console.warn(`Unable to load chapter ${chapterNumber} for ${slug}`, error);
     return null;
   }
 }

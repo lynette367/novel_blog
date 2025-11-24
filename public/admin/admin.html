@@ -234,6 +234,13 @@
                         <textarea id="novelDescription" required></textarea>
                     </div>
                     <div class="form-group">
+                        <label for="novelCategory">Category:</label>
+                        <select id="novelCategory">
+                            <option value="BL">BL</option>
+                            <option value="ROMANCE">ROMANCE</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
                         <label for="novelCoverImage">Cover Image (filename in assets/images/):</label>
                         <input type="text" id="novelCoverImage" placeholder="e.g., novel_cover.png">
                     </div>
@@ -358,6 +365,7 @@
             
             const title = document.getElementById('novelTitle').value;
             const description = document.getElementById('novelDescription').value;
+            const category = document.getElementById('novelCategory').value;
             const coverImage = document.getElementById('novelCoverImage').value;
 
             try {
@@ -370,6 +378,7 @@
                     body: JSON.stringify({
                         title,
                         description,
+                        category,
                         coverImage
                     })
                 });
@@ -531,10 +540,35 @@
             }
         }
 
-        function editChapter(chapterNum, chapterTitle) {
+        async function editChapter(chapterNum, chapterTitle) {
+            const novelId = document.getElementById('selectNovel').value;
+            if (!novelId) {
+                showAlert('chaptersAlert', 'Please select a novel first', 'error');
+                return;
+            }
+
             document.getElementById('chapterNum').value = chapterNum;
             document.getElementById('chapterTitle').value = chapterTitle;
-            // TODO: Load chapter content
+            
+            // Load chapter content
+            try {
+                const response = await fetch(`${API_BASE}/chapters?novelId=${novelId}&chapterNum=${chapterNum}`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to load chapter content');
+                }
+
+                const data = await response.json();
+                if (data.chapter && data.chapter.content) {
+                    document.getElementById('chapterContent').value = data.chapter.content;
+                }
+            } catch (error) {
+                showAlert('chaptersAlert', `Error loading chapter content: ${error.message}`, 'error');
+            }
         }
 
         function showAlert(containerId, message, type) {

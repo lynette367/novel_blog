@@ -8,18 +8,21 @@ const REPO_OWNER = process.env.GITHUB_REPO_OWNER || 'lynette367';
 const REPO_NAME = process.env.GITHUB_REPO_NAME || 'novel_blog';
 const BRANCH = process.env.GITHUB_BRANCH || 'main';
 
-// 获取小说目录页内容
-async function getNovelIndex(novelFolder) {
+// 辅助函数：获取文件内容
+async function getFileContent(path) {
   try {
     const { data } = await octokit.repos.getContent({
       owner: REPO_OWNER,
       repo: REPO_NAME,
-      path: `novels/${novelFolder}/index.html`,
+      path: path,
       ref: BRANCH,
     });
     
-    const content = Buffer.from(data.content, 'base64').toString('utf-8');
-    return { content, sha: data.sha };
+    if (data.type === 'file') {
+      const content = Buffer.from(data.content, 'base64').toString('utf-8');
+      return content;
+    }
+    return null;
   } catch (error) {
     if (error.status === 404) {
       return null;
@@ -28,168 +31,78 @@ async function getNovelIndex(novelFolder) {
   }
 }
 
-// 更新小说目录页（添加新章节）
-async function updateNovelIndex(novelFolder, chapterNum, chapterTitle, totalChapters) {
-  const novelIndex = await getNovelIndex(novelFolder);
-  if (!novelIndex) {
-    throw new Error('Novel not found');
-  }
-
-  let content = novelIndex.content;
-  
-  // 提取章节列表部分
-  const chapterListMatch = content.match(/(<div class="chapter-list"[^>]*>)(.*?)(<\/div>\s*<\/section>)/s);
-  if (!chapterListMatch) {
-    throw new Error('Could not find chapter list section');
-  }
-
-  const chapterListStart = chapterListMatch[1];
-  const existingChapters = chapterListMatch[2];
-  const chapterListEnd = chapterListMatch[3];
-
-  // 检查章节是否已存在
-  if (existingChapters.includes(`chapter${chapterNum}.html`)) {
-    // 更新现有章节
-    const chapterPattern = new RegExp(
-      `(<!-- Chapter ${chapterNum} -->\\s*<a[^>]*href="chapter${chapterNum}\\.html"[^>]*>.*?</a>\\s*)`,
-      's'
-    );
-    const newChapterHtml = `                <!-- Chapter ${chapterNum} -->
-                <a href="chapter${chapterNum}.html" class="chapter-item" data-chapter="${chapterNum}">
-                    <div class="chapter-number">Ch. ${chapterNum}</div>
-                    <div class="chapter-details">
-                        <div class="chapter-title">${chapterTitle.replace('Chapter ', '')}</div>
-                        <div class="chapter-meta-info">
-                            <span>📖 Est. 10 min</span>
-                        </div>
-                    </div>
-                    <span class="chapter-arrow">→</span>
-                </a>
-
-`;
-    
-    if (chapterPattern.test(existingChapters)) {
-      content = content.replace(chapterPattern, newChapterHtml);
-    } else {
-      // 如果没找到，添加到末尾
-      content = content.replace(
-        chapterListMatch[0],
-        `${chapterListStart}${existingChapters}${newChapterHtml}            ${chapterListEnd}`
-      );
+// 辅助函数：创建或更新文件
+async function createOrUpdateFile(path, content, message) {
+  try {
+    let sha = null;
+    try {
+      const { data } = await octokit.repos.getContent({
+        owner: REPO_OWNER,
+        repo: REPO_NAME,
+        path: path,
+        ref: BRANCH,
+      });
+      sha = data.sha;
+    } catch (error) {
+      // 文件不存在，sha 保持为 null
     }
-  } else {
-    // 添加新章节
-    const newChapterHtml = `                <!-- Chapter ${chapterNum} -->
-                <a href="chapter${chapterNum}.html" class="chapter-item" data-chapter="${chapterNum}">
-                    <div class="chapter-number">Ch. ${chapterNum}</div>
-                    <div class="chapter-details">
-                        <div class="chapter-title">${chapterTitle.replace('Chapter ', '')}</div>
-                        <div class="chapter-meta-info">
-                            <span>📖 Est. 10 min</span>
-                        </div>
-                    </div>
-                    <span class="chapter-arrow">→</span>
-                </a>
 
-`;
-    
-    content = content.replace(
-      chapterListMatch[0],
-      `${chapterListStart}${existingChapters}${newChapterHtml}            ${chapterListEnd}`
-    );
+    const { data } = await octokit.repos.createOrUpdateFileContents({
+      owner: REPO_OWNER,
+      repo: REPO_NAME,
+      path: path,
+      message: message,
+      content: Buffer.from(content, 'utf-8').toString('base64'),
+      branch: BRANCH,
+      sha: sha,
+    });
+
+    return data;
+  } catch (error) {
+    throw error;
   }
-
-  // 更新章节数量
-  content = content.replace(
-    /(\d+) Chapters Available/,
-    `${totalChapters} Chapters Available`
-  );
-
-  // 保存更新
-  const { data } = await octokit.repos.createOrUpdateFileContents({
-    owner: REPO_OWNER,
-    repo: REPO_NAME,
-    path: `novels/${novelFolder}/index.html`,
-    message: `Update novel index: Add/Update Chapter ${chapterNum}`,
-    content: Buffer.from(content, 'utf-8').toString('base64'),
-    branch: BRANCH,
-    sha: novelIndex.sha,
-  });
-
-  return data;
 }
 
-// 生成章节 HTML
-function generateChapterHtml(chapterNum, chapterTitle, chapterContent, novelTitle, novelFolder, totalChapters) {
-  // 格式化内容为段落
-  const paragraphs = chapterContent.split('\n').filter(p => p.trim()).map(p => p.trim());
-  const paragraphsHtml = paragraphs.map(p => `            <p>${p}</p>\n\n`).join('');
+// 获取小说的章节列表
+async function getChaptersForNovel(novelId) {
+  try {
+    const chaptersPath = `data/novels/${novelId}/chapters.json`;
+    const chaptersContent = await getFileContent(chaptersPath);
+    
+    if (!chaptersContent) {
+      return [];
+    }
 
-  return `<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${chapterTitle} | ${novelTitle}</title>
-    <link rel="stylesheet" href="../../assets/css/style.css">
-    <style>
-        .progress-bar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 0%;
-            height: 4px;
-            background: linear-gradient(90deg, #8b7355, #d4c5b0);
-            z-index: 2001;
-            transition: width 0.1s ease;
-        }
-        .chapter-meta {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            color: #7d6d5d;
-            font-size: 0.9rem;
-            margin-bottom: 2rem;
-            flex-wrap: wrap;
-        }
-    </style>
-</head>
-<body>
-    <div class="progress-bar" id="progressBar"></div>
-    <nav class="top-nav">
-        <div class="nav-container">
-            <a href="index.html" class="back-btn">← Back to Table of Contents</a>
-        </div>
-    </nav>
-    <header class="chapter-header">
-        <div class="chapter-number-badge">Chapter ${chapterNum}</div>
-        <h1 class="chapter-title-page">${chapterTitle.replace('Chapter ', '')}</h1>
-        <div class="chapter-meta">
-            <span>📖 Est. 10 min read</span>
-        </div>
-    </header>
-    <article class="chapter-content">
-        <div class="chapter-text">
-${paragraphsHtml}        </div>
-    </article>
-    <nav class="chapter-nav">
-${chapterNum > 1 ? `        <a href="chapter${chapterNum - 1}.html" class="nav-btn">← Previous Chapter</a>\n` : '        <a href="#" class="nav-btn disabled">← Previous Chapter</a>\n'}        <a href="index.html" class="index-btn">📚 Table of Contents</a>
-${chapterNum < totalChapters ? `        <a href="chapter${chapterNum + 1}.html" class="nav-btn">Next Chapter →</a>\n` : '        <a href="#" class="nav-btn disabled">Next Chapter →</a>\n'}    </nav>
-    <footer>
-        <div class="footer-content">
-            <p>&copy; 2025 Cross The Line. All translations published with respect for original authors.</p>
-        </div>
-    </footer>
-    <script>
-        window.addEventListener('scroll', () => {
-            const winScroll = document.documentElement.scrollTop;
-            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            const scrolled = (winScroll / height) * 100;
-            document.getElementById('progressBar').style.width = scrolled + '%';
-        });
-    </script>
-</body>
-</html>`;
+    const chaptersData = JSON.parse(chaptersContent);
+    return chaptersData.chapters || [];
+  } catch (error) {
+    console.error('Error loading chapters:', error);
+    return [];
+  }
+}
+
+// 更新 novels.json 中的 totalChapters
+async function updateNovelTotalChapters(novelId, totalChapters) {
+  try {
+    const novelsJsonContent = await getFileContent('data/novels.json');
+    if (!novelsJsonContent) {
+      return;
+    }
+
+    const novelsData = JSON.parse(novelsJsonContent);
+    const novelIndex = novelsData.novels.findIndex(n => n.slug === novelId);
+    
+    if (novelIndex >= 0) {
+      novelsData.novels[novelIndex].totalChapters = totalChapters;
+      await createOrUpdateFile(
+        'data/novels.json',
+        JSON.stringify(novelsData, null, 2),
+        `Update total chapters for novel: ${novelId}`
+      );
+    }
+  } catch (error) {
+    console.error('Error updating novel total chapters:', error);
+  }
 }
 
 export default async function handler(req, res) {
@@ -205,35 +118,31 @@ export default async function handler(req, res) {
 
   try {
     if (req.method === 'GET') {
-      // 获取小说的所有章节
-      const { novelId } = req.query;
+      // 获取小说的所有章节或单个章节
+      const { novelId, chapterNum } = req.query;
       
       if (!novelId) {
         return res.status(400).json({ error: 'novelId is required' });
       }
 
-      // 获取小说目录页，解析章节列表
-      const novelIndex = await getNovelIndex(novelId);
-      if (!novelIndex) {
-        return res.status(404).json({ error: 'Novel not found' });
+      const chapters = await getChaptersForNovel(novelId);
+      
+      // 如果指定了 chapterNum，返回单个章节的完整内容
+      if (chapterNum) {
+        const chapter = chapters.find(ch => ch.number === parseInt(chapterNum));
+        if (!chapter) {
+          return res.status(404).json({ error: 'Chapter not found' });
+        }
+        return res.status(200).json({ chapter });
       }
+      
+      // 否则返回所有章节列表（不包含完整内容）
+      const formattedChapters = chapters.map(ch => ({
+        number: ch.number,
+        title: ch.title,
+      }));
 
-      // 提取章节信息
-      const chapterMatches = novelIndex.content.matchAll(
-        /<a[^>]*href="chapter(\d+)\.html"[^>]*>.*?<div class="chapter-title">([^<]+)<\/div>/gs
-      );
-
-      const chapters = [];
-      for (const match of chapterMatches) {
-        chapters.push({
-          number: parseInt(match[1]),
-          title: match[2].trim(),
-        });
-      }
-
-      chapters.sort((a, b) => a.number - b.number);
-
-      return res.status(200).json({ chapters });
+      return res.status(200).json({ chapters: formattedChapters });
     } else if (req.method === 'POST') {
       // 创建或更新章节
       const { novelId, chapterNum, chapterTitle, chapterContent } = req.body;
@@ -244,64 +153,54 @@ export default async function handler(req, res) {
         });
       }
 
-      // 获取当前章节数量
-      const novelIndex = await getNovelIndex(novelId);
-      if (!novelIndex) {
-        return res.status(404).json({ error: 'Novel not found' });
+      // 获取现有章节数据
+      const chaptersPath = `data/novels/${novelId}/chapters.json`;
+      const existingChaptersContent = await getFileContent(chaptersPath);
+      
+      let chaptersData = { chapters: [] };
+      if (existingChaptersContent) {
+        try {
+          chaptersData = JSON.parse(existingChaptersContent);
+        } catch (error) {
+          console.error('Error parsing chapters.json:', error);
+        }
       }
 
-      // 计算总章节数
-      const existingChapters = (novelIndex.content.match(/chapter\d+\.html/g) || []).length;
-      const isNewChapter = !novelIndex.content.includes(`chapter${chapterNum}.html`);
-      const totalChapters = isNewChapter ? existingChapters + 1 : existingChapters;
-
-      // 获取小说标题
-      const titleMatch = novelIndex.content.match(/<h1>([^<]+)<\/h1>/);
-      const novelTitle = titleMatch ? titleMatch[1] : novelId;
-
-      // 生成章节 HTML
-      const chapterHtml = generateChapterHtml(
-        chapterNum,
-        chapterTitle,
-        chapterContent,
-        novelTitle,
-        novelId,
-        totalChapters
+      // 查找章节是否存在
+      const chapterIndex = chaptersData.chapters.findIndex(
+        ch => ch.number === parseInt(chapterNum)
       );
 
-      // 保存章节文件
-      const chapterPath = `novels/${novelId}/chapter${chapterNum}.html`;
-      
-      let chapterSha = null;
-      try {
-        const { data } = await octokit.repos.getContent({
-          owner: REPO_OWNER,
-          repo: REPO_NAME,
-          path: chapterPath,
-          ref: BRANCH,
-        });
-        chapterSha = data.sha;
-      } catch (error) {
-        // 文件不存在
+      const chapterEntry = {
+        number: parseInt(chapterNum),
+        title: chapterTitle,
+        content: chapterContent,
+      };
+
+      if (chapterIndex >= 0) {
+        // 更新现有章节
+        chaptersData.chapters[chapterIndex] = chapterEntry;
+      } else {
+        // 添加新章节
+        chaptersData.chapters.push(chapterEntry);
+        // 按章节号排序
+        chaptersData.chapters.sort((a, b) => a.number - b.number);
       }
 
-      await octokit.repos.createOrUpdateFileContents({
-        owner: REPO_OWNER,
-        repo: REPO_NAME,
-        path: chapterPath,
-        message: `${isNewChapter ? 'Create' : 'Update'} chapter ${chapterNum}: ${chapterTitle}`,
-        content: Buffer.from(chapterHtml, 'utf-8').toString('base64'),
-        branch: BRANCH,
-        sha: chapterSha,
-      });
+      // 保存更新后的 chapters.json
+      await createOrUpdateFile(
+        chaptersPath,
+        JSON.stringify(chaptersData, null, 2),
+        `${chapterIndex >= 0 ? 'Update' : 'Create'} chapter ${chapterNum}: ${chapterTitle}`
+      );
 
-      // 更新目录页
-      await updateNovelIndex(novelId, chapterNum, chapterTitle, totalChapters);
+      // 更新 novels.json 中的 totalChapters
+      await updateNovelTotalChapters(novelId, chaptersData.chapters.length);
 
       return res.status(200).json({
         success: true,
         chapter: {
-          number: chapterNum,
+          number: parseInt(chapterNum),
           title: chapterTitle,
         },
       });
@@ -313,53 +212,36 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'novelId and chapterNum are required' });
       }
 
-      // 删除章节文件
-      try {
-        const { data } = await octokit.repos.getContent({
-          owner: REPO_OWNER,
-          repo: REPO_NAME,
-          path: `novels/${novelId}/chapter${chapterNum}.html`,
-          ref: BRANCH,
-        });
-
-        await octokit.repos.deleteFile({
-          owner: REPO_OWNER,
-          repo: REPO_NAME,
-          path: `novels/${novelId}/chapter${chapterNum}.html`,
-          message: `Delete chapter ${chapterNum}`,
-          branch: BRANCH,
-          sha: data.sha,
-        });
-      } catch (error) {
-        if (error.status !== 404) {
-          throw error;
-        }
+      // 获取现有章节数据
+      const chaptersPath = `data/novels/${novelId}/chapters.json`;
+      const existingChaptersContent = await getFileContent(chaptersPath);
+      
+      if (!existingChaptersContent) {
+        return res.status(404).json({ error: 'Novel not found' });
       }
 
-      // 更新目录页（移除章节链接）
-      const novelIndex = await getNovelIndex(novelId);
-      if (novelIndex) {
-        let content = novelIndex.content;
-        const chapterPattern = new RegExp(
-          `<!-- Chapter ${chapterNum} -->\\s*<a[^>]*href="chapter${chapterNum}\\.html"[^>]*>.*?</a>\\s*\\n`,
-          's'
-        );
-        content = content.replace(chapterPattern, '');
+      let chaptersData = JSON.parse(existingChaptersContent);
+      
+      // 删除指定章节
+      const chapterIndex = chaptersData.chapters.findIndex(
+        ch => ch.number === parseInt(chapterNum)
+      );
 
-        // 更新章节数量
-        const chapterCount = (content.match(/chapter\d+\.html/g) || []).length;
-        content = content.replace(/(\d+) Chapters Available/, `${chapterCount} Chapters Available`);
-
-        await octokit.repos.createOrUpdateFileContents({
-          owner: REPO_OWNER,
-          repo: REPO_NAME,
-          path: `novels/${novelId}/index.html`,
-          message: `Remove chapter ${chapterNum} from index`,
-          content: Buffer.from(content, 'utf-8').toString('base64'),
-          branch: BRANCH,
-          sha: novelIndex.sha,
-        });
+      if (chapterIndex < 0) {
+        return res.status(404).json({ error: 'Chapter not found' });
       }
+
+      chaptersData.chapters.splice(chapterIndex, 1);
+
+      // 保存更新后的 chapters.json
+      await createOrUpdateFile(
+        chaptersPath,
+        JSON.stringify(chaptersData, null, 2),
+        `Delete chapter ${chapterNum}`
+      );
+
+      // 更新 novels.json 中的 totalChapters
+      await updateNovelTotalChapters(novelId, chaptersData.chapters.length);
 
       return res.status(200).json({ success: true });
     } else {
@@ -373,4 +255,3 @@ export default async function handler(req, res) {
     });
   }
 }
-

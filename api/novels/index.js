@@ -65,42 +65,35 @@ async function createOrUpdateFile(path, content, message) {
   }
 }
 
+// 从标题创建 slug
+function createSlug(title) {
+  return title
+    .toLowerCase()
+    .replace(/[^\w-]/g, '_')
+    .replace(/_+/g, '_')
+    .substring(0, 100)
+    .replace(/^_|_$/g, '');
+}
+
 // 获取所有小说列表
 async function getNovelsList() {
   try {
-    const { data } = await octokit.repos.getContent({
-      owner: REPO_OWNER,
-      repo: REPO_NAME,
-      path: 'novels',
-      ref: BRANCH,
-    });
-
-    const novels = [];
-    for (const item of data) {
-      if (item.type === 'dir') {
-        // 检查是否有 index.html
-        try {
-          const indexContent = await getFileContent(`novels/${item.name}/index.html`);
-          if (indexContent) {
-            // 提取标题
-            const titleMatch = indexContent.match(/<h1>([^<]+)<\/h1>/);
-            const title = titleMatch ? titleMatch[1] : item.name;
-            
-            novels.push({
-              id: item.name,
-              title: title,
-              folder: item.name,
-            });
-          }
-        } catch (error) {
-          // 忽略错误，继续下一个
-        }
-      }
+    const novelsJsonContent = await getFileContent('data/novels.json');
+    if (!novelsJsonContent) {
+      return [];
     }
+
+    const novelsData = JSON.parse(novelsJsonContent);
+    const novels = (novelsData.novels || []).map(novel => ({
+      id: novel.slug,
+      title: novel.title,
+      folder: novel.slug,
+    }));
 
     return novels;
   } catch (error) {
-    throw error;
+    console.error('Error loading novels:', error);
+    return [];
   }
 }
 
@@ -124,81 +117,74 @@ export default async function handler(req, res) {
       return res.status(200).json({ novels });
     } else if (req.method === 'POST') {
       // 创建新小说
-      const { title, description, coverImage } = req.body;
+      const { title, description, coverImage, category } = req.body;
 
       if (!title) {
         return res.status(400).json({ error: 'Title is required' });
       }
 
-      // 生成文件夹名
-      const folderName = title.toLowerCase().replace(/[^\w-]/g, '_').substring(0, 100);
-      const novelPath = `novels/${folderName}`;
+      // 生成 slug
+      const slug = createSlug(title);
+      
+      // 读取现有的 novels.json
+      const novelsJsonContent = await getFileContent('data/novels.json');
+      let novelsData = { novels: [] };
+      
+      if (novelsJsonContent) {
+        try {
+          novelsData = JSON.parse(novelsJsonContent);
+        } catch (error) {
+          console.error('Error parsing novels.json:', error);
+        }
+      }
 
-      // 创建目录页 HTML（简化版，实际应该使用 generate_novel.py 的逻辑）
-      const indexHtml = `<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${title} - Table of Contents | Cross The Line</title>
-    <link rel="stylesheet" href="../../assets/css/style.css">
-</head>
-<body>
-    <nav class="top-nav">
-        <div class="nav-container">
-            <a href="../../novels.html" class="back-btn">← Back to Novels</a>
-        </div>
-    </nav>
-    <div class="container">
-        <section class="novel-header">
-            <div class="novel-header-cover" style="background-image: url('../../assets/images/${coverImage || '1.jpg'}');"></div>
-            <div class="novel-header-info">
-                <div>
-                    <h1>${title}</h1>
-                    <div class="novel-meta">
-                        <span class="meta-item">✍️ Author: Anonymous</span>
-                        <span class="meta-item">🌐 Translator: Cross The Line</span>
-                        <span class="meta-item">📅 Status: Ongoing</span>
-                    </div>
-                </div>
-                <span class="novel-category-badge">LGBT+</span>
-                <div class="novel-description">
-                    ${description ? description.split('\n').map(p => `<p style="margin-bottom: 0.5rem;">${p}</p>`).join('') : ''}
-                </div>
-            </div>
-        </section>
-        <section class="chapter-section">
-            <div class="section-header">
-                <div>
-                    <h2>Table of Contents</h2>
-                    <span style="color: #7d6d5d; font-size: 0.95rem;">0 Chapters Available</span>
-                </div>
-            </div>
-            <div class="chapter-list" id="chapterList">
-            </div>
-        </section>
-    </div>
-    <footer>
-        <div class="footer-content">
-            <p>&copy; 2025 Cross The Line. All translations published with respect for original authors.</p>
-        </div>
-    </footer>
-    <script src="../../assets/js/main.js"></script>
-</body>
-</html>`;
+      // 检查是否已存在相同 slug 的小说
+      const existingIndex = novelsData.novels.findIndex(n => n.slug === slug);
+      
+      const novelEntry = {
+        title: title,
+        slug: slug,
+        category: category || 'BL',
+        excerpt: description ? description.substring(0, 220) + (description.length > 220 ? '...' : '') : 'A captivating Asian BL novel exploring themes of romance, drama, and personal growth.',
+        description: description || '',
+        coverImage: coverImage ? `/assets/images/${coverImage}` : '/assets/images/0.jpg',
+        path: `/novels/${slug}`,
+        totalChapters: 0,
+      };
 
+      if (existingIndex >= 0) {
+        // 更新现有小说
+        novelsData.novels[existingIndex] = novelEntry;
+      } else {
+        // 添加新小说
+        novelsData.novels.push(novelEntry);
+      }
+
+      // 保存更新后的 novels.json
       await createOrUpdateFile(
-        `${novelPath}/index.html`,
-        indexHtml,
-        `Create novel: ${title}`
+        'data/novels.json',
+        JSON.stringify(novelsData, null, 2),
+        `Create/Update novel: ${title}`
       );
+
+      // 创建空的 chapters.json 文件（如果不存在）
+      const chaptersPath = `data/novels/${slug}/chapters.json`;
+      const existingChapters = await getFileContent(chaptersPath);
+      if (!existingChapters) {
+        const emptyChaptersData = { chapters: [] };
+        await createOrUpdateFile(
+          chaptersPath,
+          JSON.stringify(emptyChaptersData, null, 2),
+          `Initialize chapters for novel: ${title}`
+        );
+      }
 
       return res.status(200).json({
         success: true,
         novel: {
-          id: folderName,
+          id: slug,
           title: title,
-          folder: folderName,
+          folder: slug,
         },
       });
     } else {
@@ -212,4 +198,3 @@ export default async function handler(req, res) {
     });
   }
 }
-

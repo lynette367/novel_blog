@@ -3,41 +3,43 @@ import type { Metadata } from "next";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { NovelCard } from "@/components/novel-card";
-import { getFeaturedNovels } from "@/lib/novels";
+import { getFeaturedNovels, getNovels } from "@/lib/novels";
 import { absoluteUrl, SITE_NAME } from "@/lib/siteMetadata";
-
-const pageDescription =
-  "Where stories transcend boundaries. Discover beautifully translated Asian novels and curated reading lists.";
 
 const heroImage = absoluteUrl("/assets/images/Wife_are_paramount.png");
 
-export const metadata: Metadata = {
-  title: "Cross The Line | Asian BL Novel Translation",
-  description: pageDescription,
-  alternates: {
-    canonical: "/",
-  },
-  openGraph: {
+export async function generateMetadata(): Promise<Metadata> {
+  const novels = await getNovels();
+  const totalNovels = novels.length;
+
+  return {
     title: "Cross The Line | Asian BL Novel Translation",
-    description: pageDescription,
-    url: absoluteUrl("/"),
-    siteName: SITE_NAME,
-    images: [
-      {
-        url: heroImage,
-        width: 1200,
-        height: 630,
-        alt: SITE_NAME,
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Cross The Line | Asian BL Novel Translation",
-    description: pageDescription,
-    images: [heroImage],
-  },
-};
+    description: `Explore ${totalNovels}+ translated Asian BL novels and danmei stories. Quality English translations updated weekly. Start reading today!`,
+    alternates: {
+      canonical: "/",
+    },
+    openGraph: {
+      title: "Asian BL Novel Translations | Cross The Line",
+      description: `${totalNovels}+ captivating BL novels and danmei stories`,
+      url: absoluteUrl("/"),
+      siteName: SITE_NAME,
+      images: [
+        {
+          url: heroImage,
+          width: 1200,
+          height: 630,
+          alt: SITE_NAME,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: "Cross The Line | Asian BL Novel Translation",
+      description: `Discover ${totalNovels}+ Asian BL novels and danmei translations`,
+      images: [heroImage],
+    },
+  };
+}
 
 export default async function HomePage() {
   const featuredNovels = await getFeaturedNovels();
@@ -48,11 +50,15 @@ export default async function HomePage() {
 
       <section className="hero">
         <div className="hero-content">
-          <h1>Cross The Line</h1>
+          <h1 style={{ 
+            fontSize: 'clamp(2rem, 4.5vw, 3.2rem)', 
+            whiteSpace: 'nowrap',
+            letterSpacing: '2px'
+          }}>
+            Discover Captivating Danmei Stories
+          </h1>
           <p className="tagline">
-            Where stories transcend boundaries and hearts find their truth.
-            <br />
-            Discover novels that touch the soul.
+            Your premier destination for high-quality BL and danmei translations
           </p>
         </div>
       </section>
