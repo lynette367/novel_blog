@@ -9,7 +9,7 @@ type Props = {
 };
 
 const DEFAULT_CATEGORY = "ALL";
-const BASE_CATEGORIES = ["ALL", "EPIC POWER", "LGBT+", "ROMANCE"];
+const BASE_CATEGORIES = ["ALL", "BL", "ROMANCE"];
 
 export function FilterableNovelGrid({ novels }: Props) {
   const [activeCategory, setActiveCategory] = useState<string>(DEFAULT_CATEGORY);

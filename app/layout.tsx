@@ -10,7 +10,7 @@ const defaultImage = `${SITE_URL}/assets/images/Wife_are_paramount.png`;
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: `${SITE_NAME} | Asian Pop Novel Translation`,
+    default: "Cross The Line | Asian BL Novel Translation",
     template: `%s | ${SITE_NAME}`,
   },
   description: defaultDescription,
