@@ -39,3 +39,13 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Novel source files (uploaded to Sanity, not needed in git)
+/*.txt
+/*.png
+/public/assets/images/*.png
+/public/assets/images/*.jpg
+
+# Python cache
+__pycache__/
+*.pyc
