@@ -19,6 +19,7 @@ export type Novel = {
   path: string;
   totalChapters?: number;
   description?: string;
+  author?: string;
 };
 
 export type ChapterInfo = {
@@ -38,6 +39,7 @@ type SanityNovel = {
   description?: string;
   coverImage?: SanityImageSource;
   totalChapters?: number;
+  author?: string;
 };
 
 // Sanity 返回的原始章节类型
@@ -63,6 +65,7 @@ function transformNovel(sanityNovel: SanityNovel): Novel {
     path: `/novels/${slug}`,
     totalChapters: sanityNovel.totalChapters || 0,
     description: sanityNovel.description || sanityNovel.excerpt || "",
+    author: sanityNovel.author || "Anonymous",
   };
 }
 
@@ -76,7 +79,8 @@ export async function getNovels(): Promise<Novel[]> {
     excerpt,
     description,
     coverImage,
-    totalChapters
+    totalChapters,
+    author
   }`;
 
   try {
@@ -98,7 +102,8 @@ export async function getFeaturedNovels(limit = 3): Promise<Novel[]> {
     excerpt,
     description,
     coverImage,
-    totalChapters
+    totalChapters,
+    author
   }`;
 
   try {
@@ -120,7 +125,8 @@ export async function getNovelBySlug(slug: string): Promise<Novel | undefined> {
     excerpt,
     description,
     coverImage,
-    totalChapters
+    totalChapters,
+    author
   }`;
 
   try {

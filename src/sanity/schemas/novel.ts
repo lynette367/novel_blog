@@ -35,6 +35,12 @@ export const novel = defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
+      name: "author",
+      title: "作者",
+      type: "string",
+      initialValue: "Anonymous",
+    }),
+    defineField({
       name: "excerpt",
       title: "简介摘要",
       type: "text",
@@ -78,11 +84,21 @@ export const novel = defineType({
   preview: {
     select: {
       title: "title",
-      subtitle: "category",
+      author: "author",
+      category: "category",
       media: "coverImage",
+    },
+    prepare(selection) {
+      const { title, author, category } = selection;
+      return {
+        title,
+        subtitle: author ? `${author} · ${category}` : category,
+        media: selection.media,
+      };
     },
   },
 });
+
 
 
 

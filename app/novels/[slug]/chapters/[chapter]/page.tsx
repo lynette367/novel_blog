@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { ReadingProgress } from "./reading-progress";
 import { getNovelBySlug, getChapterContent, getNovelChapters } from "@/lib/novels";
@@ -125,7 +124,6 @@ export default async function ChapterPage({
 
   return (
     <>
-      <SiteHeader activePath="novels" />
       <ReadingProgress />
 
       {/* Top Navigation */}

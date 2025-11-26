@@ -119,6 +119,15 @@ function buildExcerpt(rawDescription) {
 }
 
 /**
+ * 将标题转换为首字母大写格式 (Title Case)
+ */
+function toTitleCase(str) {
+  return str.replace(/\w\S*/g, (txt) => {
+    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+  });
+}
+
+/**
  * 从txt文件中提取小说信息
  */
 function extractNovelInfo(txtFile) {
@@ -131,26 +140,41 @@ function extractNovelInfo(txtFile) {
   titleFromFilename = titleFromFilename.replace(/[^\w\s-]/g, '');
   titleFromFilename = titleFromFilename.replace(/\s+/g, ' ').trim();
   
-  // 从内容中提取标题
+  // 尝试从第一行提取标题和作者 (格式: "Title by Author")
+  let author = null;
+  let titleFromFirstLine = null;
+  const firstLine = lines[0]?.trim() || '';
+  const byMatch = firstLine.match(/^(.+?)\s+by\s+(.+)$/i);
+  if (byMatch) {
+    titleFromFirstLine = byMatch[1].trim();
+    author = byMatch[2].trim();
+    log(`  从第一行提取作者: ${author}`, 'cyan');
+  }
+  
+  // 从内容中提取标题（如果没有从第一行提取到）
   let titleFromContent = null;
-  for (let i = 0; i < Math.min(5, lines.length); i++) {
-    const stripped = lines[i].trim();
-    if (stripped && !/^(Author|Text|Title|作者|标题|正文)[:：]/i.test(stripped)) {
-      if (stripped.length <= 50 && 
-          !stripped.startsWith('"') && 
-          !stripped.startsWith("'") &&
-          !/[.!?]{2,}/.test(stripped) &&
-          !stripped.includes('This is') &&
-          !stripped.toLowerCase().includes('they are')) {
-        titleFromContent = stripped;
-        break;
+  if (!titleFromFirstLine) {
+    for (let i = 0; i < Math.min(5, lines.length); i++) {
+      const stripped = lines[i].trim();
+      if (stripped && !/^(Author|Text|Title|作者|标题|正文)[:：]/i.test(stripped)) {
+        if (stripped.length <= 50 && 
+            !stripped.startsWith('"') && 
+            !stripped.startsWith("'") &&
+            !/[.!?]{2,}/.test(stripped) &&
+            !stripped.includes('This is') &&
+            !stripped.toLowerCase().includes('they are')) {
+          titleFromContent = stripped;
+          break;
+        }
       }
     }
   }
   
   // 选择最佳标题
   let title;
-  if (titleFromFilename && titleFromFilename.length > 3) {
+  if (titleFromFirstLine && titleFromFirstLine.length > 3) {
+    title = titleFromFirstLine;
+  } else if (titleFromFilename && titleFromFilename.length > 3) {
     title = titleFromFilename;
   } else if (titleFromContent && titleFromContent.length > 3) {
     title = titleFromContent;
@@ -160,6 +184,8 @@ function extractNovelInfo(txtFile) {
   
   title = title.replace(/^["']+|["']+$/g, '');
   title = title.replace(/\s+/g, ' ').trim();
+  // 转换为首字母大写
+  title = toTitleCase(title);
   
   // 找到第一个章节的位置
   let firstChapterIdx = null;
@@ -230,7 +256,7 @@ function extractNovelInfo(txtFile) {
   
   const description = descriptionLines.join('\n');
   
-  return { title, description, content };
+  return { title, description, content, author };
 }
 
 /**
@@ -329,12 +355,13 @@ function extractChapters(content) {
       }
     }
     
-    // 格式3: "Chapter 111" 或 "Chapter 28..."
+    // 格式3: "Chapter 111" 或 "Chapter 28..." 或 "Chapter 123 (Final)" 或 "Chapter 124 Side Story 1"
     if (!isChapter) {
-      const match3 = stripped.match(/^Chapter\s+(\d+)(?:\.\.\.|\s*$)/i);
-      if (match3) {
+      const match3 = stripped.match(/^Chapter\s+(\d+)(?:\s+(.+?))?(?:\.\.\.|\s*$)/i);
+      if (match3 && stripped.length < 100) {
         chapterNum = parseInt(match3[1], 10);
-        chapterTitle = `Chapter ${match3[1]}`;
+        const suffix = match3[2] ? ` ${match3[2].replace(/\.+$/, '').trim()}` : '';
+        chapterTitle = `Chapter ${match3[1]}${suffix}`;
         isChapter = true;
       }
     }
@@ -474,6 +501,7 @@ async function createOrUpdateNovel(novelData, coverImageAsset, existingId = null
     description: novelData.description || excerpt,
     totalChapters: novelData.totalChapters || 0,
     publishedAt: new Date().toISOString(),
+    author: novelData.author || 'Anonymous',
   };
   
   if (coverImageAsset) {
@@ -526,7 +554,7 @@ async function createChapters(novelId, slug, chapters) {
 /**
  * 处理单个小说文件
  */
-async function processNovel(txtFile, coverImage = null, category = 'BL') {
+async function processNovel(txtFile, coverImage = null, category = 'BL', authorOverride = null) {
   const txtPath = path.resolve(txtFile);
   
   if (!existsSync(txtPath)) {
@@ -537,8 +565,10 @@ async function processNovel(txtFile, coverImage = null, category = 'BL') {
   log(`\n处理文件: ${txtFile}`, 'yellow');
   
   // 提取小说信息
-  const { title, description, content } = extractNovelInfo(txtPath);
+  const { title, description, content, author: extractedAuthor } = extractNovelInfo(txtPath);
+  const author = authorOverride || extractedAuthor || 'Anonymous';
   log(`  标题: ${title}`, 'cyan');
+  log(`  作者: ${author}`, 'cyan');
   
   const slug = createSlug(title);
   log(`  Slug: ${slug}`, 'dim');
@@ -586,7 +616,7 @@ async function processNovel(txtFile, coverImage = null, category = 'BL') {
   // 创建或更新小说
   try {
     const { id: novelId } = await createOrUpdateNovel(
-      { title, description, category, totalChapters: chapters.length },
+      { title, description, category, totalChapters: chapters.length, author },
       coverImageAsset,
       existingId
     );
@@ -630,7 +660,8 @@ async function main() {
     const txtFile = args[0];
     const coverImage = args[1] || null;
     const category = args[2] || 'BL';
-    await processNovel(txtFile, coverImage, category);
+    const author = args[3] || null;
+    await processNovel(txtFile, coverImage, category, author);
   } else {
     // 处理当前目录所有 .txt 文件
     const files = readdirSync('.').filter(f => f.endsWith('.txt'));
@@ -641,7 +672,8 @@ async function main() {
       log('  npm run publish                      # 处理所有 .txt 文件', 'dim');
       log('  npm run publish novel.txt            # 处理指定文件', 'dim');
       log('  npm run publish novel.txt cover.png  # 指定封面图片', 'dim');
-      log('  npm run publish novel.txt cover.png ROMANCE  # 指定分类', 'dim');
+      log('  npm run publish novel.txt cover.png BL  # 指定分类', 'dim');
+      log('  npm run publish novel.txt cover.png BL "Author Name"  # 指定作者', 'dim');
       return;
     }
     

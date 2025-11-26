@@ -132,7 +132,7 @@ export default async function NovelDetailPage({
             <div>
               <h1>{novel.title}</h1>
               <div className="novel-meta">
-                <span className="meta-item">✍️ Author: Anonymous</span>
+                <span className="meta-item">✍️ Author: {novel.author || "Anonymous"}</span>
                 <span className="meta-item">🌐 Translator: Cross The Line</span>
                 <span className="meta-item">📅 Status: Completed</span>
                 <span className="meta-item">Category: {novel.category}</span>
