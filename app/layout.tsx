@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import "./globals.css";
 import { SITE_NAME, SITE_URL } from "@/lib/siteMetadata";
 
@@ -61,6 +62,19 @@ export default function RootLayout({
       <head>
         <link rel="canonical" href={SITE_URL} />
         <link rel="stylesheet" href="/assets/css/style.css" />
+        <Script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=G-WEP970B5F2"
+        />
+        <Script id="google-analytics">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-WEP970B5F2');
+          `}
+        </Script>
       </head>
       <body>{children}</body>
     </html>
