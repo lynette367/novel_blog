@@ -6,6 +6,8 @@ import { getNovelBySlug, getChapterContent, getNovelChapters } from "@/lib/novel
 import { absoluteUrl, SITE_NAME } from "@/lib/siteMetadata";
 import type { Metadata } from "next";
 
+export const revalidate = 60;
+
 type ChapterPageParams = {
   slug: string;
   chapter: string;

@@ -1,5 +1,5 @@
 export const SITE_NAME = "Cross The Line";
-const FALLBACK_URL = "https://example.com";
+const FALLBACK_URL = "https://www.crosstheline.press";
 
 function cleanUrl(url: string): string {
   return url.endsWith("/") ? url.slice(0, -1) : url;
