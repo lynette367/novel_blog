@@ -22,17 +22,13 @@ export const novel = defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: "category",
-      title: "分类",
-      type: "string",
+      name: 'tags',
+      title: 'Tags (NovelUpdates Style)',
+      type: 'array',
+      of: [{ type: 'string' }],
       options: {
-        list: [
-          { title: "BL", value: "BL" },
-          { title: "ROMANCE", value: "ROMANCE" },
-          { title: "OTHER", value: "OTHER" },
-        ],
+        layout: 'tags', // 输入完回车即生成标签块
       },
-      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: "author",

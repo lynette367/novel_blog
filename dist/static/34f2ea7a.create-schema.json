@@ -1,0 +1,202 @@
+[
+  {
+    "fields": [
+      {
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ],
+            "level": "error"
+          }
+        ],
+        "name": "title",
+        "type": "string",
+        "title": "标题"
+      },
+      {
+        "options": {
+          "source": "title",
+          "maxLength": 96
+        },
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "custom"
+              },
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ],
+            "level": "error"
+          }
+        ],
+        "name": "slug",
+        "type": "slug",
+        "title": "URL Slug"
+      },
+      {
+        "options": {
+          "layout": "tags"
+        },
+        "of": [
+          {
+            "type": "string"
+          }
+        ],
+        "name": "tags",
+        "type": "array",
+        "title": "Tags (NovelUpdates Style)"
+      },
+      {
+        "initialValue": "Anonymous",
+        "name": "author",
+        "type": "string",
+        "title": "作者"
+      },
+      {
+        "rows": 3,
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ],
+            "level": "error"
+          }
+        ],
+        "name": "excerpt",
+        "type": "text",
+        "title": "简介摘要"
+      },
+      {
+        "rows": 5,
+        "name": "description",
+        "type": "text",
+        "title": "详细描述"
+      },
+      {
+        "options": {
+          "hotspot": true
+        },
+        "fields": [
+          {
+            "name": "alt",
+            "type": "string",
+            "title": "Alt Text"
+          }
+        ],
+        "name": "coverImage",
+        "type": "image",
+        "title": "封面图片"
+      },
+      {
+        "initialValue": 0,
+        "name": "totalChapters",
+        "type": "number",
+        "title": "总章节数"
+      },
+      {
+        "name": "publishedAt",
+        "type": "datetime",
+        "title": "发布日期"
+      }
+    ],
+    "name": "novel",
+    "type": "document",
+    "title": "小说"
+  },
+  {
+    "fields": [
+      {
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ],
+            "level": "error"
+          }
+        ],
+        "to": [
+          {
+            "type": "novel"
+          }
+        ],
+        "name": "novel",
+        "type": "reference",
+        "title": "所属小说"
+      },
+      {
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              },
+              {
+                "flag": "min",
+                "constraint": 1
+              }
+            ],
+            "level": "error"
+          }
+        ],
+        "name": "number",
+        "type": "number",
+        "title": "章节编号"
+      },
+      {
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ],
+            "level": "error"
+          }
+        ],
+        "name": "title",
+        "type": "string",
+        "title": "章节标题"
+      },
+      {
+        "rows": 20,
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ],
+            "level": "error"
+          }
+        ],
+        "name": "content",
+        "type": "text",
+        "title": "章节内容"
+      },
+      {
+        "name": "publishedAt",
+        "type": "datetime",
+        "title": "发布日期"
+      }
+    ],
+    "name": "chapter",
+    "type": "document",
+    "title": "章节"
+  }
+]

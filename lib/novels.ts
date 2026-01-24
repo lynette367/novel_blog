@@ -20,6 +20,7 @@ export type Novel = {
   totalChapters?: number;
   description?: string;
   author?: string;
+  tags?: string[];
 };
 
 export type ChapterInfo = {
@@ -40,6 +41,7 @@ type SanityNovel = {
   coverImage?: SanityImageSource;
   totalChapters?: number;
   author?: string;
+  tags?: string[];
 };
 
 // Sanity 返回的原始章节类型
@@ -53,6 +55,16 @@ type SanityChapter = {
 // 将 Sanity 小说数据转换为前端格式
 function transformNovel(sanityNovel: SanityNovel): Novel {
   const slug = sanityNovel.slug?.current || "";
+
+  let tags = sanityNovel.tags || [];
+  // Hardcode tag injection for 'big_brother'
+  if (slug.includes("big_brother")) {
+    // Add 'Pseudo-Brothers' to the beginning if it doesn't exist
+    if (!tags.includes("Pseudo-Brothers")) {
+      tags = ["Pseudo-Brothers", ...tags];
+    }
+  }
+
   return {
     _id: sanityNovel._id,
     title: sanityNovel.title,
@@ -66,6 +78,7 @@ function transformNovel(sanityNovel: SanityNovel): Novel {
     totalChapters: sanityNovel.totalChapters || 0,
     description: sanityNovel.description || sanityNovel.excerpt || "",
     author: sanityNovel.author || "Anonymous",
+    tags: tags,
   };
 }
 
@@ -80,7 +93,8 @@ export async function getNovels(): Promise<Novel[]> {
     description,
     coverImage,
     totalChapters,
-    author
+    author,
+    tags
   }`;
 
   try {
@@ -103,7 +117,8 @@ export async function getFeaturedNovels(limit = 3): Promise<Novel[]> {
     description,
     coverImage,
     totalChapters,
-    author
+    author,
+    tags
   }`;
 
   try {
@@ -126,7 +141,8 @@ export async function getNovelBySlug(slug: string): Promise<Novel | undefined> {
     description,
     coverImage,
     totalChapters,
-    author
+    author,
+    tags
   }`;
 
   try {

@@ -140,9 +140,30 @@ export default async function NovelDetailPage({
                   <span className="meta-item">Total chapters: {chapters.length}</span>
                 ) : null}
               </div>
+
+              {novel.tags && novel.tags.length > 0 && (
+                <div style={{ marginTop: '1rem', display: 'flex', gap: '0.8rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                  <span style={{ fontSize: '0.95rem', color: '#7d6d5d' }}>Tags:</span>
+                  {novel.tags.map((tag, index) => (
+                    <span key={index} style={{
+                      padding: '0.3rem 0.8rem',
+                      backgroundColor: '#f5f0e8',
+                      color: '#8b7355',
+                      borderRadius: '20px',
+                      fontSize: '0.85rem',
+                      fontWeight: 600,
+                      border: '1px solid #e8dcc8'
+                    }}>
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
 
-            <span className="novel-category-badge">{novel.category}</span>
+            {!novel.slug.includes("big_brother") && (
+              <span className="novel-category-badge">{novel.category}</span>
+            )}
 
             <div className="novel-description">
               {descriptionParagraphs.length > 0 ? (
