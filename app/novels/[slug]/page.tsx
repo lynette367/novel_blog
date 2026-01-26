@@ -118,9 +118,6 @@ export default async function NovelDetailPage({
       <main className="main-content">
         <div className="content-header">
           <h2>{novel.title}</h2>
-          {chapters.length > 0 ? (
-            <span style={{ color: "#7d6d5d" }}>{chapters.length} chapters available</span>
-          ) : null}
         </div>
 
         <section className="novel-header" style={{ marginBottom: "2rem" }}>
@@ -160,10 +157,6 @@ export default async function NovelDetailPage({
                 </div>
               )}
             </div>
-
-            {!novel.slug.includes("big_brother") && (
-              <span className="novel-category-badge">{novel.category}</span>
-            )}
 
             <div className="novel-description">
               {descriptionParagraphs.length > 0 ? (
