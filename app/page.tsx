@@ -9,18 +9,15 @@ import { absoluteUrl, SITE_NAME } from "@/lib/siteMetadata";
 const heroImage = absoluteUrl("/assets/images/Wife_are_paramount.png");
 
 export async function generateMetadata(): Promise<Metadata> {
-  const novels = await getNovels();
-  const totalNovels = novels.length;
-
   return {
-    title: "Cross The Line | Asian BL Novel Translation",
-    description: `Explore ${totalNovels}+ translated Asian BL novels and danmei stories. Quality English translations updated weekly. Start reading today!`,
+    title: "CrossTheLine - Read Chinese Danmei & BL Novels English Translation",
+    description: "High-quality English translations of popular Chinese Danmei novels. Explore Xianxia, Wuxia, and Modern BL stories. Join our community for daily updates and exclusive chapters.",
     alternates: {
       canonical: "/",
     },
     openGraph: {
-      title: "Asian BL Novel Translations | Cross The Line",
-      description: `${totalNovels}+ captivating BL novels and danmei stories`,
+      title: "CrossTheLine - Read Chinese Danmei & BL Novels English Translation",
+      description: "High-quality English translations of popular Chinese Danmei novels. Explore Xianxia, Wuxia, and Modern BL stories. Join our community for daily updates and exclusive chapters.",
       url: absoluteUrl("/"),
       siteName: SITE_NAME,
       images: [
@@ -34,8 +31,8 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     twitter: {
       card: "summary_large_image",
-      title: "Cross The Line | Asian BL Novel Translation",
-      description: `Discover ${totalNovels}+ Asian BL novels and danmei translations`,
+      title: "CrossTheLine - Read Chinese Danmei & BL Novels English Translation",
+      description: "High-quality English translations of popular Chinese Danmei novels. Explore Xianxia, Wuxia, and Modern BL stories.",
       images: [heroImage],
     },
   };
@@ -52,10 +49,10 @@ export default async function HomePage() {
         <div className="hero-content">
           <h1 style={{ 
             fontSize: 'clamp(2rem, 4.5vw, 3.2rem)', 
-            whiteSpace: 'nowrap',
-            letterSpacing: '2px'
+            letterSpacing: '2px',
+            textAlign: 'center'
           }}>
-            Discover Captivating Danmei Stories
+            The Best Chinese Danmei Novels in English
           </h1>
           <p className="tagline">
             Your premier destination for high-quality BL and danmei translations

@@ -60,6 +60,24 @@ export async function generateMetadata({
   const ogImage = absoluteUrl(novel.coverImage);
   const canonicalPath = `/novels/${slug}/chapters/${chapterNumber}`;
 
+  // Generate Schema.org structured data for Chapter
+  const schemaData = {
+    "@context": "https://schema.org",
+    "@type": "Chapter",
+    name: chapterData.title,
+    partOf: {
+      "@type": "Book",
+      name: novel.title,
+      author: {
+        "@type": "Organization",
+        name: "Cross The Line Translations",
+      },
+    },
+    position: chapterNumber,
+    inLanguage: "en",
+    description: description,
+  };
+
   return {
     title: pageTitle,
     description,
@@ -92,6 +110,9 @@ export async function generateMetadata({
       title: `${chapterData.title} | ${novel.title}`,
       description: "Asian BL novel translation",
       images: [ogImage],
+    },
+    other: {
+      "script:application/ld+json": JSON.stringify(schemaData),
     },
   };
 }
@@ -158,7 +179,7 @@ export default async function ChapterPage({
       </header>
 
       {/* Chapter Content */}
-      <article className="chapter-content">
+      <article className="chapter-content prose max-w-none">
         <div
           className="chapter-text"
           dangerouslySetInnerHTML={{ __html: chapterData.content }}

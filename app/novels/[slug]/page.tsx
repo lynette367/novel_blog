@@ -36,6 +36,22 @@ export async function generateMetadata({
   const pageTitle = `${novel.title} | Asian BL Novel Translation - ${SITE_NAME}`;
   const chapters = await getNovelChapters(novel.slug);
 
+  // Generate Schema.org structured data
+  const schemaData = {
+    "@context": "https://schema.org",
+    "@type": "Book",
+    name: novel.title,
+    author: {
+      "@type": "Organization",
+      name: "Cross The Line Translations",
+    },
+    genre: ["BL", "Danmei", "Romance", "LGBT+ Fiction"],
+    inLanguage: "en",
+    translator: "Cross The Line",
+    numberOfPages: chapters.length,
+    description: description,
+  };
+
   return {
     title: pageTitle,
     description: `Complete ${novel.title} translation. Read all ${chapters.length} chapters of this captivating Asian BL novel and danmei story. Updated regularly with quality English translations.`,
@@ -69,6 +85,9 @@ export async function generateMetadata({
       title: pageTitle,
       description: `Read ${novel.title} - ${chapters.length} chapters available`,
       images: [ogImage],
+    },
+    other: {
+      "script:application/ld+json": JSON.stringify(schemaData),
     },
   };
 }
@@ -110,20 +129,13 @@ export default async function NovelDetailPage({
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
-      />
       <SiteHeader activePath="novels" />
       <main className="main-content">
-        <div className="content-header">
-          <h2>{novel.title}</h2>
-        </div>
-
         <section className="novel-header" style={{ marginBottom: "2rem" }}>
           <div
             className="novel-header-cover"
             style={{ backgroundImage: `url('${novel.coverImage}')` }}
+            aria-label={`${novel.title} cover image`}
           ></div>
           <div className="novel-header-info">
             <div>
