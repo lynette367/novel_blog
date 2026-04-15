@@ -16,11 +16,20 @@ export type Novel = {
   category: string;
   excerpt: string;
   coverImage: string;
+  coverImageAlt?: string;
   path: string;
   totalChapters?: number;
   description?: string;
   author?: string;
   tags?: string[];
+  seo?: {
+    title?: string;
+    description?: string;
+    canonical?: string;
+    ogTitle?: string;
+    ogDescription?: string;
+    ogImage?: string;
+  };
 };
 
 export type ChapterInfo = {
@@ -39,9 +48,18 @@ type SanityNovel = {
   excerpt: string;
   description?: string;
   coverImage?: SanityImageSource;
+  coverImageAlt?: string;
   totalChapters?: number;
   author?: string;
   tags?: string[];
+  seo?: {
+    title?: string;
+    description?: string;
+    canonical?: string;
+    ogTitle?: string;
+    ogDescription?: string;
+    ogImage?: SanityImageSource;
+  };
 };
 
 // Sanity 返回的原始章节类型
@@ -72,13 +90,24 @@ function transformNovel(sanityNovel: SanityNovel): Novel {
     category: sanityNovel.category || "OTHER",
     excerpt: sanityNovel.excerpt || "",
     coverImage: sanityNovel.coverImage
-      ? urlFor(sanityNovel.coverImage).width(600).height(800).url()
+      ? urlFor(sanityNovel.coverImage).url()
       : "/assets/images/0.jpg",
+    coverImageAlt: sanityNovel.coverImageAlt,
     path: `/novels/${slug}`,
     totalChapters: sanityNovel.totalChapters || 0,
     description: sanityNovel.description || sanityNovel.excerpt || "",
     author: sanityNovel.author || "Anonymous",
     tags: tags,
+    seo: sanityNovel.seo ? {
+      title: sanityNovel.seo.title,
+      description: sanityNovel.seo.description,
+      canonical: sanityNovel.seo.canonical,
+      ogTitle: sanityNovel.seo.ogTitle,
+      ogDescription: sanityNovel.seo.ogDescription,
+      ogImage: sanityNovel.seo.ogImage
+        ? urlFor(sanityNovel.seo.ogImage).url()
+        : undefined,
+    } : undefined,
   };
 }
 

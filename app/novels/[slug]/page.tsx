@@ -30,31 +30,44 @@ export async function generateMetadata({
     };
   }
 
-  const description = novel.description ?? novel.excerpt;
-  const ogImage = absoluteUrl(novel.coverImage);
-  const canonicalPath = `/novels/${novel.slug}`;
-  const pageTitle = `${novel.title} | Asian BL Novel Translation - ${SITE_NAME}`;
+  // Priority: seo.title > title
+  const metaTitle = novel.seo?.title || `${novel.title} | Asian BL Novel Translation - ${SITE_NAME}`;
+  // Priority: seo.description > custom description > excerpt
+  const metaDescription = novel.seo?.description || `Complete ${novel.title} translation. Read all chapters of this captivating Asian BL novel and danmei story. Updated regularly with quality English translations.`;
+  // Priority: seo.canonical > generated canonical
+  const canonicalUrl = novel.seo?.canonical || `https://www.crosstheline.press/novels/${novel.slug}`;
+  const canonicalPath = novel.seo?.canonical || `/novels/${novel.slug}`;
+  // Priority: seo.ogImage > coverImage > default
+  const ogImageUrl = novel.seo?.ogImage || novel.coverImage || '/assets/images/0.jpg';
+  // Priority: coverImageAlt > generated alt
+  const ogImageAlt = novel.coverImageAlt || `${novel.title} - BL Danmei Novel Cover`;
+  
   const chapters = await getNovelChapters(novel.slug);
 
   // Generate Schema.org structured data
+  const bookId = absoluteUrl(`/novels/${novel.slug}#book`);
   const schemaData = {
     "@context": "https://schema.org",
     "@type": "Book",
+    "@id": bookId,
     name: novel.title,
     author: {
-      "@type": "Organization",
-      name: "Cross The Line Translations",
+      "@type": "Person",
+      name: novel.author || "Anonymous",
     },
     genre: ["BL", "Danmei", "Romance", "LGBT+ Fiction"],
     inLanguage: "en",
     translator: "Cross The Line",
     numberOfPages: chapters.length,
-    description: description,
+    description: novel.description ?? novel.excerpt,
+    isPartOf: {
+      "@id": absoluteUrl("/#website")
+    }
   };
 
   return {
-    title: pageTitle,
-    description: `Complete ${novel.title} translation. Read all ${chapters.length} chapters of this captivating Asian BL novel and danmei story. Updated regularly with quality English translations.`,
+    title: metaTitle,
+    description: metaDescription,
     keywords: [
       novel.title,
       "asian BL novel",
@@ -64,27 +77,32 @@ export async function generateMetadata({
       "LGBT+ novel",
     ],
     alternates: {
-      canonical: canonicalPath,
+      canonical: canonicalUrl,
     },
     openGraph: {
-      type: "article",
-      title: pageTitle,
-      description: `Complete ${novel.title} translation. Read all ${chapters.length} chapters of this captivating Asian BL novel and danmei story.`,
-      url: absoluteUrl(canonicalPath),
+      type: "book",
+      title: novel.seo?.ogTitle || metaTitle,
+      description: novel.seo?.ogDescription || metaDescription,
+      url: canonicalUrl,
+      siteName: SITE_NAME,
       images: [
         {
-          url: ogImage,
+          url: ogImageUrl,
           width: 1200,
           height: 630,
-          alt: novel.title,
+          alt: ogImageAlt,
         },
       ],
     },
     twitter: {
       card: "summary_large_image",
-      title: pageTitle,
-      description: `Read ${novel.title} - ${chapters.length} chapters available`,
-      images: [ogImage],
+      title: metaTitle,
+      description: metaDescription,
+      images: [ogImageUrl],
+    },
+    robots: {
+      index: true,
+      follow: true,
     },
     other: {
       "script:application/ld+json": JSON.stringify(schemaData),
@@ -111,22 +129,6 @@ export default async function NovelDetailPage({
     .filter(Boolean);
   const chapters = await getNovelChapters(novel.slug);
 
-  // Generate Schema.org structured data
-  const schemaData = {
-    "@context": "https://schema.org",
-    "@type": "Book",
-    name: novel.title,
-    author: {
-      "@type": "Organization",
-      name: "Cross The Line Translations",
-    },
-    genre: ["BL", "Danmei", "Romance", "LGBT+ Fiction"],
-    inLanguage: "en",
-    translator: "Cross The Line",
-    numberOfPages: chapters.length,
-    description: description,
-  };
-
   return (
     <>
       <SiteHeader activePath="novels" />
@@ -134,9 +136,22 @@ export default async function NovelDetailPage({
         <section className="novel-header" style={{ marginBottom: "2rem" }}>
           <div
             className="novel-header-cover"
-            style={{ backgroundImage: `url('${novel.coverImage}')` }}
+            style={{ backgroundImage: `url('${novel.coverImage}')`, position: 'relative' }}
             aria-label={`${novel.title} cover image`}
-          ></div>
+          >
+            <img
+              src={novel.coverImage}
+              alt={novel.coverImageAlt || `${novel.title} novel cover`}
+              style={{
+                position: 'absolute',
+                inset: 0,
+                opacity: 0,
+                width: '100%',
+                height: '100%',
+                pointerEvents: 'none'
+              }}
+            />
+          </div>
           <div className="novel-header-info">
             <div>
               <h1>{novel.title}</h1>

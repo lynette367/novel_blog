@@ -3,17 +3,58 @@ import type { Metadata } from "next";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { NovelCard } from "@/components/novel-card";
-import { getFeaturedNovels, getNovels } from "@/lib/novels";
+import { getFeaturedNovels } from "@/lib/novels";
 import { absoluteUrl, SITE_NAME } from "@/lib/siteMetadata";
 
-const heroImage = absoluteUrl("/assets/images/Wife_are_paramount.png");
-
 export async function generateMetadata(): Promise<Metadata> {
+  const { getFeaturedNovels } = await import("@/lib/novels");
+  const featuredNovels = await getFeaturedNovels();
+  
+  // 使用第一个特色小说的封面图片作为 OG 图片
+  const firstNovel = featuredNovels[0];
+  const heroImage = firstNovel ? firstNovel.coverImage : "/assets/images/0.jpg";
+  const heroImageAlt = firstNovel ? firstNovel.title : SITE_NAME;
+
+  // Generate Schema.org structured data
+  const schemaData = [
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "@id": absoluteUrl("/#website"),
+      "name": SITE_NAME,
+      "url": absoluteUrl("/"),
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": absoluteUrl("/novels"),
+        "query-input": "required name=q"
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "@id": absoluteUrl("/#organization"),
+      "name": "Cross The Line Translations",
+      "url": absoluteUrl("/"),
+      "logo": {
+        "@type": "ImageObject",
+        "url": absoluteUrl("/assets/images/0.jpg"),
+        "width": 600,
+        "height": 600
+      },
+      "description": "High-quality English translations of popular Chinese Danmei novels",
+      "sameAs": [
+        "https://buymeacoffee.com/yqying95b",
+        "https://ko-fi.com/crosstheline46370",
+        "https://www.patreon.com/c/CrosstheLine911"
+      ]
+    }
+  ];
+
   return {
     title: "CrossTheLine - Read Chinese Danmei & BL Novels English Translation",
     description: "High-quality English translations of popular Chinese Danmei novels. Explore Xianxia, Wuxia, and Modern BL stories. Join our community for daily updates and exclusive chapters.",
     alternates: {
-      canonical: "/",
+      canonical: absoluteUrl("/"),
     },
     openGraph: {
       title: "CrossTheLine - Read Chinese Danmei & BL Novels English Translation",
@@ -25,7 +66,7 @@ export async function generateMetadata(): Promise<Metadata> {
           url: heroImage,
           width: 1200,
           height: 630,
-          alt: SITE_NAME,
+          alt: heroImageAlt,
         },
       ],
     },
@@ -34,6 +75,9 @@ export async function generateMetadata(): Promise<Metadata> {
       title: "CrossTheLine - Read Chinese Danmei & BL Novels English Translation",
       description: "High-quality English translations of popular Chinese Danmei novels. Explore Xianxia, Wuxia, and Modern BL stories.",
       images: [heroImage],
+    },
+    other: {
+      "script:application/ld+json": JSON.stringify(schemaData),
     },
   };
 }

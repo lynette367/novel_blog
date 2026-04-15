@@ -55,32 +55,38 @@ export async function generateMetadata({
     };
   }
 
-  const pageTitle = `${chapterData.title} | ${novel.title} - ${SITE_NAME}`;
-  const description = `Read ${chapterData.title} of ${novel.title} - High-quality Asian BL novel translation. Discover compelling danmei stories in English.`;
-  const ogImage = absoluteUrl(novel.coverImage);
-  const canonicalPath = `/novels/${slug}/chapters/${chapterNumber}`;
+  // Priority: seo.title > chapter title + novel title
+  const metaTitle = novel.seo?.title || `${chapterData.title} | ${novel.title} - ${SITE_NAME}`;
+  // Priority: seo.description > custom description
+  const metaDescription = novel.seo?.description || `Read ${chapterData.title} of ${novel.title} - High-quality Asian BL novel translation. Discover compelling danmei stories in English.`;
+  // Priority: seo.canonical > generated canonical
+  const canonicalUrl = novel.seo?.canonical || `https://www.crosstheline.press/novels/${slug}/chapters/${chapterNumber}`;
+  const canonicalPath = novel.seo?.canonical || `/novels/${slug}/chapters/${chapterNumber}`;
+  // Priority: seo.ogImage > coverImage > default
+  const ogImageUrl = novel.seo?.ogImage || novel.coverImage || '/assets/images/0.jpg';
+  // Priority: coverImageAlt > generated alt
+  const ogImageAlt = novel.coverImageAlt || `${novel.title} - BL Danmei Novel Cover`;
 
   // Generate Schema.org structured data for Chapter
+  const bookId = absoluteUrl(`/novels/${novel.slug}#book`);
   const schemaData = {
     "@context": "https://schema.org",
     "@type": "Chapter",
     name: chapterData.title,
     partOf: {
-      "@type": "Book",
-      name: novel.title,
-      author: {
-        "@type": "Organization",
-        name: "Cross The Line Translations",
-      },
+      "@id": bookId
     },
     position: chapterNumber,
     inLanguage: "en",
-    description: description,
+    description: metaDescription,
+    isPartOf: {
+      "@id": absoluteUrl("/#website")
+    }
   };
 
   return {
-    title: pageTitle,
-    description,
+    title: metaTitle,
+    description: metaDescription,
     keywords: [
       novel.title,
       chapterData.title,
@@ -89,27 +95,32 @@ export async function generateMetadata({
       "yaoi fiction",
     ],
     alternates: {
-      canonical: canonicalPath,
+      canonical: canonicalUrl,
     },
     openGraph: {
-      type: "article",
-      title: `${chapterData.title} | ${novel.title}`,
-      description: `Read this chapter of ${novel.title} - Asian BL novel translation`,
-      url: absoluteUrl(canonicalPath),
+      type: "book",
+      title: novel.seo?.ogTitle || metaTitle,
+      description: novel.seo?.ogDescription || metaDescription,
+      url: canonicalUrl,
+      siteName: SITE_NAME,
       images: [
         {
-          url: ogImage,
+          url: ogImageUrl,
           width: 1200,
           height: 630,
-          alt: novel.title,
+          alt: ogImageAlt,
         },
       ],
     },
     twitter: {
       card: "summary_large_image",
-      title: `${chapterData.title} | ${novel.title}`,
-      description: "Asian BL novel translation",
-      images: [ogImage],
+      title: metaTitle,
+      description: metaDescription,
+      images: [ogImageUrl],
+    },
+    robots: {
+      index: true,
+      follow: true,
     },
     other: {
       "script:application/ld+json": JSON.stringify(schemaData),
