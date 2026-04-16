@@ -104,33 +104,7 @@ export async function generateMetadata({
       follow: true,
     },
     other: {
-      "script:application/ld+json": [
-        JSON.stringify(schemaData),
-        JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "BreadcrumbList",
-          "itemListElement": [
-            {
-              "@type": "ListItem",
-              "position": 1,
-              "name": "Home",
-              "item": "https://www.crosstheline.press"
-            },
-            {
-              "@type": "ListItem",
-              "position": 2,
-              "name": "Novels",
-              "item": "https://www.crosstheline.press/novels"
-            },
-            {
-              "@type": "ListItem",
-              "position": 3,
-              "name": novel.title,
-              "item": canonicalUrl
-            }
-          ]
-        })
-      ] as any,
+      "script:application/ld+json": JSON.stringify(schemaData),
     },
   };
 }
@@ -154,8 +128,37 @@ export default async function NovelDetailPage({
     .filter(Boolean);
   const chapters = await getNovelChapters(novel.slug);
 
+  const breadcrumbData = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://www.crosstheline.press",
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Novels",
+        "item": "https://www.crosstheline.press/novels",
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": novel.title,
+        "item": `https://www.crosstheline.press/novels/${slug}`,
+      },
+    ],
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbData) }}
+      />
       <SiteHeader activePath="novels" />
       <main className="main-content">
         <section className="novel-header" style={{ marginBottom: "2rem" }}>
