@@ -16,6 +16,8 @@ export function NovelCard({ novel }: NovelCardProps) {
       <div
         className="novel-cover"
         style={{ backgroundImage: `url('${novel.coverImage}')` }}
+        aria-label={`Cover image for ${novel.title} - English Translation`}
+        title={`Read ${novel.title} English Translation`}
       >
         <span className="novel-category">
           {novel.tags && novel.tags.length > 0 ? novel.tags[0] : novel.category}

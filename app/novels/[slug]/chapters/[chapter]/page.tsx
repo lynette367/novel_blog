@@ -55,13 +55,11 @@ export async function generateMetadata({
     };
   }
 
-  // Priority: seo.title > chapter title + novel title
-  const metaTitle = novel.seo?.title || `${chapterData.title} | ${novel.title} - ${SITE_NAME}`;
-  // Priority: seo.description > custom description
-  const metaDescription = novel.seo?.description || `Read ${chapterData.title} of ${novel.title} - High-quality Asian BL novel translation. Discover compelling danmei stories in English.`;
-  // Priority: seo.canonical > generated canonical
-  const canonicalUrl = novel.seo?.canonical || `https://www.crosstheline.press/novels/${slug}/chapters/${chapterNumber}`;
-  const canonicalPath = novel.seo?.canonical || `/novels/${slug}/chapters/${chapterNumber}`;
+  // Priority: seo.metaTitle > chapter title + novel title
+  const metaTitle = novel.seo?.metaTitle || `${chapterData.title} | ${novel.title} - ${SITE_NAME}`;
+  // Priority: seo.metaDescription > custom description
+  const metaDescription = novel.seo?.metaDescription || `Read ${chapterData.title} of ${novel.title} - High-quality Asian BL novel translation. Discover compelling danmei stories in English.`;
+  const canonicalUrl = `https://www.crosstheline.press/novels/${slug}/chapters/${chapterNumber}`;
   // Priority: seo.ogImage > coverImage > default
   const ogImageUrl = novel.seo?.ogImage || novel.coverImage || '/assets/images/0.jpg';
   // Priority: coverImageAlt > generated alt

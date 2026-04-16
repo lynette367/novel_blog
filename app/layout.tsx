@@ -26,7 +26,7 @@ export const metadata: Metadata = {
     "BL novel translation",
   ],
   alternates: {
-    canonical: "/",
+    canonical: SITE_URL,
   },
   openGraph: {
     type: "website",

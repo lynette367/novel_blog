@@ -23,8 +23,8 @@ export type Novel = {
   author?: string;
   tags?: string[];
   seo?: {
-    title?: string;
-    description?: string;
+    metaTitle?: string;
+    metaDescription?: string;
     canonical?: string;
     ogTitle?: string;
     ogDescription?: string;
@@ -47,14 +47,13 @@ type SanityNovel = {
   category: string;
   excerpt: string;
   description?: string;
-  coverImage?: SanityImageSource;
-  coverImageAlt?: string;
+  coverImage?: SanityImageSource & { alt?: string };
   totalChapters?: number;
   author?: string;
   tags?: string[];
   seo?: {
-    title?: string;
-    description?: string;
+    metaTitle?: string;
+    metaDescription?: string;
     canonical?: string;
     ogTitle?: string;
     ogDescription?: string;
@@ -92,15 +91,15 @@ function transformNovel(sanityNovel: SanityNovel): Novel {
     coverImage: sanityNovel.coverImage
       ? urlFor(sanityNovel.coverImage).url()
       : "/assets/images/0.jpg",
-    coverImageAlt: sanityNovel.coverImageAlt,
+    coverImageAlt: sanityNovel.coverImage?.alt,
     path: `/novels/${slug}`,
     totalChapters: sanityNovel.totalChapters || 0,
     description: sanityNovel.description || sanityNovel.excerpt || "",
     author: sanityNovel.author || "Anonymous",
     tags: tags,
     seo: sanityNovel.seo ? {
-      title: sanityNovel.seo.title,
-      description: sanityNovel.seo.description,
+      metaTitle: sanityNovel.seo.metaTitle,
+      metaDescription: sanityNovel.seo.metaDescription,
       canonical: sanityNovel.seo.canonical,
       ogTitle: sanityNovel.seo.ogTitle,
       ogDescription: sanityNovel.seo.ogDescription,

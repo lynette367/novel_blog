@@ -13,7 +13,7 @@ export async function generateMetadata(): Promise<Metadata> {
   // 使用第一个小说的封面图片作为 OG 图片
   const firstNovel = novels[0];
   const ogImage = firstNovel ? firstNovel.coverImage : "/assets/images/0.jpg";
-  const ogImageAlt = firstNovel ? firstNovel.title : SITE_NAME;
+  const ogImageAlt = firstNovel ? (firstNovel.coverImageAlt || firstNovel.title) : SITE_NAME;
 
   // Generate Schema.org structured data for CollectionPage
   const schemaData = {

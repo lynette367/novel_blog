@@ -30,13 +30,12 @@ export async function generateMetadata({
     };
   }
 
-  // Priority: seo.title > title
-  const metaTitle = novel.seo?.title || `${novel.title} | Asian BL Novel Translation - ${SITE_NAME}`;
-  // Priority: seo.description > custom description > excerpt
-  const metaDescription = novel.seo?.description || `Complete ${novel.title} translation. Read all chapters of this captivating Asian BL novel and danmei story. Updated regularly with quality English translations.`;
-  // Priority: seo.canonical > generated canonical
-  const canonicalUrl = novel.seo?.canonical || `https://www.crosstheline.press/novels/${novel.slug}`;
-  const canonicalPath = novel.seo?.canonical || `/novels/${novel.slug}`;
+  // Priority: seo.metaTitle > title
+  const metaTitle = novel.seo?.metaTitle || `${novel.title} | Asian BL Novel Translation - ${SITE_NAME}`;
+  // Priority: seo.metaDescription > custom description > excerpt
+  const metaDescription = novel.seo?.metaDescription || `Complete ${novel.title} translation. Read all chapters of this captivating Asian BL novel and danmei story. Updated regularly with quality English translations.`;
+  
+  const canonicalUrl = `https://www.crosstheline.press/novels/${novel.slug}`;
   // Priority: seo.ogImage > coverImage > default
   const ogImageUrl = novel.seo?.ogImage || novel.coverImage || '/assets/images/0.jpg';
   // Priority: coverImageAlt > generated alt
@@ -105,7 +104,33 @@ export async function generateMetadata({
       follow: true,
     },
     other: {
-      "script:application/ld+json": JSON.stringify(schemaData),
+      "script:application/ld+json": [
+        JSON.stringify(schemaData),
+        JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Home",
+              "item": "https://www.crosstheline.press"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "Novels",
+              "item": "https://www.crosstheline.press/novels"
+            },
+            {
+              "@type": "ListItem",
+              "position": 3,
+              "name": novel.title,
+              "item": canonicalUrl
+            }
+          ]
+        })
+      ] as any,
     },
   };
 }
