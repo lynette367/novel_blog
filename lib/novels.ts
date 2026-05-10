@@ -126,7 +126,7 @@ export async function getNovels(): Promise<Novel[]> {
   }`;
 
   try {
-    const novels = await client.fetch<SanityNovel[]>(query, {}, { next: { revalidate: 60 } });
+    const novels = await client.fetch<SanityNovel[]>(query);
     return novels.map(transformNovel);
   } catch (error) {
     console.error("Failed to fetch novels from Sanity:", error);
@@ -150,7 +150,7 @@ export async function getFeaturedNovels(limit = 3): Promise<Novel[]> {
   }`;
 
   try {
-    const novels = await client.fetch<SanityNovel[]>(query, {}, { next: { revalidate: 60 } });
+    const novels = await client.fetch<SanityNovel[]>(query);
     return novels.map(transformNovel);
   } catch (error) {
     console.error("Failed to fetch featured novels from Sanity:", error);
@@ -174,11 +174,7 @@ export async function getNovelBySlug(slug: string): Promise<Novel | undefined> {
   }`;
 
   try {
-    const novel = await client.fetch<SanityNovel | null>(
-      query,
-      { slug },
-      { next: { revalidate: 60 } }
-    );
+    const novel = await client.fetch<SanityNovel | null>(query, { slug });
     return novel ? transformNovel(novel) : undefined;
   } catch (error) {
     console.error(`Failed to fetch novel ${slug} from Sanity:`, error);
@@ -195,11 +191,7 @@ export async function getNovelChapters(slug: string): Promise<ChapterInfo[]> {
   }`;
 
   try {
-    const chapters = await client.fetch<SanityChapter[]>(
-      query,
-      { slug },
-      { next: { revalidate: 60 } }
-    );
+    const chapters = await client.fetch<SanityChapter[]>(query, { slug });
     return chapters.map((ch) => ({
       _id: ch._id,
       number: ch.number,
@@ -224,11 +216,7 @@ export async function getChapterContent(
   }`;
 
   try {
-    const chapter = await client.fetch<SanityChapter | null>(
-      query,
-      { slug, chapterNumber },
-      { next: { revalidate: 60 } }
-    );
+    const chapter = await client.fetch<SanityChapter | null>(query, { slug, chapterNumber });
 
     if (!chapter) {
       return null;

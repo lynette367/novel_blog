@@ -6,6 +6,8 @@ import { SiteFooter } from "@/components/site-footer";
 import { getNovels, getNovelBySlug, getNovelChapters } from "@/lib/novels";
 import { absoluteUrl, SITE_NAME } from "@/lib/siteMetadata";
 
+export const dynamic = 'force-static';
+
 type NovelPageParams = {
   slug: string;
 };
