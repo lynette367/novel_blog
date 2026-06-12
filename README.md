@@ -19,7 +19,7 @@ SANITY_API_TOKEN=your_sanity_api_token_here
 ```
 
 **获取 Token 步骤：**
-1. 访问 https://www.sanity.io/manage/project/lke4t7vu/api
+1. 访问 https://www.sanity.io/manage/project/your_project/api
 2. 点击 "Add API token"
 3. 选择 "Editor" 权限
 4. 复制生成的 token 到 `.env.local`

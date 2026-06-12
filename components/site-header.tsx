@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Route } from "next";
 
 type HeaderProps = {
-  activePath?: "home" | "novels";
+  activePath?: "home" | "novels" | "join";
 };
 
 type HeaderLink = {
@@ -16,6 +16,7 @@ const navLinks: HeaderLink[] = [
   { href: "/" as Route, label: "Home", key: "home" },
   { href: "/novels" as Route, label: "Novels", key: "novels" },
   { href: { pathname: "/" as Route, hash: "support" }, label: "Support", key: "home", fragment: true },
+  { href: "/join" as Route, label: "Join Us", key: "join" },
 ];
 
 export function SiteHeader({ activePath = "home" }: HeaderProps) {
