@@ -55,31 +55,49 @@ export async function generateMetadata({
     };
   }
 
-  // Priority: seo.metaTitle > chapter title + novel title
-  const metaTitle = novel.seo?.metaTitle || `${chapterData.title} | ${novel.title} - ${SITE_NAME}`;
-  // Priority: seo.metaDescription > custom description
-  const metaDescription = novel.seo?.metaDescription || `Read ${chapterData.title} of ${novel.title} - High-quality Asian BL novel translation. Discover compelling danmei stories in English.`;
-  const canonicalUrl = `https://www.crosstheline.press/novels/${slug}/chapters/${chapterNumber}`;
-  // Priority: seo.ogImage > coverImage > default
-  const ogImageUrl = novel.seo?.ogImage || novel.coverImage || '/assets/images/0.jpg';
-  // Priority: coverImageAlt > generated alt
+  const canonicalUrl = absoluteUrl(`/novels/${slug}/chapters/${chapterNumber}`);
+
+  // SEO 优先级：章节设置 > 小说设置 > 自动生成
+  const metaTitle =
+    chapterData.seo?.metaTitle ||
+    `${chapterData.title} | ${novel.title} - ${SITE_NAME}`;
+
+  const metaDescription =
+    chapterData.seo?.metaDescription ||
+    novel.seo?.metaDescription ||
+    `Read ${chapterData.title} of ${novel.title} - High-quality Asian BL novel translation. Discover compelling danmei stories in English.`;
+
+  const ogImage =
+    chapterData.seo?.ogImage ||
+    novel.seo?.ogImage ||
+    novel.coverImage ||
+    absoluteUrl('/assets/images/0.jpg');
+
   const ogImageAlt = novel.coverImageAlt || `${novel.title} - BL Danmei Novel Cover`;
 
-  // Generate Schema.org structured data for Chapter
-  const bookId = absoluteUrl(`/novels/${novel.slug}#book`);
+  const noIndex = chapterData.seo?.noIndex ?? false;
+
+  // Schema.org 结构化数据
   const schemaData = {
     "@context": "https://schema.org",
     "@type": "Chapter",
     name: chapterData.title,
     partOf: {
-      "@id": bookId
+      "@type": "Book",
+      "@id": absoluteUrl(`/novels/${novel.slug}#book`),
+      name: novel.title,
+      author: {
+        "@type": "Person",
+        name: novel.author || "Anonymous",
+      },
     },
     position: chapterNumber,
     inLanguage: "en",
     description: metaDescription,
+    url: canonicalUrl,
     isPartOf: {
-      "@id": absoluteUrl("/#website")
-    }
+      "@id": absoluteUrl("/#website"),
+    },
   };
 
   return {
@@ -95,15 +113,19 @@ export async function generateMetadata({
     alternates: {
       canonical: canonicalUrl,
     },
+    robots: {
+      index: !noIndex,
+      follow: true,
+    },
     openGraph: {
       type: "book",
-      title: novel.seo?.ogTitle || metaTitle,
-      description: novel.seo?.ogDescription || metaDescription,
+      title: metaTitle,
+      description: metaDescription,
       url: canonicalUrl,
       siteName: SITE_NAME,
       images: [
         {
-          url: ogImageUrl,
+          url: ogImage,
           width: 1200,
           height: 630,
           alt: ogImageAlt,
@@ -114,11 +136,7 @@ export async function generateMetadata({
       card: "summary_large_image",
       title: metaTitle,
       description: metaDescription,
-      images: [ogImageUrl],
-    },
-    robots: {
-      index: true,
-      follow: true,
+      images: [ogImage],
     },
     other: {
       "script:application/ld+json": JSON.stringify(schemaData),

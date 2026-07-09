@@ -34,7 +34,8 @@ export const metadata: Metadata = {
     siteName: SITE_NAME,
     locale: "en_US",
     title: "Cross The Line | Asian BL Novel Translation",
-    description: "High-quality Asian BL novel translations and danmei stories in English",
+    description:
+      "High-quality Asian BL novel translations and danmei stories in English",
     images: [
       {
         url: defaultImage,
@@ -60,23 +61,29 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no" />
-        <link rel="stylesheet" href="/assets/css/style.css" />
-        <Script
-          async
-          src="https://www.googletagmanager.com/gtag/js?id=G-WEP970B5F2"
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no"
         />
-        <Script id="google-analytics">
+        <link rel="stylesheet" href="/assets/css/style.css" />
+      </head>
+      <body>
+        {children}
+
+        {/* Load GA only after the page is interactive — never blocks rendering */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-WEP970B5F2"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-
             gtag('config', 'G-WEP970B5F2');
           `}
         </Script>
-      </head>
-      <body>{children}</body>
+      </body>
     </html>
   );
 }

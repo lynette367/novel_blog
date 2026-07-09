@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { cache } from "react";
 import type { Metadata } from "next";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
@@ -6,59 +7,68 @@ import { NovelCard } from "@/components/novel-card";
 import { getFeaturedNovels } from "@/lib/novels";
 import { absoluteUrl, SITE_NAME } from "@/lib/siteMetadata";
 
+// React cache() deduplicates calls with the same arguments within one render pass.
+// Both generateMetadata and the page component call this — only one network
+// request is made to Sanity.
+const getCachedFeaturedNovels = cache(getFeaturedNovels);
+
 export async function generateMetadata(): Promise<Metadata> {
-  const { getFeaturedNovels } = await import("@/lib/novels");
-  const featuredNovels = await getFeaturedNovels();
-  
-  // 使用第一个特色小说的封面图片作为 OG 图片
+  const featuredNovels = await getCachedFeaturedNovels();
+
   const firstNovel = featuredNovels[0];
   const heroImage = firstNovel ? firstNovel.coverImage : "/assets/images/0.jpg";
-  const heroImageAlt = firstNovel ? (firstNovel.coverImageAlt || firstNovel.title) : SITE_NAME;
+  const heroImageAlt = firstNovel
+    ? firstNovel.coverImageAlt || firstNovel.title
+    : SITE_NAME;
 
-  // Generate Schema.org structured data
   const schemaData = [
     {
       "@context": "https://schema.org",
       "@type": "WebSite",
       "@id": absoluteUrl("/#website"),
-      "name": SITE_NAME,
-      "url": absoluteUrl("/"),
-      "potentialAction": {
+      name: SITE_NAME,
+      url: absoluteUrl("/"),
+      potentialAction: {
         "@type": "SearchAction",
-        "target": absoluteUrl("/novels"),
-        "query-input": "required name=q"
-      }
+        target: absoluteUrl("/novels"),
+        "query-input": "required name=q",
+      },
     },
     {
       "@context": "https://schema.org",
       "@type": "Organization",
       "@id": absoluteUrl("/#organization"),
-      "name": "Cross The Line Translations",
-      "url": absoluteUrl("/"),
-      "logo": {
+      name: "Cross The Line Translations",
+      url: absoluteUrl("/"),
+      logo: {
         "@type": "ImageObject",
-        "url": absoluteUrl("/assets/images/0.jpg"),
-        "width": 600,
-        "height": 600
+        url: absoluteUrl("/assets/images/0.jpg"),
+        width: 600,
+        height: 600,
       },
-      "description": "High-quality English translations of popular Chinese Danmei novels",
-      "sameAs": [
+      description:
+        "High-quality English translations of popular Chinese Danmei novels",
+      sameAs: [
         "https://buymeacoffee.com/yqying95b",
         "https://ko-fi.com/crosstheline46370",
-        "https://www.patreon.com/c/CrosstheLine911"
-      ]
-    }
+        "https://www.patreon.com/c/CrosstheLine911",
+      ],
+    },
   ];
 
   return {
-    title: "CrossTheLine - Read Chinese Danmei & BL Novels English Translation",
-    description: "High-quality English translations of popular Chinese Danmei novels. Explore Xianxia, Wuxia, and Modern BL stories. Join our community for daily updates and exclusive chapters.",
+    title:
+      "CrossTheLine - Read Chinese Danmei & BL Novels English Translation",
+    description:
+      "High-quality English translations of popular Chinese Danmei novels. Explore Xianxia, Wuxia, and Modern BL stories. Join our community for daily updates and exclusive chapters.",
     alternates: {
       canonical: absoluteUrl("/"),
     },
     openGraph: {
-      title: "CrossTheLine - Read Chinese Danmei & BL Novels English Translation",
-      description: "High-quality English translations of popular Chinese Danmei novels. Explore Xianxia, Wuxia, and Modern BL stories. Join our community for daily updates and exclusive chapters.",
+      title:
+        "CrossTheLine - Read Chinese Danmei & BL Novels English Translation",
+      description:
+        "High-quality English translations of popular Chinese Danmei novels. Explore Xianxia, Wuxia, and Modern BL stories. Join our community for daily updates and exclusive chapters.",
       url: absoluteUrl("/"),
       siteName: SITE_NAME,
       images: [
@@ -72,8 +82,10 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     twitter: {
       card: "summary_large_image",
-      title: "CrossTheLine - Read Chinese Danmei & BL Novels English Translation",
-      description: "High-quality English translations of popular Chinese Danmei novels. Explore Xianxia, Wuxia, and Modern BL stories.",
+      title:
+        "CrossTheLine - Read Chinese Danmei & BL Novels English Translation",
+      description:
+        "High-quality English translations of popular Chinese Danmei novels. Explore Xianxia, Wuxia, and Modern BL stories.",
       images: [heroImage],
     },
     other: {
@@ -83,7 +95,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function HomePage() {
-  const featuredNovels = await getFeaturedNovels();
+  const featuredNovels = await getCachedFeaturedNovels();
 
   return (
     <>
@@ -91,11 +103,13 @@ export default async function HomePage() {
 
       <section className="hero">
         <div className="hero-content">
-          <h1 style={{ 
-            fontSize: 'clamp(2rem, 4.5vw, 3.2rem)', 
-            letterSpacing: '2px',
-            textAlign: 'center'
-          }}>
+          <h1
+            style={{
+              fontSize: "clamp(2rem, 4.5vw, 3.2rem)",
+              letterSpacing: "2px",
+              textAlign: "center",
+            }}
+          >
             The Best Chinese Danmei Novels in English
           </h1>
           <p className="tagline">
@@ -110,8 +124,9 @@ export default async function HomePage() {
         </div>
 
         <div className="novels-grid">
-          {featuredNovels.map((novel) => (
-            <NovelCard key={novel.slug} novel={novel} />
+          {featuredNovels.map((novel, index) => (
+            // Pass priority to the first card so its image is preloaded
+            <NovelCard key={novel.slug} novel={novel} priority={index === 0} />
           ))}
         </div>
 
@@ -137,7 +152,8 @@ export default async function HomePage() {
           <p className="support-subtitle">
             Your support helps us bring more beautiful stories to life.
             <br />
-            Every contribution makes a difference in keeping these translations free and accessible.
+            Every contribution makes a difference in keeping these translations
+            free and accessible.
           </p>
 
           <div className="support-buttons">
@@ -149,7 +165,10 @@ export default async function HomePage() {
             >
               <div className="support-icon">☕</div>
               <h3>Buy Me a Coffee</h3>
-              <p>Support with a one-time coffee donation. Every cup fuels the next chapter!</p>
+              <p>
+                Support with a one-time coffee donation. Every cup fuels the
+                next chapter!
+              </p>
             </a>
 
             <a
@@ -160,7 +179,10 @@ export default async function HomePage() {
             >
               <div className="support-icon">💝</div>
               <h3>Ko-fi</h3>
-              <p>Show your appreciation with a tip. Your generosity keeps the translations flowing.</p>
+              <p>
+                Show your appreciation with a tip. Your generosity keeps the
+                translations flowing.
+              </p>
             </a>
 
             <a
@@ -171,7 +193,10 @@ export default async function HomePage() {
             >
               <div className="support-icon">🎨</div>
               <h3>Patreon</h3>
-              <p>Become a patron for exclusive content, early access, and behind-the-scenes insights.</p>
+              <p>
+                Become a patron for exclusive content, early access, and
+                behind-the-scenes insights.
+              </p>
             </a>
           </div>
         </div>

@@ -1,12 +1,28 @@
 import { client } from "@/src/sanity/client";
 import imageUrlBuilder from "@sanity/image-url";
 import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
+import { cache } from "react";
 
 // Sanity 图片 URL 构建器
 const builder = imageUrlBuilder(client);
 
 export function urlFor(source: SanityImageSource) {
   return builder.image(source);
+}
+
+// 封面缩略图：用于卡片列表，600px 宽，WebP，质量 80
+export function coverThumbUrl(source: SanityImageSource): string {
+  return builder.image(source).width(600).format("webp").quality(80).url();
+}
+
+// OG 图片：用于 Open Graph，1200px 宽
+export function ogImageUrl(source: SanityImageSource): string {
+  return builder.image(source).width(1200).format("webp").quality(85).url();
+}
+
+// 文章插图：用于章节正文，最大宽度 900px
+export function illustrationUrl(source: SanityImageSource): string {
+  return builder.image(source).width(900).format("webp").quality(85).url();
 }
 
 export type Novel = {
@@ -25,7 +41,6 @@ export type Novel = {
   seo?: {
     metaTitle?: string;
     metaDescription?: string;
-    canonical?: string;
     ogTitle?: string;
     ogDescription?: string;
     ogImage?: string;
@@ -37,6 +52,20 @@ export type ChapterInfo = {
   number: number;
   title: string;
   slug: string;
+};
+
+export type ChapterSeo = {
+  metaTitle?: string;
+  metaDescription?: string;
+  noIndex?: boolean;
+  ogImage?: string;
+};
+
+export type ChapterContent = {
+  title: string;
+  content: string;
+  chapterNumber: number;
+  seo?: ChapterSeo;
 };
 
 // Sanity 返回的原始小说类型
@@ -54,19 +83,28 @@ type SanityNovel = {
   seo?: {
     metaTitle?: string;
     metaDescription?: string;
-    canonical?: string;
     ogTitle?: string;
     ogDescription?: string;
     ogImage?: SanityImageSource;
   };
 };
 
-// Sanity 返回的原始章节类型
+// Sanity 返回的原始章节类型（基础，用于列表）
 type SanityChapter = {
   _id: string;
   number: number;
   title: string;
   content: string;
+};
+
+// Sanity 返回的原始章节类型（完整，包含 SEO）
+type SanityChapterFull = SanityChapter & {
+  seo?: {
+    metaTitle?: string;
+    metaDescription?: string;
+    noIndex?: boolean;
+    ogImage?: SanityImageSource;
+  };
 };
 
 // 将 Sanity 小说数据转换为前端格式
@@ -76,7 +114,6 @@ function transformNovel(sanityNovel: SanityNovel): Novel {
   let tags = sanityNovel.tags || [];
   // Hardcode tag injection for 'big_brother'
   if (slug.includes("big_brother")) {
-    // Add 'Pseudo-Brothers' to the beginning if it doesn't exist
     if (!tags.includes("Pseudo-Brothers")) {
       tags = ["Pseudo-Brothers", ...tags];
     }
@@ -89,29 +126,30 @@ function transformNovel(sanityNovel: SanityNovel): Novel {
     category: sanityNovel.category || "OTHER",
     excerpt: sanityNovel.excerpt || "",
     coverImage: sanityNovel.coverImage
-      ? urlFor(sanityNovel.coverImage).url()
+      ? coverThumbUrl(sanityNovel.coverImage)
       : "/assets/images/0.jpg",
     coverImageAlt: sanityNovel.coverImage?.alt,
     path: `/novels/${slug}`,
     totalChapters: sanityNovel.totalChapters || 0,
     description: sanityNovel.description || sanityNovel.excerpt || "",
     author: sanityNovel.author || "Anonymous",
-    tags: tags,
-    seo: sanityNovel.seo ? {
-      metaTitle: sanityNovel.seo.metaTitle,
-      metaDescription: sanityNovel.seo.metaDescription,
-      canonical: sanityNovel.seo.canonical,
-      ogTitle: sanityNovel.seo.ogTitle,
-      ogDescription: sanityNovel.seo.ogDescription,
-      ogImage: sanityNovel.seo.ogImage
-        ? urlFor(sanityNovel.seo.ogImage).url()
-        : undefined,
-    } : undefined,
+    tags,
+    seo: sanityNovel.seo
+      ? {
+          metaTitle: sanityNovel.seo.metaTitle,
+          metaDescription: sanityNovel.seo.metaDescription,
+          ogTitle: sanityNovel.seo.ogTitle,
+          ogDescription: sanityNovel.seo.ogDescription,
+          ogImage: sanityNovel.seo.ogImage
+            ? ogImageUrl(sanityNovel.seo.ogImage)
+            : undefined,
+        }
+      : undefined,
   };
 }
 
 // 获取所有小说
-export async function getNovels(): Promise<Novel[]> {
+export const getNovels = cache(async (): Promise<Novel[]> => {
   const query = `*[_type == "novel"] | order(publishedAt desc) {
     _id,
     title,
@@ -132,10 +170,10 @@ export async function getNovels(): Promise<Novel[]> {
     console.error("Failed to fetch novels from Sanity:", error);
     return [];
   }
-}
+});
 
 // 获取特色小说（首页展示）
-export async function getFeaturedNovels(limit = 3): Promise<Novel[]> {
+export const getFeaturedNovels = cache(async (limit = 3): Promise<Novel[]> => {
   const query = `*[_type == "novel"] | order(publishedAt desc)[0...${limit}] {
     _id,
     title,
@@ -156,10 +194,10 @@ export async function getFeaturedNovels(limit = 3): Promise<Novel[]> {
     console.error("Failed to fetch featured novels from Sanity:", error);
     return [];
   }
-}
+});
 
-// 根据 slug 获取单个小说
-export async function getNovelBySlug(slug: string): Promise<Novel | undefined> {
+// 根据 slug 获取单个小说（含 SEO 字段）
+export const getNovelBySlug = cache(async (slug: string): Promise<Novel | undefined> => {
   const query = `*[_type == "novel" && slug.current == $slug][0] {
     _id,
     title,
@@ -170,7 +208,14 @@ export async function getNovelBySlug(slug: string): Promise<Novel | undefined> {
     coverImage,
     totalChapters,
     author,
-    tags
+    tags,
+    seo {
+      metaTitle,
+      metaDescription,
+      ogTitle,
+      ogDescription,
+      ogImage
+    }
   }`;
 
   try {
@@ -180,10 +225,10 @@ export async function getNovelBySlug(slug: string): Promise<Novel | undefined> {
     console.error(`Failed to fetch novel ${slug} from Sanity:`, error);
     return undefined;
   }
-}
+});
 
 // 获取小说的所有章节列表
-export async function getNovelChapters(slug: string): Promise<ChapterInfo[]> {
+export const getNovelChapters = cache(async (slug: string): Promise<ChapterInfo[]> => {
   const query = `*[_type == "chapter" && novel->slug.current == $slug] | order(number asc) {
     _id,
     number,
@@ -202,27 +247,35 @@ export async function getNovelChapters(slug: string): Promise<ChapterInfo[]> {
     console.error(`Failed to fetch chapters for ${slug} from Sanity:`, error);
     return [];
   }
-}
+});
 
-// 获取章节内容
-export async function getChapterContent(
+// 获取章节内容（含 SEO 字段）
+export const getChapterContent = cache(async (
   slug: string,
   chapterNumber: number
-): Promise<{ title: string; content: string; chapterNumber: number } | null> {
+): Promise<ChapterContent | null> => {
   const query = `*[_type == "chapter" && novel->slug.current == $slug && number == $chapterNumber][0] {
     title,
     content,
-    number
+    number,
+    seo {
+      metaTitle,
+      metaDescription,
+      noIndex,
+      ogImage
+    }
   }`;
 
   try {
-    const chapter = await client.fetch<SanityChapter | null>(query, { slug, chapterNumber });
+    const chapter = await client.fetch<SanityChapterFull | null>(query, {
+      slug,
+      chapterNumber,
+    });
 
     if (!chapter) {
       return null;
     }
 
-    // 将纯文本内容转换为 HTML 段落
     const paragraphs = chapter.content
       .split("\n")
       .map((para: string) => para.trim())
@@ -234,9 +287,22 @@ export async function getChapterContent(
       title: chapter.title,
       content: paragraphs,
       chapterNumber: chapter.number,
+      seo: chapter.seo
+        ? {
+            metaTitle: chapter.seo.metaTitle,
+            metaDescription: chapter.seo.metaDescription,
+            noIndex: chapter.seo.noIndex,
+            ogImage: chapter.seo.ogImage
+              ? ogImageUrl(chapter.seo.ogImage)
+              : undefined,
+          }
+        : undefined,
     };
   } catch (error) {
-    console.error(`Failed to fetch chapter ${chapterNumber} for ${slug} from Sanity:`, error);
+    console.error(
+      `Failed to fetch chapter ${chapterNumber} for ${slug} from Sanity:`,
+      error
+    );
     return null;
   }
-}
+});
