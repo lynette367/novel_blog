@@ -110,10 +110,10 @@ export default async function HomePage() {
               textAlign: "center",
             }}
           >
-            The Best Chinese Danmei Novels in English
+            Where Snow Meets Shadows: Tales of Eternal Danmei.
           </h1>
           <p className="tagline">
-            Your premier destination for high-quality BL and danmei translations
+            Your premier destination for high-quality BL and danmei novels
           </p>
         </div>
       </section>
