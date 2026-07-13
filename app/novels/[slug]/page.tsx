@@ -253,6 +253,17 @@ export default async function NovelDetailPage({
                   <div className="chapter-number">Ch. {chapter.number}</div>
                   <div className="chapter-details">
                     <div className="chapter-title">{chapter.title}</div>
+                    {chapter.excerpt && (
+                      <div style={{
+                        fontSize: '0.88rem',
+                        color: '#7d6d5d',
+                        marginTop: '0.3rem',
+                        lineHeight: 1.5,
+                        fontStyle: 'italic',
+                      }}>
+                        {chapter.excerpt}
+                      </div>
+                    )}
                     <div className="chapter-meta-info">
                       <span>📖 Est. 10 min</span>
                     </div>

@@ -52,6 +52,7 @@ export type ChapterInfo = {
   number: number;
   title: string;
   slug: string;
+  excerpt?: string;
 };
 
 export type ChapterSeo = {
@@ -95,6 +96,7 @@ type SanityChapter = {
   number: number;
   title: string;
   content: string;
+  excerpt?: string;
 };
 
 // Sanity 返回的原始章节类型（完整，包含 SEO）
@@ -232,7 +234,8 @@ export const getNovelChapters = cache(async (slug: string): Promise<ChapterInfo[
   const query = `*[_type == "chapter" && novel->slug.current == $slug] | order(number asc) {
     _id,
     number,
-    title
+    title,
+    excerpt
   }`;
 
   try {
@@ -242,6 +245,7 @@ export const getNovelChapters = cache(async (slug: string): Promise<ChapterInfo[
       number: ch.number,
       title: ch.title,
       slug: ch.number.toString(),
+      excerpt: ch.excerpt || undefined,
     }));
   } catch (error) {
     console.error(`Failed to fetch chapters for ${slug} from Sanity:`, error);
