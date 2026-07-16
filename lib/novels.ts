@@ -25,6 +25,13 @@ export function illustrationUrl(source: SanityImageSource): string {
   return builder.image(source).width(900).format("webp").quality(85).url();
 }
 
+// 阅读速度：英文译文按 220 词/分钟估算，可根据实际读者数据（如 GA 平均停留时长）调整
+const WORDS_PER_MINUTE = 220;
+
+function minutesFromWordCount(wordCount: number): number {
+  return Math.max(1, Math.round(wordCount / WORDS_PER_MINUTE));
+}
+
 export type Novel = {
   _id: string;
   title: string;
@@ -35,6 +42,7 @@ export type Novel = {
   coverImageAlt?: string;
   path: string;
   totalChapters?: number;
+  totalWordCount?: number;
   description?: string;
   author?: string;
   tags?: string[];
@@ -53,6 +61,8 @@ export type ChapterInfo = {
   title: string;
   slug: string;
   excerpt?: string;
+  wordCount: number;
+  readingMinutes: number;
 };
 
 export type ChapterSeo = {
@@ -66,6 +76,8 @@ export type ChapterContent = {
   title: string;
   content: string;
   chapterNumber: number;
+  wordCount: number;
+  readingMinutes: number;
   seo?: ChapterSeo;
 };
 
@@ -79,6 +91,7 @@ type SanityNovel = {
   description?: string;
   coverImage?: SanityImageSource & { alt?: string };
   totalChapters?: number;
+  totalWordCount?: number;
   author?: string;
   tags?: string[];
   seo?: {
@@ -97,6 +110,7 @@ type SanityChapter = {
   title: string;
   content: string;
   excerpt?: string;
+  wordCount: number;
 };
 
 // Sanity 返回的原始章节类型（完整，包含 SEO）
@@ -133,6 +147,7 @@ function transformNovel(sanityNovel: SanityNovel): Novel {
     coverImageAlt: sanityNovel.coverImage?.alt,
     path: `/novels/${slug}`,
     totalChapters: sanityNovel.totalChapters || 0,
+    totalWordCount: sanityNovel.totalWordCount || 0,
     description: sanityNovel.description || sanityNovel.excerpt || "",
     author: sanityNovel.author || "Anonymous",
     tags,
@@ -198,7 +213,7 @@ export const getFeaturedNovels = cache(async (limit = 3): Promise<Novel[]> => {
   }
 });
 
-// 根据 slug 获取单个小说（含 SEO 字段）
+// 根据 slug 获取单个小说（含 SEO 字段 + 全书总字数）
 export const getNovelBySlug = cache(async (slug: string): Promise<Novel | undefined> => {
   const query = `*[_type == "novel" && slug.current == $slug][0] {
     _id,
@@ -211,6 +226,11 @@ export const getNovelBySlug = cache(async (slug: string): Promise<Novel | undefi
     totalChapters,
     author,
     tags,
+    "totalWordCount": math::sum(
+      *[_type == "chapter" && references(^._id)]{
+        "wordCount": count(string::split(content, " "))
+      }.wordCount
+    ),
     seo {
       metaTitle,
       metaDescription,
@@ -229,13 +249,14 @@ export const getNovelBySlug = cache(async (slug: string): Promise<Novel | undefi
   }
 });
 
-// 获取小说的所有章节列表
+// 获取小说的所有章节列表（含每章字数 / 预估阅读时长）
 export const getNovelChapters = cache(async (slug: string): Promise<ChapterInfo[]> => {
   const query = `*[_type == "chapter" && novel->slug.current == $slug] | order(number asc) {
     _id,
     number,
     title,
-    excerpt
+    excerpt,
+    "wordCount": count(string::split(content, " "))
   }`;
 
   try {
@@ -246,6 +267,8 @@ export const getNovelChapters = cache(async (slug: string): Promise<ChapterInfo[
       title: ch.title,
       slug: ch.number.toString(),
       excerpt: ch.excerpt || undefined,
+      wordCount: ch.wordCount,
+      readingMinutes: minutesFromWordCount(ch.wordCount),
     }));
   } catch (error) {
     console.error(`Failed to fetch chapters for ${slug} from Sanity:`, error);
@@ -253,7 +276,7 @@ export const getNovelChapters = cache(async (slug: string): Promise<ChapterInfo[
   }
 });
 
-// 获取章节内容（含 SEO 字段）
+// 获取章节内容（含 SEO 字段 + 字数 / 预估阅读时长）
 export const getChapterContent = cache(async (
   slug: string,
   chapterNumber: number
@@ -262,6 +285,7 @@ export const getChapterContent = cache(async (
     title,
     content,
     number,
+    "wordCount": count(string::split(content, " ")),
     seo {
       metaTitle,
       metaDescription,
@@ -291,6 +315,8 @@ export const getChapterContent = cache(async (
       title: chapter.title,
       content: paragraphs,
       chapterNumber: chapter.number,
+      wordCount: chapter.wordCount,
+      readingMinutes: minutesFromWordCount(chapter.wordCount),
       seo: chapter.seo
         ? {
             metaTitle: chapter.seo.metaTitle,

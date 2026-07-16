@@ -86,6 +86,7 @@ export async function generateMetadata({
       "@type": "Book",
       "@id": absoluteUrl(`/novels/${novel.slug}#book`),
       name: novel.title,
+      wordCount: novel.totalWordCount || undefined,
       author: {
         "@type": "Person",
         name: novel.author || "Anonymous",
@@ -93,6 +94,7 @@ export async function generateMetadata({
     },
     position: chapterNumber,
     inLanguage: "en",
+    wordCount: chapterData.wordCount,
     description: metaDescription,
     url: canonicalUrl,
     isPartOf: {
@@ -201,7 +203,8 @@ export default async function ChapterPage({
             flexWrap: "wrap",
           }}
         >
-          <span>📖 Est. 10 min read</span>
+          <span>📖 Est. {chapterData.readingMinutes} min read</span>
+          <span>📝 {chapterData.wordCount.toLocaleString()} words</span>
         </div>
       </header>
 

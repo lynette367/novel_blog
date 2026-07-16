@@ -60,6 +60,7 @@ export async function generateMetadata({
     inLanguage: "en",
     translator: "Cross The Line",
     numberOfPages: chapters.length,
+    wordCount: novel.totalWordCount || undefined,
     description: novel.description ?? novel.excerpt,
     isPartOf: {
       "@id": absoluteUrl("/#website")
@@ -193,6 +194,9 @@ export default async function NovelDetailPage({
                 {chapters.length > 0 ? (
                   <span className="meta-item">Total chapters: {chapters.length}</span>
                 ) : null}
+                {novel.totalWordCount ? (
+                  <span className="meta-item">📝 {novel.totalWordCount.toLocaleString()} words</span>
+                ) : null}
               </div>
 
               {novel.tags && novel.tags.length > 0 && (
@@ -265,7 +269,8 @@ export default async function NovelDetailPage({
                       </div>
                     )}
                     <div className="chapter-meta-info">
-                      <span>📖 Est. 10 min</span>
+                      <span>📖 Est. {chapter.readingMinutes} min</span>
+                      <span>📝 {chapter.wordCount.toLocaleString()} words</span>
                     </div>
                   </div>
                   <span className="chapter-arrow">→</span>
