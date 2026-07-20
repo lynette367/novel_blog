@@ -63,6 +63,7 @@ export type ChapterInfo = {
   excerpt?: string;
   wordCount: number;
   readingMinutes: number;
+  locked: boolean;
 };
 
 export type ChapterSeo = {
@@ -111,6 +112,7 @@ type SanityChapter = {
   content: string;
   excerpt?: string;
   wordCount: number;
+  locked?: boolean;
 };
 
 // Sanity 返回的原始章节类型（完整，包含 SEO）
@@ -227,7 +229,7 @@ export const getNovelBySlug = cache(async (slug: string): Promise<Novel | undefi
     author,
     tags,
     "totalWordCount": math::sum(
-      *[_type == "chapter" && references(^._id)]{
+      *[_type == "chapter" && references(^._id) && locked != true]{
         "wordCount": count(string::split(content, " "))
       }.wordCount
     ),
@@ -256,6 +258,7 @@ export const getNovelChapters = cache(async (slug: string): Promise<ChapterInfo[
     number,
     title,
     excerpt,
+    locked,
     "wordCount": count(string::split(content, " "))
   }`;
 
@@ -269,6 +272,7 @@ export const getNovelChapters = cache(async (slug: string): Promise<ChapterInfo[
       excerpt: ch.excerpt || undefined,
       wordCount: ch.wordCount,
       readingMinutes: minutesFromWordCount(ch.wordCount),
+      locked: ch.locked || false,
     }));
   } catch (error) {
     console.error(`Failed to fetch chapters for ${slug} from Sanity:`, error);
@@ -281,7 +285,7 @@ export const getChapterContent = cache(async (
   slug: string,
   chapterNumber: number
 ): Promise<ChapterContent | null> => {
-  const query = `*[_type == "chapter" && novel->slug.current == $slug && number == $chapterNumber][0] {
+  const query = `*[_type == "chapter" && novel->slug.current == $slug && number == $chapterNumber && locked != true][0] {
     title,
     content,
     number,

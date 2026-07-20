@@ -247,35 +247,52 @@ export default async function NovelDetailPage({
 
           {chapters.length > 0 ? (
             <div className="chapter-list" id="chapterList">
-              {chapters.map((chapter) => (
-                <Link
-                  key={chapter.number}
-                  href={`/novels/${slug}/chapters/${chapter.number}`}
-                  className="chapter-item"
-                  data-chapter={chapter.number}
-                >
-                  <div className="chapter-number">Ch. {chapter.number}</div>
-                  <div className="chapter-details">
-                    <div className="chapter-title">{chapter.title}</div>
-                    {chapter.excerpt && (
-                      <div style={{
-                        fontSize: '0.88rem',
-                        color: '#7d6d5d',
-                        marginTop: '0.3rem',
-                        lineHeight: 1.5,
-                        fontStyle: 'italic',
-                      }}>
-                        {chapter.excerpt}
+              {chapters.map((chapter) =>
+                chapter.locked ? (
+                  <div
+                    key={chapter.number}
+                    className="chapter-item"
+                    data-chapter={chapter.number}
+                    style={{ opacity: 0.55, cursor: "not-allowed" }}
+                  >
+                    <div className="chapter-number">Ch. {chapter.number}</div>
+                    <div className="chapter-details">
+                      <div className="chapter-title">{chapter.title}</div>
+                      <div className="chapter-meta-info">
+                        <span>🔒 Coming Soon</span>
                       </div>
-                    )}
-                    <div className="chapter-meta-info">
-                      <span>📖 Est. {chapter.readingMinutes} min</span>
-                      <span>📝 {chapter.wordCount.toLocaleString()} words</span>
                     </div>
                   </div>
-                  <span className="chapter-arrow">→</span>
-                </Link>
-              ))}
+                ) : (
+                  <Link
+                    key={chapter.number}
+                    href={`/novels/${slug}/chapters/${chapter.number}`}
+                    className="chapter-item"
+                    data-chapter={chapter.number}
+                  >
+                    <div className="chapter-number">Ch. {chapter.number}</div>
+                    <div className="chapter-details">
+                      <div className="chapter-title">{chapter.title}</div>
+                      {chapter.excerpt && (
+                        <div style={{
+                          fontSize: '0.88rem',
+                          color: '#7d6d5d',
+                          marginTop: '0.3rem',
+                          lineHeight: 1.5,
+                          fontStyle: 'italic',
+                        }}>
+                          {chapter.excerpt}
+                        </div>
+                      )}
+                      <div className="chapter-meta-info">
+                        <span>📖 Est. {chapter.readingMinutes} min</span>
+                        <span>📝 {chapter.wordCount.toLocaleString()} words</span>
+                      </div>
+                    </div>
+                    <span className="chapter-arrow">→</span>
+                  </Link>
+                )
+              )}
             </div>
           ) : (
             <p>Chapters will be available soon.</p>

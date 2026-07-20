@@ -21,6 +21,7 @@ export async function generateStaticParams() {
   for (const novel of novels) {
     const chapters = await getNovelChapters(novel.slug);
     for (const chapter of chapters) {
+      if (chapter.locked) continue;
       params.push({
         slug: novel.slug,
         chapter: chapter.number.toString(),
@@ -169,10 +170,11 @@ export default async function ChapterPage({
   }
 
   const chapters = await getNovelChapters(slug);
-  const currentIndex = chapters.findIndex((c) => c.number === chapterNumber);
-  const prevChapter = currentIndex > 0 ? chapters[currentIndex - 1] : null;
+  const readableChapters = chapters.filter((c) => !c.locked);
+  const currentIndex = readableChapters.findIndex((c) => c.number === chapterNumber);
+  const prevChapter = currentIndex > 0 ? readableChapters[currentIndex - 1] : null;
   const nextChapter =
-    currentIndex < chapters.length - 1 ? chapters[currentIndex + 1] : null;
+    currentIndex < readableChapters.length - 1 ? readableChapters[currentIndex + 1] : null;
 
   return (
     <>
