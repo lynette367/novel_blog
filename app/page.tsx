@@ -4,7 +4,8 @@ import type { Metadata } from "next";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { NovelCard } from "@/components/novel-card";
-import { getFeaturedNovels } from "@/lib/novels";
+import { ProofreadBanner } from "@/components/proofread-banner";
+import { getFeaturedNovels, getRecentlyProofreadChapter } from "@/lib/novels";
 import { absoluteUrl, SITE_NAME } from "@/lib/siteMetadata";
 
 // React cache() deduplicates calls with the same arguments within one render pass.
@@ -96,6 +97,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function HomePage() {
   const featuredNovels = await getCachedFeaturedNovels();
+  const recentProofread = await getRecentlyProofreadChapter();
 
   return (
     <>
@@ -110,7 +112,7 @@ export default async function HomePage() {
               textAlign: "center",
             }}
           >
-            Where Snow Meets Shadows: Tales of Eternal Danmei.
+            Where Snow Meets Shadows<br /> Tales of Eternal Danmei
           </h1>
           <p className="tagline">
             Your premier destination for high-quality BL and danmei novels
@@ -118,12 +120,14 @@ export default async function HomePage() {
         </div>
       </section>
 
+      <ProofreadBanner chapter={recentProofread} />
+
       <main className="main-content">
         <div className="content-header">
           <h2>Latest Updates</h2>
         </div>
 
-        <div className="novels-grid">
+        <div className="novels-grid featured-grid">
           {featuredNovels.map((novel, index) => (
             // Pass priority to the first card so its image is preloaded
             <NovelCard key={novel.slug} novel={novel} priority={index === 0} />

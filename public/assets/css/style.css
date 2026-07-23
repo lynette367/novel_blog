@@ -128,6 +128,72 @@ body {
 }
 
 /* ========================================
+   Proofread Banner (Homepage, under Hero)
+   ======================================== */
+
+.proofread-banner {
+    max-width: 1400px;
+    margin: 2rem auto 0;
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: linear-gradient(135deg, #f5ede0, #e8d9bf);
+    border: 1px solid #d4c5b0;
+    border-left: 4px solid #8b7355;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(139, 115, 85, 0.15);
+    flex-wrap: wrap;
+}
+
+.proofread-banner-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.1rem;
+    height: 2.1rem;
+    flex-shrink: 0;
+    font-size: 1.1rem;
+    background: rgba(139, 115, 85, 0.15);
+    border-radius: 50%;
+}
+
+.proofread-banner-text {
+    flex: 1;
+    min-width: 200px;
+    margin: 0;
+    color: #5d5d5d;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.proofread-banner-label {
+    color: #8b7355;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 0.8rem;
+}
+
+.proofread-banner-novel {
+    color: #7d6d5d;
+    font-style: italic;
+}
+
+.proofread-banner-link {
+    color: #8b7355;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    white-space: nowrap;
+    transition: color 0.3s;
+}
+
+.proofread-banner-link:hover {
+    color: #6d5d4b;
+}
+
+/* ========================================
    Main Content
    ======================================== */
 
@@ -199,12 +265,46 @@ body {
     outline-offset: 2px;
 }
 
-.filter-tab:hover {
-    border-color: #8b7355;
-    color: #5d4e37;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(139, 115, 85, 0.15);
+.filter-tab {
+    padding: 0.4rem 1rem;        /* 原来是 0.8rem 2rem */
+    background: transparent;
+    border: 1.5px solid #d4c5b0;  /* 原来是 2px */
+    border-radius: 50px;
+    color: #7d6d5d;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.78rem;            /* 原来是 0.95rem */
+    white-space: nowrap;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-family: 'Georgia', serif;
+    letter-spacing: 0.5px;         /* 原来是 1px */
+    text-transform: uppercase;
+    cursor: pointer;
+    display: inline-block;
+    outline: none;
 }
+
+.filter-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    gap: 0.75rem;        /* 原来是 1.5rem */
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* 标签云轮流上色：10 个莫兰迪色系循环，选中状态在下面的 .active 规则里统一覆盖 */
+.filter-tab:nth-child(10n+2) { background: rgba(200, 163, 160, 0.18); border-color: #c9a3a0; color: #8c6660; }
+.filter-tab:nth-child(10n+3) { background: rgba(169, 183, 158, 0.18); border-color: #a9b79e; color: #62735a; }
+.filter-tab:nth-child(10n+4) { background: rgba(157, 176, 194, 0.18); border-color: #9db0c2; color: #55697e; }
+.filter-tab:nth-child(10n+5) { background: rgba(180, 154, 171, 0.18); border-color: #b49aab; color: #7a5a72; }
+.filter-tab:nth-child(10n+6) { background: rgba(201, 180, 140, 0.18); border-color: #c9b48c; color: #8a7048; }
+.filter-tab:nth-child(10n+7) { background: rgba(192, 141, 118, 0.18); border-color: #c08d76; color: #8a5940; }
+.filter-tab:nth-child(10n+8) { background: rgba(169, 156, 192, 0.18); border-color: #a99cc0; color: #6c5686; }
+.filter-tab:nth-child(10n+9) { background: rgba(143, 173, 166, 0.18); border-color: #8fada6; color: #4f6d66; }
+.filter-tab:nth-child(10n+10) { background: rgba(179, 169, 155, 0.18); border-color: #b3a99b; color: #766c5e; }
+.filter-tab:nth-child(10n+11) { background: rgba(195, 174, 122, 0.18); border-color: #c3ae7a; color: #8a7440; }
 
 .filter-tab.active {
     background: linear-gradient(135deg, #8b7355, #6d5d4b);
@@ -219,9 +319,22 @@ body {
 
 .novels-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 2.5rem;
+    grid-template-columns: repeat(3, minmax(0, 340px));  /* 原来是 repeat(auto-fit, minmax(260px, 340px)) */
+    justify-content: center;
+    gap: 2rem;
     margin-bottom: 4rem;
+}
+
+/* 小说卡片展示固定 3 篇小说，直接写死 3 列，不用 auto-fit 动态换算，
+   避免在 iPad 宽度这种"刚好不够放 3 列 min-width"的区间掉到 2 列 */
+.featured-grid {
+    grid-template-columns: repeat(3, minmax(0, 340px));
+}
+
+@media (max-width: 768px) {
+    .featured-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 .novel-card {
@@ -269,7 +382,8 @@ body {
 
 .novel-cover {
     width: 100%;
-    height: 400px;
+    aspect-ratio: 2 / 3;
+    height: auto;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -307,16 +421,16 @@ body {
 }
 
 .novel-info {
-    padding: 2rem;
+    padding: 1.5rem;
     flex: 1;
     display: flex;
     flex-direction: column;
 }
 
 .novel-title {
-    font-size: 1.6rem;
+    font-size: 1.35rem;
     font-weight: 600;
-    margin-bottom: 1rem;
+    margin-bottom: 0.75rem;
     color: #2c3e50;
     line-height: 1.4;
     font-family: 'Georgia', serif;
@@ -325,9 +439,13 @@ body {
 .novel-excerpt {
     color: #5d5d5d;
     margin-bottom: 1.5rem;
-    font-size: 1rem;
-    line-height: 1.8;
+    font-size: 0.95rem;
+    line-height: 1.7;
     flex: 1;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
 .read-btn {
@@ -858,6 +976,11 @@ footer {
 
     .hero .tagline {
         font-size: 1.1rem;
+    }
+
+    .proofread-banner {
+        margin: 1.5rem 1rem 0;
+        padding: 1rem 1.25rem;
     }
 
     .novels-grid {

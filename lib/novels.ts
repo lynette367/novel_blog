@@ -66,6 +66,14 @@ export type ChapterInfo = {
   locked: boolean;
 };
 
+// 首页"最近校对"横幅用的数据结构
+export type RecentProofread = {
+  novelTitle: string;
+  novelSlug: string;
+  chapterNumber: number;
+  chapterTitle: string;
+};
+
 export type ChapterSeo = {
   metaTitle?: string;
   metaDescription?: string;
@@ -214,6 +222,44 @@ export const getFeaturedNovels = cache(async (limit = 3): Promise<Novel[]> => {
     return [];
   }
 });
+
+// 获取最近一次被编辑保存的章节（用于首页"正在校对"横幅）
+// 依赖 Sanity 系统自带的 _updatedAt，不需要新增字段。
+// 注意：编辑标题、excerpt、SEO 等任何字段保存都会更新 _updatedAt，
+// 不只是校对正文——但作为首页一条轻量提示，这个精度足够用。
+export const getRecentlyProofreadChapter = cache(
+  async (): Promise<RecentProofread | null> => {
+    const query = `*[_type == "chapter" && defined(novel)] | order(_updatedAt desc)[0] {
+      number,
+      title,
+      "novelTitle": novel->title,
+      "novelSlug": novel->slug.current
+    }`;
+
+    try {
+      const chapter = await client.fetch<{
+        number: number;
+        title: string;
+        novelTitle: string;
+        novelSlug: string;
+      } | null>(query);
+
+      if (!chapter) {
+        return null;
+      }
+
+      return {
+        novelTitle: chapter.novelTitle,
+        novelSlug: chapter.novelSlug,
+        chapterNumber: chapter.number,
+        chapterTitle: chapter.title,
+      };
+    } catch (error) {
+      console.error("Failed to fetch recently proofread chapter from Sanity:", error);
+      return null;
+    }
+  }
+);
 
 // 根据 slug 获取单个小说（含 SEO 字段 + 全书总字数）
 export const getNovelBySlug = cache(async (slug: string): Promise<Novel | undefined> => {

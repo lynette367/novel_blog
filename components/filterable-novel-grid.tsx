@@ -8,35 +8,51 @@ type Props = {
   novels: Novel[];
 };
 
-const DEFAULT_CATEGORY = "ALL";
-const BASE_CATEGORIES = ["ALL", "BL", "ROMANCE"];
+const ALL_TAG = "ALL";
 
 export function FilterableNovelGrid({ novels }: Props) {
-  const [activeCategory, setActiveCategory] = useState<string>(DEFAULT_CATEGORY);
+  const [activeTag, setActiveTag] = useState<string>(ALL_TAG);
 
-  const categories = useMemo(() => {
-    const unique = novels
-      .map((novel) => novel.category)
-      .filter((category) => !BASE_CATEGORIES.includes(category));
-    return [...BASE_CATEGORIES, ...unique];
+  // 从所有小说的 tags 里动态收集去重列表，大小写不敏感去重
+  // （手动打标签容易出现 "Younger Top" / "younger top" 这种不一致，
+  // 归一化后只会生成一个按钮，保留第一次出现时的大小写用于展示）
+  const tags = useMemo(() => {
+    const seen = new Map<string, string>();
+    novels.forEach((novel) => {
+      (novel.tags || []).forEach((tag) => {
+        const trimmed = tag.trim();
+        if (!trimmed) return;
+        const key = trimmed.toLowerCase();
+        if (!seen.has(key)) {
+          seen.set(key, trimmed);
+        }
+      });
+    });
+    const sorted = Array.from(seen.values()).sort((a, b) => a.localeCompare(b));
+    return [ALL_TAG, ...sorted];
   }, [novels]);
 
-  const filteredNovels = activeCategory === DEFAULT_CATEGORY
-    ? novels
-    : novels.filter((novel) => novel.category === activeCategory);
+  const filteredNovels =
+    activeTag === ALL_TAG
+      ? novels
+      : novels.filter((novel) =>
+          (novel.tags || []).some(
+            (tag) => tag.trim().toLowerCase() === activeTag.toLowerCase()
+          )
+        );
 
   return (
     <>
       <div className="category-filter">
         <div className="filter-container">
-          {categories.map((category) => (
+          {tags.map((tag) => (
             <button
-              key={category}
+              key={tag}
               type="button"
-              className={`filter-tab${category === activeCategory ? " active" : ""}`}
-              onClick={() => setActiveCategory(category)}
+              className={`filter-tab${tag === activeTag ? " active" : ""}`}
+              onClick={() => setActiveTag(tag)}
             >
-              {category}
+              {tag}
             </button>
           ))}
         </div>
