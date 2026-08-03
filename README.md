@@ -1,164 +1,105 @@
-# 小说网站 - Cross The Line
+# 📚 Novel Blog Infrastructure (Next.js 16 + Sanity CMS)
 
-基于 Next.js 和 Sanity CMS 的小说阅读网站。
+A modern, high-performance, open-source web application designed for web novel translators, bloggers, and reading communities. Features instant static site generation, responsive mobile-first UI, integrated headless CMS management, and automated CLI publishing tools.
 
-## 🚀 快速开始
+---
 
-### 1. 安装依赖
+## ✨ Features
 
+- **⚡ Fast & Modern Tech Stack**: Next.js 16 (App Router + React 18), TypeScript, Vanilla CSS for maximum styling flexibility.
+- **🎨 Embedded Headless CMS**: Built-in Sanity Studio at `/studio` route for easy novel & chapter management.
+- **📖 Reading Experience**:
+  - Interactive **Last Polished Chapter Hero** section on the homepage.
+  - Square-proportioned novel cover cards with clean text overflow truncation.
+  - Clear **Proofread badges (`【Polished】`)** and accent border highlights for human-proofread chapters vs machine-translated chapters.
+  - Estimated reading time and word count calculations for every chapter.
+- **🚀 One-Command Importer (`publish-novel.mjs`)**: CLI script to parse TXT novel files, upload covers/illustrations, and create documents directly in Sanity.
+- **🌐 SEO Optimized**: Automatic Open Graph tags, canonical URLs, dynamic XML Sitemap, and Schema.org structured data (`WebSite`, `Book`, `Organization`).
+
+---
+
+## 🚀 Quick Start
+
+### 1. Prerequisites
+- Node.js 18.x or higher
+- A free [Sanity.io](https://www.sanity.io/) account
+
+### 2. Clone & Install
 ```bash
+git clone https://github.com/your-username/novel-blog.git
+cd novel-blog
 npm install
 ```
 
-### 2. 配置环境变量
+### 3. Environment Variables
+Copy `.env.example` to `.env.local`:
+```bash
+cp env.example .env.local
+```
 
-在项目根目录创建 `.env.local` 文件：
-
+Fill in your Sanity credentials and site settings in `.env.local`:
 ```env
-SANITY_API_TOKEN=your_sanity_api_token_here
+NEXT_PUBLIC_SANITY_PROJECT_ID=your_sanity_project_id
+NEXT_PUBLIC_SANITY_DATASET=production
+SANITY_API_TOKEN=your_sanity_write_token
+
+NEXT_PUBLIC_SITE_NAME="My Novel Blog"
+NEXT_PUBLIC_SITE_TITLE="My Novel Blog | Web Novel Translations"
+NEXT_PUBLIC_SITE_URL="https://yourdomain.com"
+
+# Optional Sponsor Links
+NEXT_PUBLIC_BUY_ME_A_COFFEE="https://buymeacoffee.com/your_id"
+NEXT_PUBLIC_KOFI="https://ko-fi.com/your_id"
+NEXT_PUBLIC_PATREON="https://patreon.com/your_id"
 ```
 
-**获取 Token 步骤：**
-1. 访问 https://www.sanity.io/manage/project/your_project/api
-2. 点击 "Add API token"
-3. 选择 "Editor" 权限
-4. 复制生成的 token 到 `.env.local`
+### 4. Customize Site Configuration
+Edit `site.config.ts` in the project root to tweak your site branding, default authors, categories, and support buttons.
 
-### 3. 启动开发服务器
-
+### 5. Run Locally
 ```bash
 npm run dev
 ```
+- Open [http://localhost:3000](http://localhost:3000) to view your novel site.
+- Open [http://localhost:3000/studio](http://localhost:3000/studio) to manage novels and chapters via Sanity Studio.
 
-### 4. 访问网站和后台
+---
 
-- **网站首页**: http://localhost:3000
-- **小说列表**: http://localhost:3000/novels
-- **Sanity Studio 后台**: http://localhost:3000/studio
+## 📝 Publishing Novels & Chapters
 
-## 📚 管理后台使用
-
-### 访问后台
-
-1. 启动开发服务器：`npm run dev`
-2. 打开浏览器访问：http://localhost:3000/studio
-3. 使用你的 Sanity 账户登录（创建项目时使用的账户）
-
-### 后台功能
-
-- **小说管理** - 添加、编辑、删除小说
-- **章节管理** - 在对应小说下管理章节
-- **封面图片** - 上传、修改、删除封面图片
-
-### 后台结构
-
-```
-📚 小说管理
-  └── [小说名称]
-        ├── 📖 小说信息      ← 编辑基本信息
-        ├── 📝 章节列表      ← 查看/编辑章节
-        └── ➕ 添加新章节    ← 快速添加章节
-```
-
-## 📖 一键发布小说
-
-### 使用方法
+You can publish novels manually via the CMS at `/studio`, or use the built-in automated CLI script:
 
 ```bash
-# 发布当前目录所有 .txt 文件
-npm run publish
+# Publish a single novel text file
+npm run publish path/to/novel.txt
 
-# 发布指定小说
-npm run publish novel.txt
-
-# 指定封面图片
-npm run publish novel.txt cover.png
-
-# 指定封面和分类
-npm run publish novel.txt cover.png ROMANCE
+# Specify novel cover image and category
+npm run publish novel.txt cover.jpg ROMANCE
 ```
 
-### 支持的分类
+The script automatically detects chapter titles (`Chapter 1`, `第1章`, etc.), extracts text, uploads images, and syncs everything with Sanity CMS.
 
-- `BL` (默认)
-- `ROMANCE`
-- `OTHER`
+---
 
-### 自动功能
+## 🛠 Customizing Categories & Schemas
 
-- ✅ 自动检测文件编码（UTF-8, GBK 等）
-- ✅ 自动提取标题和简介
-- ✅ 自动查找同名封面图片（.png, .jpg, .jpeg, .webp）
-- ✅ 智能章节解析（支持多种格式）
+To add or modify novel categories or tags:
+1. Open `src/sanity/schemas/novel.ts`.
+2. Edit the fields or tags configuration to suit your genres (e.g. *Fantasy*, *Sci-Fi*, *Romance*, *Mystery*, *Danmei*).
+3. Open `src/sanity/schemas/chapter.ts` to adjust chapter flags like `locked` or `isPolished`.
 
-## 🛠️ 其他命令
+---
 
-```bash
-# 开发模式
-npm run dev
+## 📦 Deployment
 
-# 构建生产版本
-npm run build
+### Deploy to Vercel (Recommended)
+1. Push your repository to GitHub.
+2. Import your repository into [Vercel](https://vercel.com).
+3. Add your environment variables in Vercel settings (`NEXT_PUBLIC_SANITY_PROJECT_ID`, etc.).
+4. Add your Vercel domain to **Sanity Management Console > API > CORS Origins** (`https://your-site.vercel.app` with credentials allowed).
 
-# 启动生产服务器
-npm run start
+---
 
-# 代码检查
-npm run lint
+## 📄 License
 
-# 部署 Sanity Studio（独立部署）
-npm run sanity:deploy
-```
-
-## 📁 项目结构
-
-```
-novel_blog/
-├── app/                    # Next.js 页面
-│   ├── page.tsx           # 首页
-│   ├── novels/            # 小说页面
-│   └── studio/            # Sanity Studio
-├── lib/
-│   └── novels.ts          # 数据获取函数（从 Sanity）
-├── src/sanity/
-│   ├── client.ts          # Sanity 客户端
-│   ├── schemas/           # 数据模型
-│   └── structure.ts       # Studio 结构配置
-├── scripts/
-│   └── publish-novel.mjs # 一键发布脚本
-└── sanity.config.ts       # Sanity 配置
-```
-
-## 🔧 技术栈
-
-- **Next.js 16** - React 框架
-- **Sanity CMS** - 内容管理系统
-- **TypeScript** - 类型安全
-- **Tailwind CSS** - 样式（如需要）
-
-## 📝 注意事项
-
-1. **环境变量**: 确保 `.env.local` 文件存在且包含 `SANITY_API_TOKEN`
-2. **端口冲突**: 如果 3000 端口被占用，Next.js 会自动使用 3001
-3. **数据存储**: 所有小说数据存储在 Sanity 云端，本地不需要 JSON 文件
-4. **源文件**: `.txt` 和封面图片文件不会被提交到 Git（已在 `.gitignore` 中）
-
-## 🚢 部署
-
-### Vercel 部署
-
-1. 将代码推送到 GitHub
-2. 在 Vercel 中导入项目
-3. 添加环境变量 `SANITY_API_TOKEN`
-4. 部署完成
-
-### 环境变量配置
-
-在 Vercel 项目设置中添加：
-- `SANITY_API_TOKEN`: 你的 Sanity API Token
-
-## 📞 支持
-
-如有问题，请查看：
-- [Next.js 文档](https://nextjs.org/docs)
-- [Sanity 文档](https://www.sanity.io/docs)
+MIT License. Free for personal and commercial use.

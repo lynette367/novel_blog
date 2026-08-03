@@ -64,14 +64,19 @@ export type ChapterInfo = {
   wordCount: number;
   readingMinutes: number;
   locked: boolean;
+  isPolished: boolean; // ✨ 新增：人工精修状态
 };
 
-// 首页"最近校对"横幅用的数据结构
+// 首页"最近精修章节"Hero使用的章节数据结构
 export type RecentProofread = {
   novelTitle: string;
   novelSlug: string;
   chapterNumber: number;
   chapterTitle: string;
+  excerpt?: string;
+  coverImage?: string;
+  readingMinutes?: number;
+  wordCount?: number;
 };
 
 export type ChapterSeo = {
@@ -121,6 +126,7 @@ type SanityChapter = {
   excerpt?: string;
   wordCount: number;
   locked?: boolean;
+  isPolished?: boolean; // ✨ 新增：对应 Sanity 后端字段
 };
 
 // Sanity 返回的原始章节类型（完整，包含 SEO）
@@ -223,36 +229,61 @@ export const getFeaturedNovels = cache(async (limit = 3): Promise<Novel[]> => {
   }
 });
 
-// 获取最近一次被编辑保存的章节（用于首页"正在校对"横幅）
-// 依赖 Sanity 系统自带的 _updatedAt，不需要新增字段。
-// 注意：编辑标题、excerpt、SEO 等任何字段保存都会更新 _updatedAt，
-// 不只是校对正文——但作为首页一条轻量提示，这个精度足够用。
+// 获取最近精修的章节（优先获取 isPolished == true 的章节，若没有则回退到最新更新章节）
 export const getRecentlyProofreadChapter = cache(
   async (): Promise<RecentProofread | null> => {
-    const query = `*[_type == "chapter" && defined(novel)] | order(_updatedAt desc)[0] {
+    const polishedQuery = `*[_type == "chapter" && defined(novel) && isPolished == true] | order(_updatedAt desc)[0] {
       number,
       title,
+      excerpt,
       "novelTitle": novel->title,
-      "novelSlug": novel->slug.current
+      "novelSlug": novel->slug.current,
+      "coverImage": coalesce(seo.ogImage, novel->coverImage),
+      "wordCount": count(string::split(content, " "))
+    }`;
+
+    const fallbackQuery = `*[_type == "chapter" && defined(novel)] | order(_updatedAt desc)[0] {
+      number,
+      title,
+      excerpt,
+      "novelTitle": novel->title,
+      "novelSlug": novel->slug.current,
+      "coverImage": coalesce(seo.ogImage, novel->coverImage),
+      "wordCount": count(string::split(content, " "))
     }`;
 
     try {
-      const chapter = await client.fetch<{
+      type RawResult = {
         number: number;
         title: string;
+        excerpt?: string;
         novelTitle: string;
         novelSlug: string;
-      } | null>(query);
+        coverImage?: SanityImageSource;
+        wordCount?: number;
+      };
+
+      let chapter = await client.fetch<RawResult | null>(polishedQuery);
+      if (!chapter) {
+        chapter = await client.fetch<RawResult | null>(fallbackQuery);
+      }
 
       if (!chapter) {
         return null;
       }
+
+      const wordCount = chapter.wordCount || 0;
+      const readingMinutes = minutesFromWordCount(wordCount);
 
       return {
         novelTitle: chapter.novelTitle,
         novelSlug: chapter.novelSlug,
         chapterNumber: chapter.number,
         chapterTitle: chapter.title,
+        excerpt: chapter.excerpt || undefined,
+        coverImage: chapter.coverImage ? coverThumbUrl(chapter.coverImage) : "/assets/images/0.jpg",
+        wordCount,
+        readingMinutes,
       };
     } catch (error) {
       console.error("Failed to fetch recently proofread chapter from Sanity:", error);
@@ -297,7 +328,23 @@ export const getNovelBySlug = cache(async (slug: string): Promise<Novel | undefi
   }
 });
 
-// 获取小说的所有章节列表（含每章字数 / 预估阅读时长）
+// 仅用于生成静态路由参数 (generateStaticParams)，不包含 wordCount / content 文本拆分等重型开销
+export const getNovelChapterNumbers = cache(
+  async (slug: string): Promise<{ number: number; locked: boolean }[]> => {
+    const query = `*[_type == "chapter" && novel->slug.current == $slug] | order(number asc) {
+      number,
+      "locked": coalesce(locked, false)
+    }`;
+    try {
+      return await client.fetch(query, { slug });
+    } catch (error) {
+      console.error(`Failed to fetch chapter numbers for ${slug}:`, error);
+      return [];
+    }
+  }
+);
+
+// 获取小说的所有章节列表（含每章字数 / 预估阅读时长 / 人工精修状态）
 export const getNovelChapters = cache(async (slug: string): Promise<ChapterInfo[]> => {
   const query = `*[_type == "chapter" && novel->slug.current == $slug] | order(number asc) {
     _id,
@@ -305,6 +352,7 @@ export const getNovelChapters = cache(async (slug: string): Promise<ChapterInfo[
     title,
     excerpt,
     locked,
+    isPolished,
     "wordCount": count(string::split(content, " "))
   }`;
 
@@ -319,6 +367,7 @@ export const getNovelChapters = cache(async (slug: string): Promise<ChapterInfo[
       wordCount: ch.wordCount,
       readingMinutes: minutesFromWordCount(ch.wordCount),
       locked: ch.locked || false,
+      isPolished: ch.isPolished || false, // ✨ 映射传递给前端
     }));
   } catch (error) {
     console.error(`Failed to fetch chapters for ${slug} from Sanity:`, error);

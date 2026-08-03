@@ -4,6 +4,9 @@ import { visionTool } from "@sanity/vision";
 import { schemaTypes } from "./src/sanity/schemas";
 import { structure } from "./src/sanity/structure";
 
+const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || "lke4t7vu";
+const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || "production";
+
 // 初始值模板 - 用于创建关联到特定小说的章节
 const initialValueTemplates: Template[] = [
   {
@@ -18,10 +21,10 @@ const initialValueTemplates: Template[] = [
 ];
 
 export default defineConfig({
-  projectId: "lke4t7vu",
-  dataset: "production",
+  projectId,
+  dataset,
   basePath: "/studio",
-  title: "小说管理后台",
+  title: "Novel Management CMS",
   plugins: [
     structureTool({ structure }),
     visionTool(),

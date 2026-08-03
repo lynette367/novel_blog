@@ -47,8 +47,8 @@ loadEnvFile();
 
 // Sanity 客户端
 const client = createClient({
-  projectId: 'lke4t7vu',
-  dataset: 'production',
+  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'lke4t7vu',
+  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'production',
   apiVersion: '2024-01-01',
   token: process.env.SANITY_API_TOKEN,
   useCdn: false,
@@ -69,7 +69,7 @@ function log(message, color = 'reset') {
 }
 
 // 默认摘要
-const DEFAULT_EXCERPT = "Discover this compelling Asian BL novel. A captivating danmei story exploring romance, drama, and character development. Read now in English translation.";
+const DEFAULT_EXCERPT = "Discover this compelling web novel. A captivating story exploring romance, drama, and character development. Read now in English translation.";
 
 /**
  * 读取文件内容，自动检测编码

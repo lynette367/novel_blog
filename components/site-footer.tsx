@@ -2,7 +2,7 @@ export function SiteFooter() {
   return (
     <footer>
       <div className="footer-content">
-        <p>&copy; 2025 Cross The Line. All translations published with respect for original authors.</p>
+        <p>&copy; 2026 Cross The Line. All translations published with respect for original authors.</p>
         <p style={{ fontSize: "0.85rem", opacity: 0.8, marginTop: "1rem" }}>
           Content Warning: Stories may contain mature themes. Reader discretion advised.
         </p>

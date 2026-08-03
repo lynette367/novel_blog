@@ -36,13 +36,13 @@ export async function generateMetadata({
   const metaTitle = novel.seo?.metaTitle || `${novel.title} | Asian BL Novel Translation - ${SITE_NAME}`;
   // Priority: seo.metaDescription > custom description > excerpt
   const metaDescription = novel.seo?.metaDescription || `Complete ${novel.title} translation. Read all chapters of this captivating Asian BL novel and danmei story. Updated regularly with quality English translations.`;
-  
+
   const canonicalUrl = `https://www.crosstheline.press/novels/${novel.slug}`;
   // Priority: seo.ogImage > coverImage > default
   const ogImageUrl = novel.seo?.ogImage || novel.coverImage || '/assets/images/0.jpg';
   // Priority: coverImageAlt > generated alt
   const ogImageAlt = novel.coverImageAlt || `${novel.title} - BL Danmei Novel Cover`;
-  
+
   const chapters = await getNovelChapters(novel.slug);
 
   // Generate Schema.org structured data
@@ -267,12 +267,19 @@ export default async function NovelDetailPage({
                   <Link
                     key={chapter.number}
                     href={`/novels/${slug}/chapters/${chapter.number}`}
-                    className="chapter-item"
+                    className={`chapter-item ${chapter.isPolished ? "is-polished" : ""}`}
                     data-chapter={chapter.number}
                   >
+                    {chapter.isPolished && (
+                      <div className="polished-corner-tag">
+                        Polished
+                      </div>
+                    )}
                     <div className="chapter-number">Ch. {chapter.number}</div>
                     <div className="chapter-details">
-                      <div className="chapter-title">{chapter.title}</div>
+                      <div className="chapter-title" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
+                        <span>{chapter.title}</span>
+                      </div>
                       {chapter.excerpt && (
                         <div style={{
                           fontSize: '0.88rem',

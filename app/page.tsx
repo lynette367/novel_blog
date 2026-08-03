@@ -8,6 +8,8 @@ import { ProofreadBanner } from "@/components/proofread-banner";
 import { getFeaturedNovels, getRecentlyProofreadChapter } from "@/lib/novels";
 import { absoluteUrl, SITE_NAME } from "@/lib/siteMetadata";
 
+import siteConfig from "@/site.config";
+
 // React cache() deduplicates calls with the same arguments within one render pass.
 // Both generateMetadata and the page component call this — only one network
 // request is made to Sanity.
@@ -21,6 +23,12 @@ export async function generateMetadata(): Promise<Metadata> {
   const heroImageAlt = firstNovel
     ? firstNovel.coverImageAlt || firstNovel.title
     : SITE_NAME;
+
+  const sameAs = [
+    siteConfig.supportLinks.buyMeACoffee,
+    siteConfig.supportLinks.kofi,
+    siteConfig.supportLinks.patreon,
+  ].filter(Boolean);
 
   const schemaData = [
     {
@@ -39,7 +47,7 @@ export async function generateMetadata(): Promise<Metadata> {
       "@context": "https://schema.org",
       "@type": "Organization",
       "@id": absoluteUrl("/#organization"),
-      name: "Cross The Line Translations",
+      name: `${SITE_NAME} Translations`,
       url: absoluteUrl("/"),
       logo: {
         "@type": "ImageObject",
@@ -47,13 +55,8 @@ export async function generateMetadata(): Promise<Metadata> {
         width: 600,
         height: 600,
       },
-      description:
-        "High-quality English translations of popular Chinese Danmei novels",
-      sameAs: [
-        "https://buymeacoffee.com/yqying95b",
-        "https://ko-fi.com/crosstheline46370",
-        "https://www.patreon.com/c/CrosstheLine911",
-      ],
+      description: siteConfig.description,
+      sameAs,
     },
   ];
 
@@ -103,26 +106,15 @@ export default async function HomePage() {
     <>
       <SiteHeader activePath="home" />
 
-      <section className="hero">
-        <div className="hero-content">
-          <h1
-            style={{
-              fontSize: "clamp(2rem, 4.5vw, 3.2rem)",
-              letterSpacing: "2px",
-              textAlign: "center",
-            }}
-          >
-            Where Snow Meets Shadows<br /> Tales of Eternal Danmei
-          </h1>
-          <p className="tagline">
-            Your premier destination for high-quality BL and danmei novels
-          </p>
-        </div>
-      </section>
-
+      {/* 首页 Hero 区域：展示最新精修章节 Last Polished Chapter */}
       <ProofreadBanner chapter={recentProofread} />
 
       <main className="main-content">
+        {/* 首页唯一 H1 标签：承载全站核心 SEO 关键词 */}
+        <h1 className="homepage-main-heading">
+          {SITE_NAME} — High-Quality Chinese Danmei & BL Novel Translations
+        </h1>
+
         <div className="content-header">
           <h2>Latest Updates</h2>
         </div>
@@ -161,47 +153,53 @@ export default async function HomePage() {
           </p>
 
           <div className="support-buttons">
-            <a
-              href="https://buymeacoffee.com/yqying95b"
-              target="_blank"
-              className="support-card"
-              rel="noopener noreferrer"
-            >
-              <div className="support-icon">☕</div>
-              <h3>Buy Me a Coffee</h3>
-              <p>
-                Support with a one-time coffee donation. Every cup fuels the
-                next chapter!
-              </p>
-            </a>
+            {siteConfig.supportLinks.buyMeACoffee && (
+              <a
+                href={siteConfig.supportLinks.buyMeACoffee}
+                target="_blank"
+                className="support-card"
+                rel="noopener noreferrer"
+              >
+                <div className="support-icon">☕</div>
+                <h3>Buy Me a Coffee</h3>
+                <p>
+                  Support with a one-time coffee donation. Every cup fuels the
+                  next chapter!
+                </p>
+              </a>
+            )}
 
-            <a
-              href="https://ko-fi.com/crosstheline46370"
-              target="_blank"
-              className="support-card"
-              rel="noopener noreferrer"
-            >
-              <div className="support-icon">💝</div>
-              <h3>Ko-fi</h3>
-              <p>
-                Show your appreciation with a tip. Your generosity keeps the
-                translations flowing.
-              </p>
-            </a>
+            {siteConfig.supportLinks.kofi && (
+              <a
+                href={siteConfig.supportLinks.kofi}
+                target="_blank"
+                className="support-card"
+                rel="noopener noreferrer"
+              >
+                <div className="support-icon">💝</div>
+                <h3>Ko-fi</h3>
+                <p>
+                  Show your appreciation with a tip. Your generosity keeps the
+                  translations flowing.
+                </p>
+              </a>
+            )}
 
-            <a
-              href="https://www.patreon.com/c/CrosstheLine911"
-              target="_blank"
-              className="support-card"
-              rel="noopener noreferrer"
-            >
-              <div className="support-icon">🎨</div>
-              <h3>Patreon</h3>
-              <p>
-                Become a patron for exclusive content, early access, and
-                behind-the-scenes insights.
-              </p>
-            </a>
+            {siteConfig.supportLinks.patreon && (
+              <a
+                href={siteConfig.supportLinks.patreon}
+                target="_blank"
+                className="support-card"
+                rel="noopener noreferrer"
+              >
+                <div className="support-icon">🎨</div>
+                <h3>Patreon</h3>
+                <p>
+                  Become a patron for exclusive content, early access, and
+                  behind-the-scenes insights.
+                </p>
+              </a>
+            )}
           </div>
         </div>
       </section>

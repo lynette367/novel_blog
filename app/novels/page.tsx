@@ -9,7 +9,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const novels = await getNovels();
   const totalNovels = novels.length;
   const totalChapters = novels.reduce((sum, n) => sum + (n.totalChapters || 0), 0);
-  
+
   // 使用第一个小说的封面图片作为 OG 图片
   const firstNovel = novels[0];
   const ogImage = firstNovel ? firstNovel.coverImage : "/assets/images/0.jpg";
@@ -73,7 +73,7 @@ export default async function NovelsPage() {
       <SiteHeader activePath="novels" />
       <main className="main-content">
         <div className="content-header">
-          <h2>All Novels</h2>
+          <h2>Explore Chinese Danmei & BL Library</h2>
         </div>
 
         <FilterableNovelGrid novels={novels} />

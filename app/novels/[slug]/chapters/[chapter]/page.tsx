@@ -14,20 +14,23 @@ type ChapterPageParams = {
 };
 
 export async function generateStaticParams() {
-  const { getNovels } = await import("@/lib/novels");
+  const { getNovels, getNovelChapterNumbers } = await import("@/lib/novels");
   const novels = await getNovels();
-  const params: Array<{ slug: string; chapter: string }> = [];
 
-  for (const novel of novels) {
-    const chapters = await getNovelChapters(novel.slug);
-    for (const chapter of chapters) {
+  const chaptersByNovel = await Promise.all(
+    novels.map((novel) => getNovelChapterNumbers(novel.slug))
+  );
+
+  const params: Array<{ slug: string; chapter: string }> = [];
+  novels.forEach((novel, i) => {
+    for (const chapter of chaptersByNovel[i]) {
       if (chapter.locked) continue;
       params.push({
         slug: novel.slug,
         chapter: chapter.number.toString(),
       });
     }
-  }
+  });
 
   return params;
 }
