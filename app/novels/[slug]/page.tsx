@@ -33,9 +33,9 @@ export async function generateMetadata({
   }
 
   // Priority: seo.metaTitle > title
-  const metaTitle = novel.seo?.metaTitle || `${novel.title} | Asian BL Novel Translation - ${SITE_NAME}`;
+  const metaTitle = novel.seo?.metaTitle || `${novel.title} | Asian BL Novel in English - ${SITE_NAME}`;
   // Priority: seo.metaDescription > custom description > excerpt
-  const metaDescription = novel.seo?.metaDescription || `Complete ${novel.title} translation. Read all chapters of this captivating Asian BL novel and danmei story. Updated regularly with quality English translations.`;
+  const metaDescription = novel.seo?.metaDescription || `Complete ${novel.title} in Englis. Read all chapters of this captivating Asian BL novel and danmei story. Updated regularly with quality English version.`;
 
   const canonicalUrl = `https://www.crosstheline.press/novels/${novel.slug}`;
   // Priority: seo.ogImage > coverImage > default

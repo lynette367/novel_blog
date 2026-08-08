@@ -2,7 +2,15 @@ import type { MetadataRoute } from "next";
 import { getNovels, getNovelChapters } from "@/lib/novels";
 import { SITE_URL } from "@/lib/siteMetadata";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? SITE_URL;
+// 无论来源是环境变量还是 SITE_URL 兜底值，统一去掉末尾斜杠，
+// 避免和下面 withOrigin 里补的前导斜杠拼接成双斜杠（//）。
+// 这就是线上 sitemap.xml 出现 https://xxx.press//novels 的原因：
+// NEXT_PUBLIC_SITE_URL 这个环境变量本身末尾带了 "/"，且从未被清洗过。
+function cleanTrailingSlash(url: string): string {
+  return url.endsWith("/") ? url.slice(0, -1) : url;
+}
+
+const siteUrl = cleanTrailingSlash(process.env.NEXT_PUBLIC_SITE_URL ?? SITE_URL);
 
 const withOrigin = (path: string) => {
   const normalized = path.startsWith("/") ? path : `/${path}`;

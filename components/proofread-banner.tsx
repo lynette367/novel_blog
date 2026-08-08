@@ -14,16 +14,20 @@ export function ProofreadBanner({ chapter }: Props) {
   const chapterUrl = `/novels/${chapter.novelSlug}/chapters/${chapter.chapterNumber}` as any;
 
   return (
-    <section className="hero-polished-section">
-      <div className="hero-polished-container">
-        <Link href={chapterUrl} className="hero-polished-card" aria-label={`Read Chapter ${chapter.chapterNumber}: ${chapter.chapterTitle}`}>
+    <div className="w-full">
+      <div className="hero-polished-container w-full">
+        <Link
+          href={chapterUrl}
+          className="hero-polished-card min-h-0 md:aspect-[2/1]"
+          aria-label={`Read Chapter ${chapter.chapterNumber}: ${chapter.chapterTitle}`}
+        >
           {/* 整体 Hero 板块右上角角标 */}
           <div className="hero-polished-badge">
             <span>✨ Human Proofread</span>
           </div>
 
           {/* 左侧：章节图片 / 小说封面 */}
-          <div className="hero-polished-image-wrapper">
+          <div className="hero-polished-image-wrapper aspect-[16/9] md:aspect-auto md:self-stretch">
             <Image
               src={chapter.coverImage || "/assets/images/0.jpg"}
               alt={`${chapter.novelTitle} - Chapter ${chapter.chapterNumber} Cover`}
@@ -68,6 +72,6 @@ export function ProofreadBanner({ chapter }: Props) {
           </div>
         </Link>
       </div>
-    </section>
+    </div>
   );
 }

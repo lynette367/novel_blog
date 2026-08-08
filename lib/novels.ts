@@ -67,6 +67,34 @@ export type ChapterInfo = {
   isPolished: boolean; // ✨ 新增：人工精修状态
 };
 
+// 首页 第一屏 "正在校对中的小说" Hero 数据结构
+export type CurrentlyReviewingNovel = {
+  _id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  description: string;
+  coverImage: string;
+  tags: string[];
+  reviewedUpToChapter: number;
+  totalChapters: number;
+  latestPolishedChapterNumber?: number;
+};
+
+// 首页 第二屏 "最近精修章节" 数据结构
+export type LatestPolishedChapter = {
+  _id: string;
+  chapterNumber: number;
+  chapterTitle: string;
+  excerpt?: string;
+  updatedAt?: string;
+  novelTitle: string;
+  novelSlug: string;
+  novelCoverImage?: string;
+  wordCount: number;
+  readingMinutes: number;
+};
+
 // 首页"最近精修章节"Hero使用的章节数据结构
 export type RecentProofread = {
   novelTitle: string;
@@ -206,7 +234,7 @@ export const getNovels = cache(async (): Promise<Novel[]> => {
 });
 
 // 获取特色小说（首页展示）
-export const getFeaturedNovels = cache(async (limit = 3): Promise<Novel[]> => {
+export const getFeaturedNovels = cache(async (limit = 6): Promise<Novel[]> => {
   const query = `*[_type == "novel"] | order(publishedAt desc)[0...${limit}] {
     _id,
     title,
@@ -228,6 +256,188 @@ export const getFeaturedNovels = cache(async (limit = 3): Promise<Novel[]> => {
     return [];
   }
 });
+
+// 获取当前正在人工校对审核的小说（优先 fetch currentlyReviewing == true 的小说，若没有则回退到 big_brother 或最新更新的小说）
+export const getCurrentlyReviewingNovel = cache(
+  async (): Promise<CurrentlyReviewingNovel | null> => {
+    const mainQuery = `*[_type == "novel" && currentlyReviewing == true][0] {
+      _id,
+      title,
+      "slug": slug.current,
+      excerpt,
+      description,
+      coverImage,
+      tags,
+      reviewedUpToChapter,
+      totalChapters,
+      "latestPolishedChapterNumber": *[_type == "chapter" && references(^._id) && isPolished == true] | order(number desc)[0].number,
+      "maxChapterNumber": *[_type == "chapter" && references(^._id)] | order(number desc)[0].number,
+      "totalChapterCount": count(*[_type == "chapter" && references(^._id)])
+    }`;
+
+    const fallbackQuery = `*[_type == "novel" && (slug.current match "*big_brother*" || slug.current match "*big-brother*")][0] {
+      _id,
+      title,
+      "slug": slug.current,
+      excerpt,
+      description,
+      coverImage,
+      tags,
+      reviewedUpToChapter,
+      totalChapters,
+      "latestPolishedChapterNumber": *[_type == "chapter" && references(^._id) && isPolished == true] | order(number desc)[0].number,
+      "maxChapterNumber": *[_type == "chapter" && references(^._id)] | order(number desc)[0].number,
+      "totalChapterCount": count(*[_type == "chapter" && references(^._id)])
+    }`;
+
+    const defaultQuery = `*[_type == "novel"] | order(publishedAt desc)[0] {
+      _id,
+      title,
+      "slug": slug.current,
+      excerpt,
+      description,
+      coverImage,
+      tags,
+      reviewedUpToChapter,
+      totalChapters,
+      "latestPolishedChapterNumber": *[_type == "chapter" && references(^._id) && isPolished == true] | order(number desc)[0].number,
+      "maxChapterNumber": *[_type == "chapter" && references(^._id)] | order(number desc)[0].number,
+      "totalChapterCount": count(*[_type == "chapter" && references(^._id)])
+    }`;
+
+    try {
+      type RawNovelResult = {
+        _id: string;
+        title: string;
+        slug: string;
+        excerpt?: string;
+        description?: string;
+        coverImage?: SanityImageSource;
+        tags?: string[];
+        reviewedUpToChapter?: number;
+        totalChapters?: number;
+        latestPolishedChapterNumber?: number;
+        maxChapterNumber?: number;
+        totalChapterCount?: number;
+      };
+
+      let result = await client.fetch<RawNovelResult | null>(mainQuery);
+      if (!result) {
+        result = await client.fetch<RawNovelResult | null>(fallbackQuery);
+      }
+      if (!result) {
+        result = await client.fetch<RawNovelResult | null>(defaultQuery);
+      }
+
+      if (!result) {
+        return null;
+      }
+
+      const slug = result.slug || "";
+      let tags = result.tags || [];
+      if (slug.includes("big_brother") && !tags.includes("Pseudo-Brothers")) {
+        tags = ["Pseudo-Brothers", ...tags];
+      }
+
+      const totalChapters = result.totalChapters || result.totalChapterCount || result.maxChapterNumber || 0;
+      const reviewedUpTo = result.reviewedUpToChapter ?? result.latestPolishedChapterNumber ?? 1;
+
+      return {
+        _id: result._id,
+        title: result.title,
+        slug,
+        excerpt: result.excerpt || "",
+        description: result.description || result.excerpt || "",
+        coverImage: result.coverImage ? coverThumbUrl(result.coverImage) : "/assets/images/0.jpg",
+        tags,
+        reviewedUpToChapter: reviewedUpTo,
+        totalChapters: Math.max(totalChapters, reviewedUpTo),
+        latestPolishedChapterNumber: result.latestPolishedChapterNumber || reviewedUpTo,
+      };
+    } catch (error) {
+      console.error("Failed to fetch currently reviewing novel from Sanity:", error);
+      return {
+        _id: "big_brother_default",
+        title: "Big Brother",
+        slug: "big_brother",
+        excerpt: "An intriguing story of pseudo-brothers navigating secrets, growth, and emotions.",
+        description: "An intriguing story of pseudo-brothers navigating secrets, growth, and emotions.",
+        coverImage: "/assets/images/Wife_are_paramount.png",
+        tags: ["Pseudo-Brothers", "Modern", "BL"],
+        reviewedUpToChapter: 5,
+        totalChapters: 50,
+        latestPolishedChapterNumber: 5,
+      };
+    }
+  }
+);
+
+// 获取最新完成人工精修的章节列表（倒序排列，取 3~6 条）
+export const getLatestPolishedChapters = cache(
+  async (limit = 6): Promise<LatestPolishedChapter[]> => {
+    const query = `*[_type == "chapter" && defined(novel) && isPolished == true] | order(_updatedAt desc)[0...${limit}] {
+      _id,
+      "chapterNumber": number,
+      "chapterTitle": title,
+      excerpt,
+      "_updatedAt": _updatedAt,
+      "novelTitle": novel->title,
+      "novelSlug": novel->slug.current,
+      "coverImage": coalesce(seo.ogImage, novel->coverImage),
+      "wordCount": count(string::split(content, " "))
+    }`;
+
+    const fallbackQuery = `*[_type == "chapter" && defined(novel)] | order(_updatedAt desc)[0...${limit}] {
+      _id,
+      "chapterNumber": number,
+      "chapterTitle": title,
+      excerpt,
+      "_updatedAt": _updatedAt,
+      "novelTitle": novel->title,
+      "novelSlug": novel->slug.current,
+      "coverImage": coalesce(seo.ogImage, novel->coverImage),
+      "wordCount": count(string::split(content, " "))
+    }`;
+
+    try {
+      type RawChapter = {
+        _id: string;
+        chapterNumber: number;
+        chapterTitle: string;
+        excerpt?: string;
+        _updatedAt?: string;
+        novelTitle: string;
+        novelSlug: string;
+        coverImage?: SanityImageSource;
+        wordCount?: number;
+      };
+
+      let chapters = await client.fetch<RawChapter[]>(query);
+      if (!chapters || chapters.length === 0) {
+        chapters = await client.fetch<RawChapter[]>(fallbackQuery);
+      }
+
+      return (chapters || []).map((ch) => {
+        const wc = ch.wordCount || 0;
+        return {
+          _id: ch._id,
+          chapterNumber: ch.chapterNumber,
+          chapterTitle: ch.chapterTitle,
+          excerpt: ch.excerpt || undefined,
+          updatedAt: ch._updatedAt || undefined,
+          novelTitle: ch.novelTitle,
+          novelSlug: ch.novelSlug,
+          novelCoverImage: ch.coverImage ? coverThumbUrl(ch.coverImage) : "/assets/images/0.jpg",
+          wordCount: wc,
+          readingMinutes: minutesFromWordCount(wc),
+        };
+      });
+    } catch (error) {
+      console.error("Failed to fetch latest polished chapters from Sanity:", error);
+      return [];
+    }
+  }
+);
 
 // 获取最近精修的章节（优先获取 isPolished == true 的章节，若没有则回退到最新更新章节）
 export const getRecentlyProofreadChapter = cache(
