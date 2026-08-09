@@ -285,8 +285,8 @@ body {
     margin-bottom: 1.5rem;
     font-style: italic;
     display: -webkit-box;
-    -webkit-line-clamp: 3;
-    line-clamp: 3;
+    -webkit-line-clamp: 4;
+    line-clamp: 4;
     -webkit-box-orient: vertical;
     overflow: hidden;
     border-left: 3px solid #c9a96e;
@@ -643,7 +643,6 @@ body {
     color: inherit;
     opacity: 1;
     transform: scale(1);
-    aspect-ratio: 1 / 1;
     width: 100%;
 }
 
@@ -680,7 +679,7 @@ body {
 
 .novel-cover {
     width: 100%;
-    height: 50%;
+    aspect-ratio: 16 / 9;
     flex-shrink: 0;
     background-size: cover;
     background-position: center;
@@ -728,8 +727,8 @@ body {
 }
 
 .novel-info {
-    padding: 1rem 1.25rem;
-    height: 50%;
+    padding: 1.25rem 1.5rem;
+    flex: 1;
     display: flex;
     flex-direction: column;
     justify-content: space-between;

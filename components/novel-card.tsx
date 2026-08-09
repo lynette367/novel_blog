@@ -15,7 +15,7 @@ export function NovelCard({ novel, priority = false }: NovelCardProps) {
       data-category={novel.category}
       prefetch={false}
     >
-      <div className="novel-cover">
+      <div className="relative w-full aspect-[16/9] overflow-hidden rounded-t-[16px] flex-shrink-0">
         <Image
           src={novel.coverImage}
           alt={novel.coverImageAlt || `Cover image for ${novel.title} - English Translation`}

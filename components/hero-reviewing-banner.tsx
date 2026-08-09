@@ -65,7 +65,7 @@ export function HeroReviewingBanner({ novel }: Props) {
             </h2>
 
             <p className="hero-polished-excerpt">
-              &ldquo;{novel.excerpt || novel.description}&rdquo;
+              {novel.description || novel.excerpt}
             </p>
 
             {/* 校对进度条 */}

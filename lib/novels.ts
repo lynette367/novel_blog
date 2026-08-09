@@ -375,7 +375,7 @@ export const getCurrentlyReviewingNovel = cache(
 // 获取最新完成人工精修的章节列表（倒序排列，取 3~6 条）
 export const getLatestPolishedChapters = cache(
   async (limit = 6): Promise<LatestPolishedChapter[]> => {
-    const query = `*[_type == "chapter" && defined(novel) && isPolished == true] | order(_updatedAt desc)[0...${limit}] {
+    const query = `*[_type == "chapter" && defined(novel) && isPolished == true] | order(number desc)[0...${limit}] {
       _id,
       "chapterNumber": number,
       "chapterTitle": title,
@@ -387,7 +387,7 @@ export const getLatestPolishedChapters = cache(
       "wordCount": count(string::split(content, " "))
     }`;
 
-    const fallbackQuery = `*[_type == "chapter" && defined(novel)] | order(_updatedAt desc)[0...${limit}] {
+    const fallbackQuery = `*[_type == "chapter" && defined(novel)] | order(number desc)[0...${limit}] {
       _id,
       "chapterNumber": number,
       "chapterTitle": title,
