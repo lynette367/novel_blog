@@ -120,6 +120,7 @@ export type ChapterContent = {
   chapterNumber: number;
   wordCount: number;
   readingMinutes: number;
+  ogImageUrl?: string;
   seo?: ChapterSeo;
 };
 
@@ -159,6 +160,7 @@ type SanityChapter = {
 
 // Sanity 返回的原始章节类型（完整，包含 SEO）
 type SanityChapterFull = SanityChapter & {
+  ogImageUrl?: string;
   seo?: {
     metaTitle?: string;
     metaDescription?: string;
@@ -595,6 +597,7 @@ export const getChapterContent = cache(async (
     content,
     number,
     "wordCount": count(string::split(content, " ")),
+    "ogImageUrl": seo.ogImage.asset->url,
     seo {
       metaTitle,
       metaDescription,
@@ -626,6 +629,7 @@ export const getChapterContent = cache(async (
       chapterNumber: chapter.number,
       wordCount: chapter.wordCount,
       readingMinutes: minutesFromWordCount(chapter.wordCount),
+      ogImageUrl: chapter.ogImageUrl || undefined,
       seo: chapter.seo
         ? {
             metaTitle: chapter.seo.metaTitle,

@@ -179,6 +179,35 @@ export default async function ChapterPage({
   const nextChapter =
     currentIndex < readableChapters.length - 1 ? readableChapters[currentIndex + 1] : null;
 
+  // Split chapter content into paragraph strings to insert illustration at midpoint
+  const paragraphs = chapterData.content
+    .split("\n")
+    .map((p) => p.trim())
+    .filter(Boolean);
+
+  let fullContentHtml = chapterData.content;
+
+  if (chapterData.ogImageUrl && paragraphs.length > 0) {
+    const midIndex = Math.floor(paragraphs.length / 2);
+
+    const optimizedImageUrl = chapterData.ogImageUrl.includes("?")
+      ? `${chapterData.ogImageUrl}&w=600&auto=format&q=80`
+      : `${chapterData.ogImageUrl}?w=600&auto=format&q=80`;
+
+    const chapterNumberAndTitle = chapterData.title.toLowerCase().startsWith("chapter")
+      ? chapterData.title
+      : `Chapter ${chapterData.chapterNumber} - ${chapterData.title}`;
+
+    const altText = `Illustration for ${novel.title} - ${chapterNumberAndTitle}`;
+
+    const imageHtml = `<div class="chapter-illustration-container" style="text-align: center; margin-top: 2.5rem; margin-bottom: 2.5rem;"><img src="${optimizedImageUrl}" alt="${altText}" loading="lazy" decoding="async" style="max-width: 50%; min-width: 280px; width: 100%; height: auto; border-radius: 8px; margin: 0 auto; display: block; box-shadow: 0 4px 16px rgba(0,0,0,0.08);" /></div>`;
+
+    const firstHalf = paragraphs.slice(0, midIndex);
+    const secondHalf = paragraphs.slice(midIndex);
+
+    fullContentHtml = [...firstHalf, imageHtml, ...secondHalf].join("\n");
+  }
+
   return (
     <>
       <ReadingProgress />
@@ -217,7 +246,7 @@ export default async function ChapterPage({
       <article className="chapter-content prose max-w-none">
         <div
           className="chapter-text"
-          dangerouslySetInnerHTML={{ __html: chapterData.content }}
+          dangerouslySetInnerHTML={{ __html: fullContentHtml }}
         />
       </article>
 
