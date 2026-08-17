@@ -19,11 +19,8 @@ export const metadata: Metadata = {
     "asian BL novel",
     "danmei translation",
     "BL fiction",
-    "yaoi novel",
-    "LGBT+ romance",
     "Chinese BL",
-    "Korean BL",
-    "BL novel translation",
+    "Xianxia BL",
   ],
   alternates: {
     canonical: SITE_URL,

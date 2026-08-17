@@ -66,9 +66,9 @@ export async function generateMetadata(): Promise<Metadata> {
 
   return {
     title:
-      "CrossTheLine - Read Chinese Danmei & BL Novels English Translation",
+      "Read Chinese Danmei & BL Novels",
     description:
-      "High-quality English translations of popular Chinese Danmei novels. Explore Xianxia, Wuxia, and Modern BL stories. Join our community for daily updates and exclusive chapters.",
+      "High-quality English version of popular Chinese Danmei & BL novels. Explore Xianxia, Wuxia, and modern BL stories. Read exclusive daily updates!",
     alternates: {
       canonical: absoluteUrl("/"),
     },
