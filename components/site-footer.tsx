@@ -1,4 +1,5 @@
 import siteConfig from "@/site.config";
+import Link from "next/link";
 
 export function SiteFooter() {
   const { buyMeACoffee, kofi, patreon } = siteConfig.supportLinks;
@@ -33,7 +34,7 @@ export function SiteFooter() {
         <div className="footer-links">
           <a href="#">About</a>
           <a href="#">Translation Policy</a>
-          <a href="#">Contact</a>
+          <Link href="/join">Contact</Link>
           <a href="#">Privacy</a>
         </div>
       </div>
