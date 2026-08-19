@@ -34,7 +34,7 @@ export function SiteFooter() {
         <div className="footer-links">
           <a href="#">About</a>
           <a href="#">Translation Policy</a>
-          <Link href="/join">Contact</Link>
+          <Link href="/contact">Contact</Link>
           <a href="#">Privacy</a>
         </div>
       </div>

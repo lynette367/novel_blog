@@ -33,13 +33,6 @@ export const chapter = defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: "excerpt",
-      title: "章节摘要",
-      type: "text",
-      rows: 3,
-      description: "显示在章节列表和首页 Hero 中的精简摘录",
-    }),
-    defineField({
       name: "locked",
       title: "🔒 锁定章节 (校对中)",
       type: "boolean",

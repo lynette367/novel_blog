@@ -145,7 +145,9 @@ async function main() {
             _type: 'novel',
             title: title,
             author: author,
-            excerpt: synopsis.slice(0, 300) + '...', // Just a snippet for excerpt
+            seo: {
+                metaDescription: synopsis.slice(0, 300) + '...',
+            },
             description: synopsis,
             totalChapters: chapters.length,
             slug: { _type: 'slug', current: 'building-a-kingdom-in-the-middle-ages' },

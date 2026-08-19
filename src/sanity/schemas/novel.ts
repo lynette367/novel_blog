@@ -37,17 +37,15 @@ export const novel = defineType({
       initialValue: "Anonymous",
     }),
     defineField({
-      name: "excerpt",
-      title: "简介摘要",
-      type: "text",
-      rows: 3,
-      validation: (Rule) => Rule.required(),
-    }),
-    defineField({
       name: "description",
       title: "详细描述",
       type: "text",
       rows: 5,
+    }),
+    defineField({
+      name: "seo",
+      title: "SEO 设置",
+      type: "seo",
     }),
     defineField({
       name: "coverImage",

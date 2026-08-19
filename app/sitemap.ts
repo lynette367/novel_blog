@@ -23,6 +23,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseRoutes: MetadataRoute.Sitemap = [
     { url: withOrigin("/") },
     { url: withOrigin("/novels") },
+    { url: withOrigin("/contact") },
   ];
 
   const novelRoutes: MetadataRoute.Sitemap = [];

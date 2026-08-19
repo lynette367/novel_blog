@@ -186,7 +186,7 @@ function transformNovel(sanityNovel: SanityNovel): Novel {
     title: sanityNovel.title,
     slug,
     category: sanityNovel.category || "OTHER",
-    excerpt: sanityNovel.excerpt || "",
+    excerpt: sanityNovel.seo?.metaDescription || sanityNovel.excerpt || "",
     coverImage: sanityNovel.coverImage
       ? coverThumbUrl(sanityNovel.coverImage)
       : "/assets/images/0.jpg",
@@ -194,7 +194,7 @@ function transformNovel(sanityNovel: SanityNovel): Novel {
     path: `/novels/${slug}`,
     totalChapters: sanityNovel.totalChapters || 0,
     totalWordCount: sanityNovel.totalWordCount || 0,
-    description: sanityNovel.description || sanityNovel.excerpt || "",
+    description: sanityNovel.description || sanityNovel.seo?.metaDescription || sanityNovel.excerpt || "",
     author: sanityNovel.author || "Anonymous",
     tags,
     seo: sanityNovel.seo
@@ -218,12 +218,19 @@ export const getNovels = cache(async (): Promise<Novel[]> => {
     title,
     slug,
     category,
-    excerpt,
+    "excerpt": coalesce(seo.metaDescription, excerpt),
     description,
     coverImage,
     totalChapters,
     author,
-    tags
+    tags,
+    seo {
+      metaTitle,
+      metaDescription,
+      ogTitle,
+      ogDescription,
+      ogImage
+    }
   }`;
 
   try {
@@ -242,12 +249,19 @@ export const getFeaturedNovels = cache(async (limit = 6): Promise<Novel[]> => {
     title,
     slug,
     category,
-    excerpt,
+    "excerpt": coalesce(seo.metaDescription, excerpt),
     description,
     coverImage,
     totalChapters,
     author,
-    tags
+    tags,
+    seo {
+      metaTitle,
+      metaDescription,
+      ogTitle,
+      ogDescription,
+      ogImage
+    }
   }`;
 
   try {
@@ -266,7 +280,7 @@ export const getCurrentlyReviewingNovel = cache(
       _id,
       title,
       "slug": slug.current,
-      excerpt,
+      "excerpt": coalesce(seo.metaDescription, excerpt),
       description,
       coverImage,
       tags,
@@ -281,7 +295,7 @@ export const getCurrentlyReviewingNovel = cache(
       _id,
       title,
       "slug": slug.current,
-      excerpt,
+      "excerpt": coalesce(seo.metaDescription, excerpt),
       description,
       coverImage,
       tags,
@@ -296,7 +310,7 @@ export const getCurrentlyReviewingNovel = cache(
       _id,
       title,
       "slug": slug.current,
-      excerpt,
+      "excerpt": coalesce(seo.metaDescription, excerpt),
       description,
       coverImage,
       tags,
@@ -381,7 +395,7 @@ export const getLatestPolishedChapters = cache(
       _id,
       "chapterNumber": number,
       "chapterTitle": title,
-      excerpt,
+      "excerpt": coalesce(seo.metaDescription, excerpt),
       "_updatedAt": _updatedAt,
       "novelTitle": novel->title,
       "novelSlug": novel->slug.current,
@@ -393,7 +407,7 @@ export const getLatestPolishedChapters = cache(
       _id,
       "chapterNumber": number,
       "chapterTitle": title,
-      excerpt,
+      "excerpt": coalesce(seo.metaDescription, excerpt),
       "_updatedAt": _updatedAt,
       "novelTitle": novel->title,
       "novelSlug": novel->slug.current,
@@ -447,7 +461,7 @@ export const getRecentlyProofreadChapter = cache(
     const polishedQuery = `*[_type == "chapter" && defined(novel) && isPolished == true] | order(_updatedAt desc)[0] {
       number,
       title,
-      excerpt,
+      "excerpt": coalesce(seo.metaDescription, excerpt),
       "novelTitle": novel->title,
       "novelSlug": novel->slug.current,
       "coverImage": coalesce(seo.ogImage, novel->coverImage),
@@ -457,7 +471,7 @@ export const getRecentlyProofreadChapter = cache(
     const fallbackQuery = `*[_type == "chapter" && defined(novel)] | order(_updatedAt desc)[0] {
       number,
       title,
-      excerpt,
+      "excerpt": coalesce(seo.metaDescription, excerpt),
       "novelTitle": novel->title,
       "novelSlug": novel->slug.current,
       "coverImage": coalesce(seo.ogImage, novel->coverImage),
@@ -511,7 +525,7 @@ export const getNovelBySlug = cache(async (slug: string): Promise<Novel | undefi
     title,
     slug,
     category,
-    excerpt,
+    "excerpt": coalesce(seo.metaDescription, excerpt),
     description,
     coverImage,
     totalChapters,
@@ -562,7 +576,7 @@ export const getNovelChapters = cache(async (slug: string): Promise<ChapterInfo[
     _id,
     number,
     title,
-    excerpt,
+    "excerpt": coalesce(seo.metaDescription, excerpt),
     locked,
     isPolished,
     "wordCount": count(string::split(content, " "))

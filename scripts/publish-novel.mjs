@@ -497,7 +497,9 @@ async function createOrUpdateNovel(novelData, coverImageAsset, existingId = null
       current: slug,
     },
     category: novelData.category || 'BL',
-    excerpt: excerpt,
+    seo: {
+      metaDescription: excerpt,
+    },
     description: novelData.description || excerpt,
     totalChapters: novelData.totalChapters || 0,
     publishedAt: new Date().toISOString(),

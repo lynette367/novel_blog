@@ -14,10 +14,10 @@ export const seo = defineType({
     }),
     defineField({
       name: "metaDescription",
-      title: "Meta Description",
+      title: "Meta Description(Excerpt)",
       type: "text",
       rows: 3,
-      description: "Search result snippet (120-160 chars recommended).",
+      description: "Search result snippet (120-160 chars recommended). Also used as the excerpt.",
       validation: (rule) => rule.max(160),
     }),
     defineField({
