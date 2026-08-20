@@ -49,7 +49,7 @@ export const novel = defineType({
     }),
     defineField({
       name: "coverImage",
-      title: "封面图片",
+      title: "NovelCover (OG Image)",
       type: "image",
       options: {
         hotspot: true,
@@ -64,17 +64,12 @@ export const novel = defineType({
     }),
     defineField({
       name: "currentlyReviewing",
-      title: "🔥 正在精修校对中 (Currently Under Review)",
+      title: "🔥 正在精修校对中 (Human TL)",
       type: "boolean",
       description: "勾选代表此小说为当前主打精修校对的小说，将展示在首页 Hero 区块",
       initialValue: false,
     }),
-    defineField({
-      name: "reviewedUpToChapter",
-      title: "已精修章节数 / 序号 (Reviewed Up To Chapter)",
-      type: "number",
-      description: "已人工精修润色至第几章 (可选，未填写时自动计算已有精修章节最大序号)",
-    }),
+
     defineField({
       name: "totalChapters",
       title: "总章节数",
@@ -92,14 +87,13 @@ export const novel = defineType({
     select: {
       title: "title",
       author: "author",
-      category: "category",
       media: "coverImage",
     },
     prepare(selection) {
-      const { title, author, category } = selection;
+      const { title, author } = selection;
       return {
         title,
-        subtitle: author ? `${author} · ${category}` : category,
+        subtitle: author || "Anonymous",
         media: selection.media,
       };
     },

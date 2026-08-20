@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { absoluteUrl, SITE_NAME } from "@/lib/siteMetadata";
-import { ContactForm } from "./contact-form";
 
 export const metadata: Metadata = {
   title: `Contact Us & Recruitment | ${SITE_NAME}`,
@@ -57,58 +56,35 @@ export default function ContactPage() {
           <div className="section-header">
             <h2 className="section-title">General Inquiries & Feedback</h2>
             <p className="section-desc">
-              Reach out to us directly via email, join our Discord community, or submit a message using the form below.
+              Reach out to us directly via email for any inquiries or typo reports.
             </p>
           </div>
 
-          <div className="contact-grid">
-            {/* Quick Contact Cards */}
-            <div className="contact-cards">
-              <div className="contact-card">
-                <div className="card-icon">✉️</div>
-                <div className="card-info">
-                  <h3>Official Email</h3>
-                  <p>For general questions, feedback, and collaboration</p>
-                  <a
-                    href="mailto:contact@crosstheline.press"
-                    className="contact-link"
-                  >
-                    contact@crosstheline.press
-                  </a>
-                </div>
-              </div>
-
-              <div className="contact-card">
-                <div className="card-icon">💬</div>
-                <div className="card-info">
-                  <h3>Discord Community</h3>
-                  <p>Join our reader community for instant updates and chat</p>
-                  <a
-                    href="https://discord.gg/crosstheline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="contact-link discord-link"
-                  >
-                    Join Discord Server →
-                  </a>
-                </div>
-              </div>
-
-              <div className="contact-card">
-                <div className="card-icon">🐛</div>
-                <div className="card-info">
-                  <h3>Report an Issue / Typo</h3>
-                  <p>Found a broken link or typo? Let us know so we can fix it quickly.</p>
-                  <a href="mailto:contact@crosstheline.press?subject=[Report]%20Typo%20or%20Issue" className="contact-link">
-                    Report via Email →
-                  </a>
-                </div>
+          {/* Quick Contact Cards (Two cards side by side) */}
+          <div className="contact-cards">
+            <div className="contact-card">
+              <div className="card-icon">✉️</div>
+              <div className="card-info">
+                <h3>Official Email</h3>
+                <p>For general questions, feedback, and collaboration</p>
+                <a
+                  href="mailto:contact@crosstheline.press"
+                  className="contact-link"
+                >
+                  contact@crosstheline.press
+                </a>
               </div>
             </div>
 
-            {/* Interactive Contact Form Component */}
-            <div className="form-wrapper">
-              <ContactForm />
+            <div className="contact-card">
+              <div className="card-icon">🐛</div>
+              <div className="card-info">
+                <h3>Report an Issue / Typo</h3>
+                <p>Found a broken link or typo? Let us know so we can fix it quickly.</p>
+                <span className="contact-text">
+                  contact@crosstheline.press
+                </span>
+              </div>
             </div>
           </div>
         </section>
@@ -119,8 +95,7 @@ export default function ContactPage() {
         {/* ── BOTTOM SECTION: Join Us / Recruitment (加入我们/招募) ── */}
         <section className="contact-section join-section" id="join-us">
           <div className="section-header text-center">
-            <span className="join-badge">Recruitment</span>
-            <h2 className="section-title">Join Our Team</h2>
+            <h2 className="section-title">Join US</h2>
             <p className="section-desc">
               We are actively looking for passionate individuals to help bring Chinese Danmei novels to English readers worldwide!
             </p>
@@ -174,12 +149,6 @@ export default function ContactPage() {
                     Send an email to <strong>contact@crosstheline.press</strong> with the subject line <code>[Proofreader Application] Your Name</code>. Tell us a bit about yourself, why you love Danmei, and any relevant experience!
                   </p>
                 </div>
-                <a
-                  href="mailto:contact@crosstheline.press?subject=[Proofreader%20Application]%20My%20Application"
-                  className="apply-now-btn"
-                >
-                  Apply Now via Email ✉️
-                </a>
               </div>
             </div>
           </div>
@@ -279,9 +248,15 @@ export default function ContactPage() {
         }
 
         .contact-cards {
-          display: flex;
-          flex-direction: column;
-          gap: 1.2rem;
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 1.5rem;
+          margin-bottom: 2rem;
+        }
+        @media (max-width: 680px) {
+          .contact-cards {
+            grid-template-columns: 1fr;
+          }
         }
         .contact-card {
           display: flex;
@@ -325,6 +300,12 @@ export default function ContactPage() {
         .contact-link:hover {
           color: #5c3511;
           text-decoration: underline;
+        }
+        .contact-text {
+          display: inline-block;
+          font-size: 0.9rem;
+          font-weight: 600;
+          color: #4a3728;
         }
 
         /* ── Form Wrapper ── */
@@ -467,7 +448,7 @@ export default function ContactPage() {
           font-size: 0.92rem;
           line-height: 1.6;
           margin: 0;
-          max-width: 580px;
+          max-width: 100%;
         }
         .apply-callout-content code {
           background: rgba(201,169,110,0.2);

@@ -496,7 +496,6 @@ async function createOrUpdateNovel(novelData, coverImageAsset, existingId = null
       _type: 'slug',
       current: slug,
     },
-    category: novelData.category || 'BL',
     seo: {
       metaDescription: excerpt,
     },
@@ -556,7 +555,7 @@ async function createChapters(novelId, slug, chapters) {
 /**
  * 处理单个小说文件
  */
-async function processNovel(txtFile, coverImage = null, category = 'BL', authorOverride = null) {
+async function processNovel(txtFile, coverImage = null, authorOverride = null) {
   const txtPath = path.resolve(txtFile);
   
   if (!existsSync(txtPath)) {
@@ -618,7 +617,7 @@ async function processNovel(txtFile, coverImage = null, category = 'BL', authorO
   // 创建或更新小说
   try {
     const { id: novelId } = await createOrUpdateNovel(
-      { title, description, category, totalChapters: chapters.length, author },
+      { title, description, totalChapters: chapters.length, author },
       coverImageAsset,
       existingId
     );
@@ -661,9 +660,8 @@ async function main() {
     // 处理指定文件
     const txtFile = args[0];
     const coverImage = args[1] || null;
-    const category = args[2] || 'BL';
-    const author = args[3] || null;
-    await processNovel(txtFile, coverImage, category, author);
+    const author = args[2] || null;
+    await processNovel(txtFile, coverImage, author);
   } else {
     // 处理当前目录所有 .txt 文件
     const files = readdirSync('.').filter(f => f.endsWith('.txt'));
@@ -674,8 +672,7 @@ async function main() {
       log('  npm run publish                      # 处理所有 .txt 文件', 'dim');
       log('  npm run publish novel.txt            # 处理指定文件', 'dim');
       log('  npm run publish novel.txt cover.png  # 指定封面图片', 'dim');
-      log('  npm run publish novel.txt cover.png BL  # 指定分类', 'dim');
-      log('  npm run publish novel.txt cover.png BL "Author Name"  # 指定作者', 'dim');
+      log('  npm run publish novel.txt cover.png "Author Name"  # 指定作者', 'dim');
       return;
     }
     

@@ -41,7 +41,7 @@ export function ProofreadBanner({ chapter }: Props) {
           {/* 右侧：章节精修介绍与 Excerpt */}
           <div className="hero-polished-content">
             <div className="hero-polished-meta-tag">
-              <span>Latest Polished Chapter</span>
+              <span>Latest Human TLChapter</span>
               <span className="hero-polished-novel-name">{chapter.novelTitle}</span>
             </div>
 

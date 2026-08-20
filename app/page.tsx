@@ -5,6 +5,7 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { NovelCard } from "@/components/novel-card";
 import { HeroReviewingBanner } from "@/components/hero-reviewing-banner";
+import { HeroAnnouncementPanel } from "@/components/hero-announcement-panel";
 import { LatestPolishedGrid } from "@/components/latest-polished-grid";
 import {
   getFeaturedNovels,
@@ -116,25 +117,24 @@ export default async function HomePage() {
       {/* 首页唯一 H1 标签：承载全站核心 SEO 关键词 */}
       <div className="hero-section-wrapper">
         <h1 className="homepage-main-heading mb-0">
-          {SITE_NAME} — High-Quality Chinese Danmei & BL Novel in English
+          {SITE_NAME} — High-Quality Chinese Danmei & BL Novels in English
         </h1>
       </div>
 
       {/* 第一屏：Hero 区块（展示正在人工审核校对的小说） */}
       <section className="hero-section-wrapper" style={{ paddingTop: '1rem', paddingBottom: '2rem' }}>
-        <HeroReviewingBanner novel={reviewingNovel} />
+        <div className="hero-split-grid">
+          <HeroReviewingBanner novel={reviewingNovel} />
+          <HeroAnnouncementPanel />
+        </div>
       </section>
 
       <main className="main-content pt-4">
-        {/* 第二屏：Latest Polished 区块（展示最近完成人工审核精修的章节卡片列表） */}
+        {/* 第二屏：Latest Human TL区块（展示最近完成人工审核精修的章节卡片列表） */}
         <section className="mb-14">
           <div className="content-header">
-            <h2>Latest Polished</h2>
+            <h2>Latest Refined Chapters</h2>
           </div>
-
-          <p className="homepage-section-lead mb-6">
-            Freshly reviewed by our team, chapter by chapter.
-          </p>
 
           <LatestPolishedGrid chapters={latestPolishedChapters} />
         </section>
@@ -144,10 +144,6 @@ export default async function HomePage() {
           <div className="content-header">
             <h2>Explore the Library</h2>
           </div>
-
-          <p className="homepage-section-lead mb-6">
-            Discover our full collection of high-quality translated Danmei & BL novels.
-          </p>
 
           <div className="novels-grid featured-grid">
             {featuredNovels.map((novel, index) => (

@@ -36,7 +36,6 @@ export type Novel = {
   _id: string;
   title: string;
   slug: string;
-  category: string;
   excerpt: string;
   coverImage: string;
   coverImageAlt?: string;
@@ -129,7 +128,6 @@ type SanityNovel = {
   _id: string;
   title: string;
   slug: { current: string };
-  category: string;
   excerpt: string;
   description?: string;
   coverImage?: SanityImageSource & { alt?: string };
@@ -185,7 +183,6 @@ function transformNovel(sanityNovel: SanityNovel): Novel {
     _id: sanityNovel._id,
     title: sanityNovel.title,
     slug,
-    category: sanityNovel.category || "OTHER",
     excerpt: sanityNovel.seo?.metaDescription || sanityNovel.excerpt || "",
     coverImage: sanityNovel.coverImage
       ? coverThumbUrl(sanityNovel.coverImage)
@@ -199,14 +196,14 @@ function transformNovel(sanityNovel: SanityNovel): Novel {
     tags,
     seo: sanityNovel.seo
       ? {
-          metaTitle: sanityNovel.seo.metaTitle,
-          metaDescription: sanityNovel.seo.metaDescription,
-          ogTitle: sanityNovel.seo.ogTitle,
-          ogDescription: sanityNovel.seo.ogDescription,
-          ogImage: sanityNovel.seo.ogImage
-            ? ogImageUrl(sanityNovel.seo.ogImage)
-            : undefined,
-        }
+        metaTitle: sanityNovel.seo.metaTitle,
+        metaDescription: sanityNovel.seo.metaDescription,
+        ogTitle: sanityNovel.seo.ogTitle,
+        ogDescription: sanityNovel.seo.ogDescription,
+        ogImage: sanityNovel.seo.ogImage
+          ? ogImageUrl(sanityNovel.seo.ogImage)
+          : undefined,
+      }
       : undefined,
   };
 }
@@ -217,7 +214,6 @@ export const getNovels = cache(async (): Promise<Novel[]> => {
     _id,
     title,
     slug,
-    category,
     "excerpt": coalesce(seo.metaDescription, excerpt),
     description,
     coverImage,
@@ -248,7 +244,6 @@ export const getFeaturedNovels = cache(async (limit = 6): Promise<Novel[]> => {
     _id,
     title,
     slug,
-    category,
     "excerpt": coalesce(seo.metaDescription, excerpt),
     description,
     coverImage,
@@ -449,7 +444,7 @@ export const getLatestPolishedChapters = cache(
         };
       });
     } catch (error) {
-      console.error("Failed to fetch latest polished chapters from Sanity:", error);
+      console.error("Failed to fetch Latest Human TLchapters from Sanity:", error);
       return [];
     }
   }
@@ -524,7 +519,6 @@ export const getNovelBySlug = cache(async (slug: string): Promise<Novel | undefi
     _id,
     title,
     slug,
-    category,
     "excerpt": coalesce(seo.metaDescription, excerpt),
     description,
     coverImage,
@@ -646,13 +640,13 @@ export const getChapterContent = cache(async (
       ogImageUrl: chapter.ogImageUrl || undefined,
       seo: chapter.seo
         ? {
-            metaTitle: chapter.seo.metaTitle,
-            metaDescription: chapter.seo.metaDescription,
-            noIndex: chapter.seo.noIndex,
-            ogImage: chapter.seo.ogImage
-              ? ogImageUrl(chapter.seo.ogImage)
-              : undefined,
-          }
+          metaTitle: chapter.seo.metaTitle,
+          metaDescription: chapter.seo.metaDescription,
+          noIndex: chapter.seo.noIndex,
+          ogImage: chapter.seo.ogImage
+            ? ogImageUrl(chapter.seo.ogImage)
+            : undefined,
+        }
         : undefined,
     };
   } catch (error) {

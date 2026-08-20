@@ -190,7 +190,6 @@ export default async function NovelDetailPage({
                 <span className="meta-item">✍️ Author: {novel.author || "Anonymous"}</span>
                 <span className="meta-item">🌐 Translator: Cross The Line</span>
                 <span className="meta-item">📅 Status: Completed</span>
-                <span className="meta-item">Category: {novel.category}</span>
                 {chapters.length > 0 ? (
                   <span className="meta-item">Total chapters: {chapters.length}</span>
                 ) : null}
@@ -267,14 +266,19 @@ export default async function NovelDetailPage({
                   <Link
                     key={chapter.number}
                     href={`/novels/${slug}/chapters/${chapter.number}`}
-                    className={`chapter-item ${chapter.isPolished ? "is-polished" : ""}`}
+                    className={`chapter-item ${chapter.isPolished ? "is-polished" : "is-raw"}`}
                     data-chapter={chapter.number}
                   >
-                    {chapter.isPolished && (
+                    {chapter.isPolished ? (
                       <div className="polished-corner-tag">
-                        Polished
+                        Human TL
+                      </div>
+                    ) : (
+                      <div className="raw-corner-tag">
+                        Raw TL
                       </div>
                     )}
+
                     <div className="chapter-number">Ch. {chapter.number}</div>
                     <div className="chapter-details">
                       <div className="chapter-title" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
