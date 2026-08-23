@@ -66,16 +66,14 @@ export async function generateMetadata(): Promise<Metadata> {
   ];
 
   return {
-    title:
-      "Read Chinese Danmei & BL Novels",
+    title: "Read Chinese Danmei & BL Novels",
     description:
       "High-quality English version of popular Chinese Danmei & BL novels. Explore Xianxia, Wuxia, and modern BL stories. Read exclusive daily updates!",
     alternates: {
       canonical: absoluteUrl("/"),
     },
     openGraph: {
-      title:
-        "CrossTheLine - Read Chinese Danmei & BL Novels English Translation",
+      title: "CrossTheLine - Read Chinese Danmei & BL Novels English Translation",
       description:
         "High-quality English translations of popular Chinese Danmei novels. Explore Xianxia, Wuxia, and Modern BL stories. Join our community for daily updates and exclusive chapters.",
       url: absoluteUrl("/"),
@@ -91,8 +89,7 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     twitter: {
       card: "summary_large_image",
-      title:
-        "CrossTheLine - Read Chinese Danmei & BL Novels English Translation",
+      title: "CrossTheLine - Read Chinese Danmei & BL Novels English Translation",
       description:
         "High-quality English translations of popular Chinese Danmei novels. Explore Xianxia, Wuxia, and Modern BL stories.",
       images: [heroImage],
@@ -114,53 +111,50 @@ export default async function HomePage() {
     <>
       <SiteHeader activePath="home" />
 
-      {/* 首页唯一 H1 标签：承载全站核心 SEO 关键词 */}
-      <div className="hero-section-wrapper">
-        <h1 className="homepage-main-heading mb-0">
-          {SITE_NAME} — High-Quality Chinese Danmei & BL Novels in English
+      {/* SEO H1 */}
+      <div className="page-shell pt-6 pb-2">
+        <h1 className="text-center font-serif italic text-base font-normal text-[#c87f9b] tracking-wide leading-snug">
+          {SITE_NAME} — High-Quality Chinese Danmei &amp; BL Novels in English
         </h1>
       </div>
 
-      {/* 第一屏：Hero 区块（展示正在人工审核校对的小说） */}
-      <section className="hero-section-wrapper" style={{ paddingTop: '1rem', paddingBottom: '2rem' }}>
-        <div className="hero-split-grid">
+      {/* Hero section */}
+      <section className="page-shell pt-4 pb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-6 items-stretch">
           <HeroReviewingBanner novel={reviewingNovel} />
           <HeroAnnouncementPanel />
         </div>
       </section>
 
-      <main className="main-content pt-4">
-        {/* 第二屏：Latest Human TL区块（展示最近完成人工审核精修的章节卡片列表） */}
+      <main className="page-shell pt-4 pb-12">
+        {/* Latest Refined Chapters */}
         <section className="mb-14">
-          <div className="content-header">
-            <h2>Latest Refined Chapters</h2>
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="font-serif text-2xl font-normal text-[#2b1f2d] tracking-wide">
+              Latest Refined Chapters
+            </h2>
           </div>
-
           <LatestPolishedGrid chapters={latestPolishedChapters} />
         </section>
 
-        {/* 第三屏：Explore the Library 区块（展示全部/精选小说列表） */}
+        {/* Explore Library */}
         <section className="mb-8">
-          <div className="content-header">
-            <h2>Explore the Library</h2>
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="font-serif text-2xl font-normal text-[#2b1f2d] tracking-wide">
+              Explore the Library
+            </h2>
           </div>
 
-          <div className="novels-grid featured-grid">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {featuredNovels.map((novel, index) => (
               <NovelCard key={novel.slug} novel={novel} priority={index === 0} />
             ))}
           </div>
 
-          <div style={{ textAlign: "center", marginTop: "3rem" }}>
+          <div className="text-center mt-12">
             <Link
               href="/novels"
-              className="read-btn"
-              style={{
-                fontSize: "1.1rem",
-                padding: "1rem 2rem",
-                border: "2px solid #8b7355",
-                borderRadius: "50px",
-              }}
+              className="inline-flex items-center gap-2 text-[#e499b3] font-semibold text-base px-8 py-3.5 border-2 border-[#e499b3] rounded-full hover:bg-[#e499b3] hover:text-white transition-all no-underline"
             >
               View All Novels →
             </Link>

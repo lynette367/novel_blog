@@ -21,21 +21,17 @@ export function HeroReviewingBanner({ novel }: Props) {
   );
 
   return (
-    <div className="hero-polished-card min-h-0">
-      {/* Corner badge — kept exactly as-is */}
-      <div className="hero-polished-badge">
-        <span>🔥 Refining</span>
+    <div className="relative rounded-3xl border border-[#f7c6d9]/50 bg-white/85 p-6 sm:p-8 shadow-sm hover:shadow-md transition-all overflow-hidden">
+      {/* Corner badge */}
+      <div className="absolute top-4 right-4 bg-gradient-to-r from-[#ff69b4] to-[#e499b3] text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide shadow-sm z-10">
+        🔥 Refining
       </div>
 
-      {/* ── TOP ROW: image (left half) + basic info (right half) ── */}
-      <div className="hero-card-top-row">
-        {/* Top-left: cover image */}
-        <Link
-          href={novelUrl}
-          className="hero-card-image-cell block"
-          aria-label={`View ${novel.title}`}
-        >
-          <div className="hero-card-image-inner">
+      {/* Top row: cover + info */}
+      <div className="grid grid-cols-2 gap-5 mb-5">
+        {/* Cover image */}
+        <Link href={novelUrl} className="block" aria-label={`View ${novel.title}`}>
+          <div className="relative aspect-[2/3] rounded-2xl overflow-hidden shadow-md max-h-60">
             <Image
               src={novel.coverImage || "/assets/images/0.jpg"}
               alt={`${novel.title} Cover`}
@@ -47,65 +43,68 @@ export function HeroReviewingBanner({ novel }: Props) {
           </div>
         </Link>
 
-        {/* Top-right: basic info */}
-        <div className="hero-card-info-cell">
-          <div className="hero-card-info-cell pt-9"></div>
-          <h2 className="hero-polished-title">
-            <Link href={novelUrl} className="hover:text-[#8b7355] transition-colors">
+        {/* Novel info */}
+        <div className="flex flex-col gap-3 pt-8">
+          <h2 className="font-serif font-semibold text-lg text-[#2b1f2d] leading-snug">
+            <Link
+              href={novelUrl}
+              className="no-underline text-inherit hover:text-[#e499b3] transition-colors"
+            >
               {novel.title}
             </Link>
           </h2>
-
-          <p className="hero-card-chapter-count">
+          <p className="text-xs font-semibold text-[#e499b3] bg-[#f7c6d9]/20 border border-[#e499b3]/30 rounded-full px-3 py-0.5 w-fit">
             {novel.totalChapters} Chapters
           </p>
-
-          <div className="hero-polished-meta-tag flex flex-wrap gap-2">
-            {novel.tags && novel.tags.slice(0, 3).map((tag) => (
-              <span key={tag} className="hero-polished-novel-name">
-                {tag}
-              </span>
-            ))}
+          <div className="flex flex-wrap gap-1.5">
+            {novel.tags &&
+              novel.tags.slice(0, 3).map((tag) => (
+                <span
+                  key={tag}
+                  className="text-xs font-medium text-[#2b1f2d] bg-white border border-[#f7c6d9]/60 rounded-full px-2.5 py-0.5"
+                >
+                  {tag}
+                </span>
+              ))}
           </div>
-
         </div>
       </div>
 
-      {/* ── BOTTOM ROW: excerpt + progress bar + CTA (full width) ── */}
-      <div className="hero-card-bottom-row">
-        <p className="hero-polished-excerpt">
-          {novel.description || novel.excerpt}
-        </p>
+      {/* Excerpt */}
+      <p className="text-sm italic text-[#302a2f] leading-relaxed mb-4 border-l-2 border-[#e499b3] pl-3 line-clamp-3">
+        {novel.description || novel.excerpt}
+      </p>
 
-        {/* Progress bar — markup unchanged */}
-        <div className="hero-progress-wrapper my-3">
-          <div className="flex justify-between items-center text-xs font-semibold text-[#5d5246] mb-1.5">
-            <span>Refinement Progress</span>
-            <span className="text-[#8b7355] font-bold">
-              Ch. {novel.reviewedUpToChapter} / {novel.totalChapters} ({percentage}%)
-            </span>
-          </div>
-          <div className="w-full bg-[#e8ded0] h-2.5 rounded-full overflow-hidden shadow-inner border border-amber-900/10">
-            <div
-              className="bg-gradient-to-r from-[#c9a96e] to-[#8b7355] h-full rounded-full transition-all duration-500"
-              style={{ width: `${Math.max(percentage, 4)}%` }}
-            />
-          </div>
+      {/* Progress bar */}
+      <div className="mb-5">
+        <div className="flex justify-between items-center text-xs font-semibold text-[#302a2f] mb-1.5">
+          <span>Refinement Progress</span>
+          <span className="text-[#e499b3] font-bold">
+            Ch. {novel.reviewedUpToChapter} / {novel.totalChapters} ({percentage}%)
+          </span>
         </div>
-
-        {/* CTA buttons */}
-        <div className="hero-polished-footer pt-3 mt-auto border-t border-[#c9a96e]/30 flex flex-wrap items-center justify-between gap-3">
-          <Link href={latestChapterUrl} className="hero-polished-cta">
-            Read Ch. {latestPolishedChapterNumber} (Latest Refined) <span className="arrow">→</span>
-          </Link>
-
-          <Link
-            href={novelUrl}
-            className="text-xs font-bold text-[#8b7355] hover:text-[#5d4e37] underline underline-offset-4 transition-colors"
-          >
-            View Novel Details →
-          </Link>
+        <div className="w-full bg-[#ffe3ef] h-2.5 rounded-full overflow-hidden border border-[#f7c6d9]/40">
+          <div
+            className="bg-[#ff69b4] h-full rounded-full transition-all duration-500"
+            style={{ width: `${Math.max(percentage, 4)}%` }}
+          />
         </div>
+      </div>
+
+      {/* CTA buttons */}
+      <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-[#f7c6d9]/30">
+        <Link
+          href={latestChapterUrl}
+          className="inline-flex items-center gap-2 px-5 py-2 bg-gradient-to-r from-[#ff69b4] to-[#e499b3] text-white rounded-full font-semibold text-sm shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all no-underline"
+        >
+          Read Ch. {latestPolishedChapterNumber} (Latest Refined) <span>→</span>
+        </Link>
+        <Link
+          href={novelUrl}
+          className="text-xs font-bold text-[#e499b3] hover:text-[#c87f9b] underline underline-offset-4 transition-colors"
+        >
+          View Novel Details →
+        </Link>
       </div>
     </div>
   );

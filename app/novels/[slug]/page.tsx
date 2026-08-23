@@ -6,7 +6,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { getNovels, getNovelBySlug, getNovelChapters } from "@/lib/novels";
 import { absoluteUrl, SITE_NAME } from "@/lib/siteMetadata";
 
-export const dynamic = 'force-static';
+export const dynamic = "force-static";
 
 type NovelPageParams = {
   slug: string;
@@ -32,20 +32,18 @@ export async function generateMetadata({
     };
   }
 
-  // Priority: seo.metaTitle > title
-  const metaTitle = novel.seo?.metaTitle || `${novel.title} | Asian BL Novel in English - ${SITE_NAME}`;
-  // Priority: seo.metaDescription > custom description > excerpt
-  const metaDescription = novel.seo?.metaDescription || `Complete ${novel.title} in Englis. Read all chapters of this captivating Asian BL novel and danmei story. Updated regularly with quality English version.`;
+  const metaTitle =
+    novel.seo?.metaTitle || `${novel.title} | Asian BL Novel in English - ${SITE_NAME}`;
+  const metaDescription =
+    novel.seo?.metaDescription ||
+    `Complete ${novel.title} in English. Read all chapters of this captivating Asian BL novel and danmei story. Updated regularly with quality English version.`;
 
   const canonicalUrl = `https://www.crosstheline.press/novels/${novel.slug}`;
-  // Priority: seo.ogImage > coverImage > default
-  const ogImageUrl = novel.seo?.ogImage || novel.coverImage || '/assets/images/0.jpg';
-  // Priority: coverImageAlt > generated alt
+  const ogImageUrl = novel.seo?.ogImage || novel.coverImage || "/assets/images/0.jpg";
   const ogImageAlt = novel.coverImageAlt || `${novel.title} - BL Danmei Novel Cover`;
 
   const chapters = await getNovelChapters(novel.slug);
 
-  // Generate Schema.org structured data
   const bookId = absoluteUrl(`/novels/${novel.slug}#book`);
   const schemaData = {
     "@context": "https://schema.org",
@@ -63,8 +61,8 @@ export async function generateMetadata({
     wordCount: novel.totalWordCount || undefined,
     description: novel.description ?? novel.excerpt,
     isPartOf: {
-      "@id": absoluteUrl("/#website")
-    }
+      "@id": absoluteUrl("/#website"),
+    },
   };
 
   return {
@@ -134,24 +132,24 @@ export default async function NovelDetailPage({
   const breadcrumbData = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
-    "itemListElement": [
+    itemListElement: [
       {
         "@type": "ListItem",
-        "position": 1,
-        "name": "Home",
-        "item": "https://www.crosstheline.press",
+        position: 1,
+        name: "Home",
+        item: "https://www.crosstheline.press",
       },
       {
         "@type": "ListItem",
-        "position": 2,
-        "name": "Novels",
-        "item": "https://www.crosstheline.press/novels",
+        position: 2,
+        name: "Novels",
+        item: "https://www.crosstheline.press/novels",
       },
       {
         "@type": "ListItem",
-        "position": 3,
-        "name": novel.title,
-        "item": `https://www.crosstheline.press/novels/${slug}`,
+        position: 3,
+        name: novel.title,
+        item: `https://www.crosstheline.press/novels/${slug}`,
       },
     ],
   };
@@ -163,54 +161,50 @@ export default async function NovelDetailPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbData) }}
       />
       <SiteHeader activePath="novels" />
-      <main className="main-content">
-        <section className="novel-header" style={{ marginBottom: "2rem" }}>
+
+      <main className="page-shell py-8">
+        {/* Novel header card */}
+        <section className="grid grid-cols-1 md:grid-cols-[280px_1fr] gap-8 mb-8 bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-[#f7c6d9]/30">
+          {/* Cover image */}
           <div
-            className="novel-header-cover"
-            style={{ backgroundImage: `url('${novel.coverImage}')`, position: 'relative' }}
+            className="w-full h-80 md:h-auto rounded-xl bg-cover bg-center bg-no-repeat shadow-lg"
+            style={{ backgroundImage: `url('${novel.coverImage}')` }}
             aria-label={`${novel.title} cover image`}
           >
             <img
               src={novel.coverImage}
               alt={novel.coverImageAlt || `${novel.title} novel cover`}
-              style={{
-                position: 'absolute',
-                inset: 0,
-                opacity: 0,
-                width: '100%',
-                height: '100%',
-                pointerEvents: 'none'
-              }}
+              className="absolute inset-0 opacity-0 w-full h-full pointer-events-none"
             />
           </div>
-          <div className="novel-header-info">
+
+          {/* Novel info */}
+          <div className="flex flex-col gap-5">
             <div>
-              <h1>{novel.title}</h1>
-              <div className="novel-meta">
-                <span className="meta-item">✍️ Author: {novel.author || "Anonymous"}</span>
-                <span className="meta-item">🌐 Translator: Cross The Line</span>
-                <span className="meta-item">📅 Status: Completed</span>
+              <h1 className="font-serif text-3xl md:text-4xl text-[#2b1f2d] font-normal leading-snug mb-3">
+                {novel.title}
+              </h1>
+              <div className="flex gap-4 flex-wrap text-[#c87f9b] text-sm mb-4">
+                <span>✍️ Author: {novel.author || "Anonymous"}</span>
+                <span>🌐 Translator: Cross The Line</span>
+                <span>📅 Status: Completed</span>
                 {chapters.length > 0 ? (
-                  <span className="meta-item">Total chapters: {chapters.length}</span>
+                  <span>Total chapters: {chapters.length}</span>
                 ) : null}
                 {novel.totalWordCount ? (
-                  <span className="meta-item">📝 {novel.totalWordCount.toLocaleString()} words</span>
+                  <span>📝 {novel.totalWordCount.toLocaleString()} words</span>
                 ) : null}
               </div>
 
+              {/* Tags */}
               {novel.tags && novel.tags.length > 0 && (
-                <div style={{ marginTop: '1rem', display: 'flex', gap: '0.8rem', flexWrap: 'wrap', alignItems: 'center' }}>
-                  <span style={{ fontSize: '0.95rem', color: '#7d6d5d' }}>Tags:</span>
+                <div className="flex flex-wrap gap-2 items-center mt-2">
+                  <span className="text-sm text-[#c87f9b]">Tags:</span>
                   {novel.tags.map((tag, index) => (
-                    <span key={index} style={{
-                      padding: '0.3rem 0.8rem',
-                      backgroundColor: '#f5f0e8',
-                      color: '#8b7355',
-                      borderRadius: '20px',
-                      fontSize: '0.85rem',
-                      fontWeight: 600,
-                      border: '1px solid #e8dcc8'
-                    }}>
+                    <span
+                      key={index}
+                      className="px-3 py-0.5 bg-[#ffe3ef] text-[#e499b3] rounded-full text-sm font-semibold border border-[#f7c6d9]"
+                    >
                       {tag}
                     </span>
                   ))}
@@ -218,10 +212,11 @@ export default async function NovelDetailPage({
               )}
             </div>
 
-            <div className="novel-description">
+            {/* Description */}
+            <div className="text-[#302a2f] text-base leading-relaxed">
               {descriptionParagraphs.length > 0 ? (
                 descriptionParagraphs.map((paragraph, index) => (
-                  <p key={`${paragraph}-${index}`} style={{ marginBottom: "0.5rem" }}>
+                  <p key={`${paragraph}-${index}`} className="mb-2">
                     {paragraph}
                   </p>
                 ))
@@ -229,15 +224,27 @@ export default async function NovelDetailPage({
                 <p>{novel.excerpt}</p>
               )}
             </div>
+
+            {/* Category badge */}
+            {novel.tags && novel.tags.length > 0 && (
+              <div className="inline-block">
+                <span className="px-5 py-2 border-2 border-[#e499b3] rounded-full text-[#e499b3] font-semibold text-sm uppercase tracking-wide">
+                  {novel.tags[0]}
+                </span>
+              </div>
+            )}
           </div>
         </section>
 
-        <section className="chapter-section">
-          <div className="section-header">
+        {/* Chapter list */}
+        <section className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-[#f7c6d9]/30">
+          <div className="flex justify-between items-center mb-6 pb-4 border-b border-[#f7c6d9]">
             <div>
-              <h2>Table of Contents</h2>
+              <h2 className="font-serif text-2xl text-[#2b1f2d] font-normal tracking-wide">
+                Table of Contents
+              </h2>
               {chapters.length > 0 ? (
-                <span style={{ color: "#7d6d5d", fontSize: "0.95rem" }}>
+                <span className="text-[#c87f9b] text-sm">
                   {chapters.length} Chapters Available
                 </span>
               ) : null}
@@ -245,71 +252,76 @@ export default async function NovelDetailPage({
           </div>
 
           {chapters.length > 0 ? (
-            <div className="chapter-list" id="chapterList">
+            <div className="flex flex-col gap-3" id="chapterList">
               {chapters.map((chapter) =>
                 chapter.locked ? (
                   <div
                     key={chapter.number}
-                    className="chapter-item"
                     data-chapter={chapter.number}
-                    style={{ opacity: 0.55, cursor: "not-allowed" }}
+                    className="opacity-55 cursor-not-allowed grid grid-cols-1 sm:grid-cols-[80px_1fr] gap-4 items-center p-5 rounded-xl border-2 bg-[#f8fafc] border-[#cbd5e1]"
                   >
-                    <div className="chapter-number">Ch. {chapter.number}</div>
-                    <div className="chapter-details">
-                      <div className="chapter-title">{chapter.title}</div>
-                      <div className="chapter-meta-info">
-                        <span>🔒 Coming Soon</span>
-                      </div>
+                    <div className="text-2xl font-semibold text-[#c87f9b] text-center sm:text-left">
+                      Ch. {chapter.number}
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <div className="text-lg font-semibold text-[#2b1f2d]">{chapter.title}</div>
+                      <div className="text-sm text-[#c87f9b]">🔒 Coming Soon</div>
                     </div>
                   </div>
                 ) : (
                   <Link
                     key={chapter.number}
                     href={`/novels/${slug}/chapters/${chapter.number}`}
-                    className={`chapter-item ${chapter.isPolished ? "is-polished" : "is-raw"}`}
                     data-chapter={chapter.number}
+                    className={`group relative overflow-hidden grid grid-cols-1 sm:grid-cols-[80px_1fr_auto] gap-4 items-center p-5 rounded-xl border transition-all hover:translate-x-2 hover:shadow-md no-underline text-inherit ${
+                      chapter.isPolished
+                        ? "bg-gradient-to-r from-[#fff8fb] to-white border-[#f7c6d9] [border-left:4px_solid_#ff69b4] shadow-sm"
+                        : "bg-[#f8fafc] border-2 border-[#cbd5e1]"
+                    }`}
                   >
+                    {/* Corner tag */}
                     {chapter.isPolished ? (
-                      <div className="polished-corner-tag">
+                      <div className="absolute top-0 right-0 bg-gradient-to-r from-[#ff69b4] to-[#e499b3] text-white text-xs font-bold px-3 py-0.5 rounded-bl-xl shadow-sm z-10">
                         Human TL
                       </div>
                     ) : (
-                      <div className="raw-corner-tag">
+                      <div className="absolute top-0 right-0 bg-gradient-to-r from-[#94a3b8] to-[#64748b] text-white text-xs font-bold px-3 py-0.5 rounded-bl-xl shadow-sm z-10">
                         Raw TL
                       </div>
                     )}
 
-                    <div className="chapter-number">Ch. {chapter.number}</div>
-                    <div className="chapter-details">
-                      <div className="chapter-title" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
+                    <div className="text-xl font-semibold text-[#e499b3] text-center sm:text-left">
+                      Ch. {chapter.number}
+                    </div>
+
+                    <div className="flex flex-col gap-1">
+                      <div className="flex items-center gap-2 flex-wrap text-lg font-semibold text-[#2b1f2d]">
                         <span>{chapter.title}</span>
                       </div>
                       {chapter.excerpt && (
-                        <div style={{
-                          fontSize: '0.88rem',
-                          color: '#7d6d5d',
-                          marginTop: '0.3rem',
-                          lineHeight: 1.5,
-                          fontStyle: 'italic',
-                        }}>
+                        <div className="text-sm text-[#c87f9b] mt-0.5 leading-snug italic">
                           {chapter.excerpt}
                         </div>
                       )}
-                      <div className="chapter-meta-info">
+                      <div className="flex gap-4 text-sm text-[#c87f9b] font-medium mt-1">
                         <span>📖 Est. {chapter.readingMinutes} min</span>
                         <span>📝 {chapter.wordCount.toLocaleString()} words</span>
                       </div>
                     </div>
-                    <span className="chapter-arrow">→</span>
+
+                    <span className="hidden sm:block text-2xl text-[#e499b3] transition-transform group-hover:translate-x-1.5">
+                      →
+                    </span>
                   </Link>
                 )
               )}
             </div>
           ) : (
-            <p>Chapters will be available soon.</p>
+            <p className="text-[#c87f9b]">Chapters will be available soon.</p>
           )}
         </section>
       </main>
+
       <SiteFooter />
     </>
   );

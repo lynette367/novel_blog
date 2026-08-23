@@ -4,22 +4,19 @@ import type { Novel } from "@/lib/novels";
 
 type NovelCardProps = {
   novel: Novel;
-  priority?: boolean; // pass priority={true} for above-the-fold cards
+  priority?: boolean;
 };
 
 export function NovelCard({ novel, priority = false }: NovelCardProps) {
-  // 取第一个 tag 作为封面角标展示
-  const categoryTag = novel.tags && novel.tags.length > 0 ? novel.tags[0] : undefined;
-
   return (
     <Link
       href={`/novels/${novel.slug}`}
-      className="novel-card group flex flex-col bg-white dark:bg-zinc-900 rounded-[16px] overflow-hidden border border-gray-100 dark:border-zinc-800 shadow-sm hover:shadow-md transition-all duration-300"
+      className="group relative flex flex-col overflow-hidden rounded-2xl border border-[#f7c6d9]/40 bg-white transition-all duration-300 hover:-translate-y-2 hover:shadow-lg hover:border-[#e499b3]/60 no-underline text-inherit"
       data-slug={novel.slug}
       prefetch={false}
     >
-      {/* 1. 小说封面图区 */}
-      <div className="relative w-full aspect-[16/9] overflow-hidden rounded-t-[16px] flex-shrink-0 bg-gray-100 dark:bg-zinc-800">
+      {/* Cover image — no category tag */}
+      <div className="relative w-full aspect-[16/9] overflow-hidden flex-shrink-0 bg-gray-100">
         <Image
           src={novel.coverImage}
           alt={novel.coverImageAlt || `Cover image for ${novel.title} - English Translation`}
@@ -30,32 +27,29 @@ export function NovelCard({ novel, priority = false }: NovelCardProps) {
           title={`Read ${novel.title} English Translation`}
           className="transition-transform duration-500 group-hover:scale-105"
         />
-        {/* 高亮分类徽章（参照章节卡片时间徽章的高亮渐变样式） */}
-        {categoryTag && (
-          <div className="absolute top-2.5 right-2.5 bg-gradient-to-r from-[#c9a96e] to-[#8b7355] text-white text-[0.68rem] font-bold px-2.5 py-0.5 rounded-full shadow-md uppercase tracking-wider">
-            🏷️ {categoryTag}
-          </div>
-        )}
+        {/* Subtle pink top-edge accent on hover */}
+        <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-[#ff69b4] to-[#e499b3] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
       </div>
 
-      {/* 2. 卡片内容区 */}
-
-
-      {/* 3. 底部信息与行动栏 */}
-      <div className="novel-info">
-        <h3 className="novel-title">{novel.title}</h3>
-        <p className="novel-excerpt">{novel.excerpt}</p>
-        <div className="novel-card-footer">
+      {/* Card content */}
+      <div className="flex flex-col flex-1 p-5 bg-gradient-to-b from-white to-[#fff9f2]">
+        <h3 className="font-serif font-semibold text-lg text-[#2b1f2d] leading-snug mb-3 line-clamp-2 min-h-[3.1rem]">
+          {novel.title}
+        </h3>
+        <p className="text-sm text-[#302a2f] leading-relaxed mb-4 line-clamp-3 min-h-[4.2rem]">
+          {novel.excerpt}
+        </p>
+        <div className="flex items-center justify-between mt-auto pt-3 border-t border-[#f7c6d9]/30 text-xs">
           {novel.totalChapters ? (
-            <span className="novel-card-stat">
-              📚 {novel.totalChapters} chapters
-            </span>
+            <span className="text-[#c87f9b] font-medium">📚 {novel.totalChapters} chapters</span>
           ) : (
             <span />
           )}
-          <span className="read-btn">Read →</span>
+          <span className="text-[#e499b3] font-semibold group-hover:text-[#c87f9b] transition-colors">
+            Read →
+          </span>
         </div>
       </div>
-    </Link >
+    </Link>
   );
 }

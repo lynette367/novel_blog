@@ -28,7 +28,7 @@ export function LatestPolishedGrid({ chapters }: Props) {
   }
 
   return (
-    <div className="novels-grid featured-grid">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
       {chapters.map((ch) => {
         const chapterUrl = `/novels/${ch.novelSlug}/chapters/${ch.chapterNumber}` as any;
         const relativeTime = formatRelativeTime(ch.updatedAt);
@@ -37,50 +37,50 @@ export function LatestPolishedGrid({ chapters }: Props) {
           <Link
             key={ch._id}
             href={chapterUrl}
-            className="chapter-polished-card"
+            className="group flex flex-col overflow-hidden rounded-2xl border border-[#f7c6d9]/40 bg-white transition-all duration-300 hover:-translate-y-2 hover:shadow-lg hover:border-[#e499b3]/60 no-underline text-inherit"
           >
-            {/* 章节 OG 封面图 */}
-            <div className="chapter-polished-cover relative w-full aspect-[16/9] overflow-hidden rounded-t-[16px]">
+            {/* Cover image with time badge */}
+            <div className="relative w-full aspect-[16/9] overflow-hidden rounded-t-2xl bg-gray-100">
               <Image
                 src={ch.novelCoverImage || "/assets/images/0.jpg"}
                 alt={`${ch.novelTitle} Chapter ${ch.chapterNumber}`}
                 fill
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 380px"
                 style={{ objectFit: "cover" }}
-                className="chapter-polished-img transition-transform duration-500"
+                className="transition-transform duration-500 group-hover:scale-105"
               />
-              <div className="absolute top-2.5 right-2.5 bg-gradient-to-r from-[#c9a96e] to-[#8b7355] text-white text-[0.68rem] font-bold px-2.5 py-0.5 rounded-full shadow-md uppercase tracking-wider">
+              <div className="absolute top-2.5 right-2.5 bg-gradient-to-r from-[#ff69b4] to-[#e499b3] text-white text-[0.68rem] font-bold px-2.5 py-0.5 rounded-full shadow-md uppercase tracking-wider">
                 ✨ {relativeTime}
               </div>
             </div>
 
-            {/* 卡片下半部分内容区 */}
-            <div className="chapter-polished-body p-5 flex flex-col flex-1">
-              <div className="chapter-polished-header mb-2">
-                <span className="chapter-polished-novel-tag">
+            {/* Card content */}
+            <div className="flex flex-col flex-1 p-5">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-bold text-[#e499b3] bg-[#f7c6d9]/20 border border-[#e499b3]/45 px-2.5 py-0.5 rounded-full truncate max-w-[170px]">
                   {ch.novelTitle}
                 </span>
               </div>
 
-              <h3 className="chapter-polished-title">
+              <h3 className="font-serif font-semibold text-lg text-[#2b1f2d] leading-snug mb-3 line-clamp-2">
                 Chapter {ch.chapterNumber}: {ch.chapterTitle}
               </h3>
 
               {ch.excerpt ? (
-                <p className="chapter-polished-excerpt">
+                <p className="text-sm text-[#302a2f] italic leading-relaxed mb-4 line-clamp-3 border-l-2 border-[#e499b3] pl-3">
                   &ldquo;{ch.excerpt}&rdquo;
                 </p>
               ) : (
-                <p className="chapter-polished-excerpt italic text-gray-400">
+                <p className="text-sm italic text-gray-400 mb-4 line-clamp-3">
                   Freshly polished human translation available. Click to read!
                 </p>
               )}
 
-              <div className="chapter-polished-footer">
-                <span className="chapter-polished-stats">
+              <div className="flex items-center justify-between mt-auto pt-3 border-t border-[#f7c6d9]/25 text-xs">
+                <span className="text-[#c87f9b] font-medium">
                   📖 {ch.readingMinutes} min read ({ch.wordCount.toLocaleString()} words)
                 </span>
-                <span className="chapter-polished-link">
+                <span className="text-[#e499b3] font-semibold group-hover:text-[#c87f9b] transition-colors">
                   Read →
                 </span>
               </div>

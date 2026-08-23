@@ -10,12 +10,10 @@ export async function generateMetadata(): Promise<Metadata> {
   const totalNovels = novels.length;
   const totalChapters = novels.reduce((sum, n) => sum + (n.totalChapters || 0), 0);
 
-  // 使用第一个小说的封面图片作为 OG 图片
   const firstNovel = novels[0];
   const ogImage = firstNovel ? firstNovel.coverImage : "/assets/images/0.jpg";
   const ogImageAlt = firstNovel ? (firstNovel.coverImageAlt || firstNovel.title) : SITE_NAME;
 
-  // Generate Schema.org structured data for CollectionPage
   const schemaData = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
@@ -25,11 +23,11 @@ export async function generateMetadata(): Promise<Metadata> {
     "description": `Explore our collection of ${totalNovels} translated Asian BL novels with ${totalChapters}+ chapters. High-quality danmei translations updated regularly.`,
     "mainEntityOfPage": {
       "@type": "WebPage",
-      "@id": absoluteUrl("/novels")
+      "@id": absoluteUrl("/novels"),
     },
     "isPartOf": {
-      "@id": absoluteUrl("/#website")
-    }
+      "@id": absoluteUrl("/#website"),
+    },
   };
 
   return {
@@ -71,11 +69,12 @@ export default async function NovelsPage() {
   return (
     <>
       <SiteHeader activePath="novels" />
-      <main className="main-content">
-        <div className="content-header">
-          <h2>Explore Chinese Danmei & BL Library</h2>
+      <main className="page-shell py-8">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="font-serif text-2xl font-normal text-[#2b1f2d] tracking-wide">
+            Explore Chinese Danmei &amp; BL Library
+          </h2>
         </div>
-
         <FilterableNovelGrid novels={novels} />
       </main>
       <SiteFooter />

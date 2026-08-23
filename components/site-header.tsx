@@ -20,17 +20,24 @@ const navLinks: HeaderLink[] = [
 
 export function SiteHeader({ activePath = "home" }: HeaderProps) {
   return (
-    <header className="header">
-      <div className="header-container">
-        <Link href="/" className="logo">
+    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-[#f7c6d9] shadow-sm">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 py-4 flex justify-between items-center">
+        <Link
+          href="/"
+          className="text-xl font-semibold tracking-widest text-[#2b1f2d] font-serif no-underline hover:text-[#e499b3] transition-colors"
+        >
           Cross The Line
         </Link>
-        <nav className="nav-links">
+        <nav className="flex gap-6 items-center">
           {navLinks.map((link) => (
             <Link
               key={link.label}
               href={link.href}
-              className={link.key === activePath && !link.fragment ? "active" : undefined}
+              className={`font-semibold text-sm transition-colors no-underline ${
+                link.key === activePath && !link.fragment
+                  ? "text-[#e499b3] border-b-2 border-[#e499b3] pb-0.5"
+                  : "text-[#c87f9b] hover:text-[#2b1f2d]"
+              }`}
             >
               {link.label}
             </Link>

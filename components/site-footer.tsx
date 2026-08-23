@@ -5,37 +5,63 @@ export function SiteFooter() {
   const { buyMeACoffee, kofi, patreon } = siteConfig.supportLinks;
 
   return (
-    <footer>
-      <div className="footer-content">
-        <p>&copy; 2026 Cross The Line. All translations published with respect for original authors.</p>
-        <p style={{ fontSize: "0.85rem", opacity: 0.8, marginTop: "1rem" }}>
+    <footer className="bg-[#2b1f2d] text-[#f7c6d9] py-12 px-6 mt-20">
+      <div className="max-w-6xl mx-auto text-center">
+        <p className="mb-4 text-sm">
+          &copy; 2026 Cross The Line. All translations published with respect for original authors.
+        </p>
+        <p className="text-xs opacity-70 mt-4 mb-3">
           Content Warning: Stories may contain mature themes. Reader discretion advised.
         </p>
-        <p className="footer-support-line">
+        <p className="text-sm">
           Enjoying the stories? Support us on{" "}
           {buyMeACoffee && (
-            <a href={buyMeACoffee} target="_blank" rel="noopener noreferrer">
+            <a
+              href={buyMeACoffee}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[#f7c6d9] underline underline-offset-2 hover:text-[#ffe3ef] transition-colors"
+            >
               Buy Me a Coffee
             </a>
           )}
           {buyMeACoffee && kofi && ", "}
           {kofi && (
-            <a href={kofi} target="_blank" rel="noopener noreferrer">
+            <a
+              href={kofi}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[#f7c6d9] underline underline-offset-2 hover:text-[#ffe3ef] transition-colors"
+            >
               Ko-fi
             </a>
           )}
           {((buyMeACoffee && patreon) || (kofi && patreon)) && ", or "}
           {patreon && (
-            <a href={patreon} target="_blank" rel="noopener noreferrer">
+            <a
+              href={patreon}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[#f7c6d9] underline underline-offset-2 hover:text-[#ffe3ef] transition-colors"
+            >
               Patreon
             </a>
-          )}.
+          )}
+          .
         </p>
-        <div className="footer-links">
-          <a href="#">About</a>
-          <a href="#">Translation Policy</a>
-          <Link href="/contact">Contact</Link>
-          <a href="#">Privacy</a>
+        <div className="flex justify-center gap-8 mt-6 flex-wrap">
+          <a href="#" className="text-[#f7c6d9] no-underline hover:text-[#ffe3ef] transition-colors text-sm">
+            About
+          </a>
+          <a href="#" className="text-[#f7c6d9] no-underline hover:text-[#ffe3ef] transition-colors text-sm">
+            Translation Policy
+          </a>
+          <Link href="/contact" className="text-[#f7c6d9] no-underline hover:text-[#ffe3ef] transition-colors text-sm">
+            Contact
+          </Link>
+          <a href="#" className="text-[#f7c6d9] no-underline hover:text-[#ffe3ef] transition-colors text-sm">
+            Privacy
+          </a>
         </div>
       </div>
     </footer>

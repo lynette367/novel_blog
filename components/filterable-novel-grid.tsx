@@ -13,9 +13,6 @@ const ALL_TAG = "ALL";
 export function FilterableNovelGrid({ novels }: Props) {
   const [activeTag, setActiveTag] = useState<string>(ALL_TAG);
 
-  // 从所有小说的 tags 里动态收集去重列表，大小写不敏感去重
-  // （手动打标签容易出现 "Younger Top" / "younger top" 这种不一致，
-  // 归一化后只会生成一个按钮，保留第一次出现时的大小写用于展示）
   const tags = useMemo(() => {
     const seen = new Map<string, string>();
     novels.forEach((novel) => {
@@ -43,14 +40,19 @@ export function FilterableNovelGrid({ novels }: Props) {
 
   return (
     <>
-      <div className="category-filter">
-        <div className="filter-container">
+      {/* Filter Tabs — pink capsule style */}
+      <div className="py-5 mb-8 border-b border-[#f7c6d9]">
+        <div className="flex flex-wrap justify-center gap-2.5">
           {tags.map((tag) => (
             <button
               key={tag}
               type="button"
-              className={`filter-tab${tag === activeTag ? " active" : ""}`}
               onClick={() => setActiveTag(tag)}
+              className={`rounded-full px-4 py-1.5 text-xs font-semibold border transition-all duration-200 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-[#e499b3] ${
+                tag === activeTag
+                  ? "bg-gradient-to-r from-[#ff69b4] to-[#e499b3] text-white border-transparent shadow-sm"
+                  : "bg-white/70 border-[#e499b3]/30 text-[#2b1f2d]/75 hover:bg-[#ffe3ef]/70 hover:border-[#e499b3]/60"
+              }`}
             >
               {tag}
             </button>
@@ -58,7 +60,8 @@ export function FilterableNovelGrid({ novels }: Props) {
         </div>
       </div>
 
-      <div className="novels-grid">
+      {/* Novel Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {filteredNovels.map((novel) => (
           <NovelCard key={novel.slug} novel={novel} />
         ))}

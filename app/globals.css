@@ -2,7 +2,31 @@
 @plugin "@tailwindcss/typography";
 
 :root {
-  color-scheme: light;
+  --background: #fff9f2;
+  --foreground: #2b1f2d;
+  --brand-pink: #f7c6d9;
+  --brand-blush: #ffe3ef;
+  --brand-pinkdeep: #e499b3;
+  --brand-pinkhover: #c87f9b;
+  --brand-hotpink: #ff69b4;
+  --brand-ink: #2b1f2d;
+  --brand-sky: #b8d9ff;
+  --brand-sand: #fcdcc2;
+  --brand-mist: #f4f9ff;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-brand-pink: var(--brand-pink);
+  --color-brand-blush: var(--brand-blush);
+  --color-brand-pinkdeep: var(--brand-pinkdeep);
+  --color-brand-pinkhover: var(--brand-pinkhover);
+  --color-brand-hotpink: var(--brand-hotpink);
+  --color-brand-ink: var(--brand-ink);
+  --color-brand-sky: var(--brand-sky);
+  --color-brand-sand: var(--brand-sand);
+  --color-brand-mist: var(--brand-mist);
 }
 
 *,
@@ -12,5 +36,15 @@
 }
 
 body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: 'Georgia', 'Times New Roman', serif;
+  min-height: 100vh;
+  line-height: 1.7;
   margin: 0;
+}
+
+/* Shared page-width container used across all pages */
+.page-shell {
+  @apply mx-auto w-full max-w-6xl px-4 sm:px-6;
 }

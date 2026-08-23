@@ -6,7 +6,7 @@ import { getNovelBySlug, getChapterContent, getNovelChapters } from "@/lib/novel
 import { absoluteUrl, SITE_NAME } from "@/lib/siteMetadata";
 import type { Metadata } from "next";
 
-export const dynamic = 'force-static';
+export const dynamic = "force-static";
 
 type ChapterPageParams = {
   slug: string;
@@ -61,7 +61,6 @@ export async function generateMetadata({
 
   const canonicalUrl = absoluteUrl(`/novels/${slug}/chapters/${chapterNumber}`);
 
-  // SEO 优先级：章节设置 > 小说设置 > 自动生成
   const metaTitle =
     chapterData.seo?.metaTitle ||
     `${chapterData.title} | ${novel.title} - ${SITE_NAME}`;
@@ -75,13 +74,12 @@ export async function generateMetadata({
     chapterData.seo?.ogImage ||
     novel.seo?.ogImage ||
     novel.coverImage ||
-    absoluteUrl('/assets/images/0.jpg');
+    absoluteUrl("/assets/images/0.jpg");
 
   const ogImageAlt = novel.coverImageAlt || `${novel.title} - BL Danmei Novel Cover`;
 
   const noIndex = chapterData.seo?.noIndex ?? false;
 
-  // Schema.org 结构化数据
   const schemaData = {
     "@context": "https://schema.org",
     "@type": "Chapter",
@@ -109,13 +107,7 @@ export async function generateMetadata({
   return {
     title: metaTitle,
     description: metaDescription,
-    keywords: [
-      novel.title,
-      chapterData.title,
-      "asian BL novel",
-      "danmei translation",
-      "yaoi fiction",
-    ],
+    keywords: [novel.title, chapterData.title, "asian BL novel", "danmei translation", "yaoi fiction"],
     alternates: {
       canonical: canonicalUrl,
     },
@@ -179,7 +171,7 @@ export default async function ChapterPage({
   const nextChapter =
     currentIndex < readableChapters.length - 1 ? readableChapters[currentIndex + 1] : null;
 
-  // Split chapter content into paragraph strings to insert illustration at midpoint
+  // Build content HTML with optional mid-chapter illustration
   const paragraphs = chapterData.content
     .split("\n")
     .map((p) => p.trim())
@@ -204,7 +196,6 @@ export default async function ChapterPage({
 
     const firstHalf = paragraphs.slice(0, midIndex);
     const secondHalf = paragraphs.slice(midIndex);
-
     fullContentHtml = [...firstHalf, imageHtml, ...secondHalf].join("\n");
   }
 
@@ -212,68 +203,73 @@ export default async function ChapterPage({
     <>
       <ReadingProgress />
 
-      {/* Top Navigation */}
-      <nav className="top-nav">
-        <div className="nav-container">
-          <Link href={`/novels/${slug}`} className="back-btn">
+      {/* Top navigation */}
+      <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-[#f7c6d9]/50 shadow-sm">
+        <div className="mx-auto max-w-3xl px-4 sm:px-6 py-3 flex justify-between items-center">
+          <Link
+            href={`/novels/${slug}`}
+            className="flex items-center gap-2 text-[#e499b3] no-underline font-semibold text-sm hover:text-[#c87f9b] transition-colors px-3 py-1.5 rounded-lg hover:bg-[#fff9f2]"
+          >
             ← Back to Table of Contents
           </Link>
         </div>
       </nav>
 
-      {/* Chapter Header */}
-      <header className="chapter-header">
-        <div className="chapter-number-badge">Chapter {chapterNumber}</div>
-        <h1 className="chapter-title-page">{chapterData.title}</h1>
-        <div
-          className="chapter-meta"
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            gap: "2rem",
-            color: "#7d6d5d",
-            fontSize: "0.9rem",
-            marginBottom: "2rem",
-            flexWrap: "wrap",
-          }}
-        >
+      {/* Chapter header */}
+      <header className="max-w-3xl mx-auto px-4 sm:px-6 pt-10 pb-6 text-center">
+        <div className="text-sm text-[#e499b3] uppercase tracking-[0.15em] font-semibold mb-3">
+          Chapter {chapterNumber}
+        </div>
+        <h1 className="font-serif text-3xl md:text-4xl text-[#2b1f2d] font-normal leading-snug mb-6">
+          {chapterData.title}
+        </h1>
+        <div className="flex justify-center gap-8 text-[#c87f9b] text-sm mb-8 flex-wrap">
           <span>📖 Est. {chapterData.readingMinutes} min read</span>
           <span>📝 {chapterData.wordCount.toLocaleString()} words</span>
         </div>
       </header>
 
-      {/* Chapter Content */}
-      <article className="chapter-content prose max-w-none">
+      {/* Chapter content */}
+      <article className="max-w-3xl mx-auto px-4 sm:px-6 mb-12 bg-white rounded-2xl border border-[#f7c6d9]/20 p-6 sm:p-10 shadow-sm">
         <div
-          className="chapter-text"
+          className="prose prose-stone max-w-none"
           dangerouslySetInnerHTML={{ __html: fullContentHtml }}
         />
       </article>
 
-      {/* Chapter Navigation */}
-      <nav className="chapter-nav">
+      {/* Chapter navigation */}
+      <nav className="max-w-3xl mx-auto mb-16 px-4 sm:px-6 flex flex-col sm:flex-row gap-4">
         {prevChapter ? (
           <Link
             href={`/novels/${slug}/chapters/${prevChapter.number}`}
-            className="nav-btn"
+            className="flex-1 flex items-center justify-center gap-2 py-4 px-6 bg-white border-2 border-[#f7c6d9] rounded-xl text-[#2b1f2d] font-semibold text-center transition-all hover:bg-[#e499b3] hover:text-white hover:border-[#e499b3] hover:-translate-y-0.5 no-underline"
           >
             ← Previous Chapter
           </Link>
         ) : (
-          <span className="nav-btn disabled">← Previous Chapter</span>
+          <span className="flex-1 flex items-center justify-center gap-2 py-4 px-6 bg-white border-2 border-[#f7c6d9] rounded-xl text-[#2b1f2d] font-semibold text-center opacity-40 cursor-not-allowed">
+            ← Previous Chapter
+          </span>
         )}
-        <Link href={`/novels/${slug}`} className="index-btn">
+
+        <Link
+          href={`/novels/${slug}`}
+          className="flex-1 flex items-center justify-center gap-2 py-4 px-6 bg-gradient-to-r from-[#ff69b4] to-[#e499b3] text-white rounded-xl font-semibold text-center transition-all hover:shadow-lg hover:-translate-y-0.5 no-underline"
+        >
           📚 Table of Contents
         </Link>
+
         {nextChapter ? (
           <Link
             href={`/novels/${slug}/chapters/${nextChapter.number}`}
-            className="nav-btn"
+            className="flex-1 flex items-center justify-center gap-2 py-4 px-6 bg-white border-2 border-[#f7c6d9] rounded-xl text-[#2b1f2d] font-semibold text-center transition-all hover:bg-[#e499b3] hover:text-white hover:border-[#e499b3] hover:-translate-y-0.5 no-underline"
           >
             Next Chapter →
           </Link>
         ) : (
-          <span className="nav-btn disabled">Next Chapter →</span>
+          <span className="flex-1 flex items-center justify-center gap-2 py-4 px-6 bg-white border-2 border-[#f7c6d9] rounded-xl text-[#2b1f2d] font-semibold text-center opacity-40 cursor-not-allowed">
+            Next Chapter →
+          </span>
         )}
       </nav>
 
