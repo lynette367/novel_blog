@@ -28,15 +28,23 @@ export function NovelCard({ novel, priority = false }: NovelCardProps) {
           className="transition-transform duration-500 group-hover:scale-105"
         />
         {/* Subtle pink top-edge accent on hover */}
-        <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-[#ff69b4] to-[#e499b3] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-[#ffd3de] to-[#f4a7b9] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
       </div>
 
       {/* Card content */}
       <div className="flex flex-col flex-1 p-5 bg-gradient-to-b from-white to-[#fff9f2]">
-        <h3 className="font-serif font-semibold text-lg text-[#2b1f2d] leading-snug mb-3 line-clamp-2 min-h-[3.1rem]">
+        {novel.tags && novel.tags.length > 0 && (
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs font-bold text-[#e499b3] bg-[#f7c6d9]/20 border border-[#e499b3]/45 px-2.5 py-0.5 rounded-full truncate max-w-[170px]">
+              {novel.tags[0]}
+            </span>
+          </div>
+        )}
+
+        <h3 className="font-serif font-semibold text-lg text-[#2b1f2d] leading-snug mb-3 line-clamp-2">
           {novel.title}
         </h3>
-        <p className="text-sm text-[#302a2f] leading-relaxed mb-4 line-clamp-3 min-h-[4.2rem]">
+        <p className="text-sm text-[#302a2f] italic leading-relaxed mb-4 line-clamp-3 border-l-2 border-[#e499b3] pl-3">
           {novel.excerpt}
         </p>
         <div className="flex items-center justify-between mt-auto pt-3 border-t border-[#f7c6d9]/30 text-xs">

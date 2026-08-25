@@ -49,7 +49,7 @@ export function LatestPolishedGrid({ chapters }: Props) {
                 style={{ objectFit: "cover" }}
                 className="transition-transform duration-500 group-hover:scale-105"
               />
-              <div className="absolute top-2.5 right-2.5 bg-gradient-to-r from-[#ff69b4] to-[#e499b3] text-white text-[0.68rem] font-bold px-2.5 py-0.5 rounded-full shadow-md uppercase tracking-wider">
+              <div className="absolute top-2.5 right-2.5 bg-[#fde2e8] text-[#d66b85] border border-[#f8bccb]/60 px-2.5 py-0.5 rounded-full text-xs font-semibold shadow-none uppercase tracking-wider">
                 ✨ {relativeTime}
               </div>
             </div>

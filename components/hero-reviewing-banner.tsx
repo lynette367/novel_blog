@@ -21,9 +21,9 @@ export function HeroReviewingBanner({ novel }: Props) {
   );
 
   return (
-    <div className="relative rounded-3xl border border-[#f7c6d9]/50 bg-white/85 p-6 sm:p-8 shadow-sm hover:shadow-md transition-all overflow-hidden">
+    <div className="relative flex flex-col justify-between h-full rounded-3xl border border-[#f7c6d9]/50 bg-white/85 p-6 sm:p-8 shadow-sm hover:shadow-md transition-all overflow-hidden">
       {/* Corner badge */}
-      <div className="absolute top-4 right-4 bg-gradient-to-r from-[#ff69b4] to-[#e499b3] text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide shadow-sm z-10">
+      <div className="absolute top-4 right-4 bg-[#fde2e8] text-[#d66b85] border border-[#f8bccb] text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide shadow-sm z-10">
         🔥 Refining
       </div>
 
@@ -85,7 +85,7 @@ export function HeroReviewingBanner({ novel }: Props) {
         </div>
         <div className="w-full bg-[#ffe3ef] h-2.5 rounded-full overflow-hidden border border-[#f7c6d9]/40">
           <div
-            className="bg-[#ff69b4] h-full rounded-full transition-all duration-500"
+            className="bg-gradient-to-r from-[#ffd3de] to-[#f4a7b9] h-full rounded-full transition-all duration-500"
             style={{ width: `${Math.max(percentage, 4)}%` }}
           />
         </div>
@@ -95,7 +95,7 @@ export function HeroReviewingBanner({ novel }: Props) {
       <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-[#f7c6d9]/30">
         <Link
           href={latestChapterUrl}
-          className="inline-flex items-center gap-2 px-5 py-2 bg-gradient-to-r from-[#ff69b4] to-[#e499b3] text-white rounded-full font-semibold text-sm shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all no-underline"
+          className="inline-flex items-center gap-2 px-5 py-2 bg-[#f4a7b9] hover:bg-[#e896a9] text-white rounded-full font-semibold text-sm transition-all shadow-[0_8px_20px_rgba(244,167,185,0.3)] no-underline"
         >
           Read Ch. {latestPolishedChapterNumber} (Latest Refined) <span>→</span>
         </Link>

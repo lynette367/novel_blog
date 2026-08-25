@@ -21,7 +21,7 @@ export function ProofreadBanner({ chapter }: Props) {
         className="group relative flex flex-col md:flex-row rounded-3xl border border-[#f7c6d9]/50 bg-white/85 overflow-hidden shadow-sm hover:shadow-md transition-all no-underline text-inherit min-h-0 md:aspect-[2/1]"
       >
         {/* Badge */}
-        <div className="absolute top-4 right-4 z-10 bg-gradient-to-r from-[#ff69b4] to-[#e499b3] text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide shadow-sm">
+        <div className="absolute top-4 right-4 z-10 bg-[#fde2e8] text-[#d66b85] border border-[#f8bccb] text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide shadow-sm">
           ✨ Human Proofread
         </div>
 
@@ -67,7 +67,7 @@ export function ProofreadBanner({ chapter }: Props) {
               {chapter.readingMinutes ? <span>📖 Est. {chapter.readingMinutes} min read</span> : null}
               {chapter.wordCount ? <span>📝 {chapter.wordCount.toLocaleString()} words</span> : null}
             </div>
-            <span className="inline-flex items-center gap-2 px-5 py-2 bg-gradient-to-r from-[#ff69b4] to-[#e499b3] text-white rounded-full font-semibold text-sm shadow-sm group-hover:shadow-md group-hover:-translate-y-0.5 transition-all">
+            <span className="inline-flex items-center gap-2 px-5 py-2 bg-[#f4a7b9] group-hover:bg-[#e896a9] text-white rounded-full font-semibold text-sm transition-all shadow-[0_8px_20px_rgba(244,167,185,0.3)]">
               Read Chapter <span className="transition-transform group-hover:translate-x-1">→</span>
             </span>
           </div>

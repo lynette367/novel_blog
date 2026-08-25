@@ -50,8 +50,8 @@ export function FilterableNovelGrid({ novels }: Props) {
               onClick={() => setActiveTag(tag)}
               className={`rounded-full px-4 py-1.5 text-xs font-semibold border transition-all duration-200 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-[#e499b3] ${
                 tag === activeTag
-                  ? "bg-gradient-to-r from-[#ff69b4] to-[#e499b3] text-white border-transparent shadow-sm"
-                  : "bg-white/70 border-[#e499b3]/30 text-[#2b1f2d]/75 hover:bg-[#ffe3ef]/70 hover:border-[#e499b3]/60"
+                  ? "bg-[#f4a7b9] text-white border-transparent shadow-[0_4px_10px_rgba(244,167,185,0.3)]"
+                  : "bg-white text-[#2b1f2d] border-[#f7c6d9] hover:bg-[#ffe3ef] hover:border-[#e499b3]/60"
               }`}
             >
               {tag}

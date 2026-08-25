@@ -2,58 +2,36 @@ import Link from "next/link";
 
 export function HeroAnnouncementPanel() {
   return (
-    <aside className="rounded-3xl border border-[#b8d9ff]/50 bg-[#f4f9ff] p-6 sm:p-8 shadow-sm flex flex-col">
-      {/* Header */}
-      <div className="flex items-center gap-3 mb-5 pb-4 border-b border-[#b8d9ff]/45">
-        <span className="text-[#e499b3] text-base leading-none flex-shrink-0">✦</span>
-        <h2 className="font-serif font-semibold text-lg text-[#2b1f2d] leading-snug m-0">
-          Dear Readers
-        </h2>
+    <div className="relative flex flex-col justify-between overflow-hidden rounded-[32px] border-[3.5px] border-[#bfe2ee] bg-[#fffdf2] p-7 shadow-[0_12px_32px_rgba(191,226,238,0.35)] h-full">
+      {/* 顶部标题区 */}
+      <div className="flex items-center gap-2 pb-3 border-b border-[#bfe2ee]/40">
+        <span className="text-[#f4a7b9] text-lg">✦</span>
+        <h3 className="font-serif text-lg font-bold text-[#5c4a42]">Dear Readers</h3>
       </div>
 
-      {/* Body */}
-      <div className="flex-1 flex flex-col gap-3">
-        <p className="text-sm leading-relaxed text-[#302a2f] m-0">
-          Due to limited staffing and resources, we have released all raw machine-translated (Raw
-          MTL) chapters completely for free so you can follow the plot without waiting!
+      {/* 正文内容 */}
+      <div className="my-4 space-y-3.5 text-[0.88rem] leading-relaxed text-[#6d5e56]">
+        <p>
+          Due to limited staffing and resources, we have released all raw
+          machine-translated (Raw MTL) chapters completely for free so you can
+          follow the plot without waiting!
         </p>
-
-        <p className="text-sm leading-relaxed text-[#302a2f] m-0">
-          Our team is working through each novel, chapter by chapter, to create a meticulously
-          crafted, refined version. Currently, we are focusing our efforts on producing the premium,
-          refined chapters for Big Brother.
+        <p>
+          Our team is working through each novel, chapter by chapter, to create a
+          meticulously crafted, refined version. Currently, we are focusing our
+          efforts on producing the premium, refined chapters for Big Brother.
         </p>
-
-        <ul className="list-none p-0 m-0 my-1 flex flex-col gap-2">
-          <li className="flex items-start gap-2.5 text-sm text-[#2b1f2d] font-medium leading-snug">
-            <span className="flex-shrink-0 text-base leading-snug">📖</span>
-            Raw MTL chapters available instantly for all novels
-          </li>
-          <li className="flex items-start gap-2.5 text-sm text-[#2b1f2d] font-medium leading-snug">
-            <span className="flex-shrink-0 text-base leading-snug">✨</span>
-            Refined chapters added daily, starting from Ch. 1
-          </li>
-          <li className="flex items-start gap-2.5 text-sm text-[#2b1f2d] font-medium leading-snug">
-            <span className="flex-shrink-0 text-base leading-snug">🔒</span>
-            No abandoned series — ever
-          </li>
+        <ul className="space-y-1.5 pt-1 text-xs font-medium text-[#7d6f67]">
+          <li className="flex items-center gap-2"><span>📖</span> Raw MTL chapters available instantly for all novels</li>
+          <li className="flex items-center gap-2"><span>✨</span> Refined chapters added daily, starting from Ch. 1</li>
+          <li className="flex items-center gap-2"><span>🔒</span> No abandoned series — ever</li>
         </ul>
-
-        <p className="text-sm leading-relaxed text-[#302a2f] m-0">
-          Spot a translation issue or want to request priority polishing for a novel you love? We
-          read every message.
-        </p>
       </div>
 
-      {/* CTA */}
-      <div className="mt-6 pt-4 border-t border-[#b8d9ff]/45">
-        <Link
-          href="/contact"
-          className="inline-flex items-center gap-1.5 px-5 py-2 bg-[#b8d9ff] text-[#2b1f2d] rounded-full font-semibold text-sm hover:bg-[#b8d9ff]/70 transition-all no-underline"
-        >
-          Send a Message →
-        </Link>
+      {/* 底部小贴士 */}
+      <div className="pt-3 border-t border-[#bfe2ee]/40 text-xs text-[#8c7d75] italic">
+        Spot a translation issue or want to request priority polishing for a novel you love? We read every message.
       </div>
-    </aside>
+    </div>
   );
 }

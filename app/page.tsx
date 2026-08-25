@@ -120,7 +120,7 @@ export default async function HomePage() {
 
       {/* Hero section */}
       <section className="page-shell pt-4 pb-8">
-        <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-6 items-stretch">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
           <HeroReviewingBanner novel={reviewingNovel} />
           <HeroAnnouncementPanel />
         </div>
