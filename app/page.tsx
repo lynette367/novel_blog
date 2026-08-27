@@ -3,31 +3,26 @@ import { cache } from "react";
 import type { Metadata } from "next";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
-import { NovelCard } from "@/components/novel-card";
 import { HeroReviewingBanner } from "@/components/hero-reviewing-banner";
 import { HeroAnnouncementPanel } from "@/components/hero-announcement-panel";
 import { LatestPolishedGrid } from "@/components/latest-polished-grid";
+import { NovelSection } from "@/components/novel-section";
 import {
-  getFeaturedNovels,
-  getCurrentlyReviewingNovel,
-  getLatestPolishedChapters,
+  getHeroFeaturedNovel,
+  getLatestPolishedChaptersForNovel,
+  getReviewingNovelsWithChapters,
 } from "@/lib/novels";
 import { absoluteUrl, SITE_NAME } from "@/lib/siteMetadata";
 
 import siteConfig from "@/site.config";
 
-const getCachedFeaturedNovels = cache(getFeaturedNovels);
-const getCachedCurrentlyReviewingNovel = cache(getCurrentlyReviewingNovel);
-const getCachedLatestPolishedChapters = cache(getLatestPolishedChapters);
+const getCachedHeroFeaturedNovel = cache(getHeroFeaturedNovel);
 
 export async function generateMetadata(): Promise<Metadata> {
-  const featuredNovels = await getCachedFeaturedNovels();
+  const heroNovel = await getCachedHeroFeaturedNovel();
 
-  const firstNovel = featuredNovels[0];
-  const heroImage = firstNovel ? firstNovel.coverImage : "/assets/images/0.jpg";
-  const heroImageAlt = firstNovel
-    ? firstNovel.coverImageAlt || firstNovel.title
-    : SITE_NAME;
+  const heroImage = heroNovel ? heroNovel.coverImage : "/assets/images/0.jpg";
+  const heroImageAlt = heroNovel ? heroNovel.title : SITE_NAME;
 
   const sameAs = [
     siteConfig.supportLinks.buyMeACoffee,
@@ -101,11 +96,16 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function HomePage() {
-  const [featuredNovels, reviewingNovel, latestPolishedChapters] = await Promise.all([
-    getCachedFeaturedNovels(),
-    getCachedCurrentlyReviewingNovel(),
-    getCachedLatestPolishedChapters(6),
+  const heroNovel = await getCachedHeroFeaturedNovel();
+  const heroSlug = heroNovel?.slug ?? "";
+
+  // Fetch hero chapters + other reviewing novels concurrently
+  const [heroChapters, reviewingResult] = await Promise.all([
+    heroSlug ? getLatestPolishedChaptersForNovel(heroSlug, 6) : Promise.resolve([]),
+    getReviewingNovelsWithChapters(heroSlug, 2),
   ]);
+
+  const { sections: reviewingSections, overflow } = reviewingResult;
 
   return (
     <>
@@ -121,45 +121,71 @@ export default async function HomePage() {
       {/* Hero section */}
       <section className="page-shell pt-4 pb-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
-          <HeroReviewingBanner novel={reviewingNovel} />
+          <HeroReviewingBanner novel={heroNovel} />
           <HeroAnnouncementPanel />
         </div>
       </section>
 
       <main className="page-shell pt-4 pb-12">
-        {/* Latest Refined Chapters */}
-        <section className="mb-14">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="font-serif text-2xl font-normal text-[#2b1f2d] tracking-wide">
-              Latest Refined Chapters
-            </h2>
-          </div>
-          <LatestPolishedGrid chapters={latestPolishedChapters} />
-        </section>
 
-        {/* Explore Library */}
-        <section className="mb-8">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="font-serif text-2xl font-normal text-[#2b1f2d] tracking-wide">
-              Explore the Library
-            </h2>
-          </div>
+        {/* ── Hero novel chapter section ── */}
+        {heroNovel && (
+          <section className="mb-14">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="font-serif text-2xl font-normal text-[#2b1f2d] tracking-wide">
+                {heroNovel.title} — Latest Refined Chapters
+              </h2>
+              <Link
+                href={`/novels/${heroNovel.slug}` as any}
+                className="text-xs font-semibold text-[#e499b3] hover:text-[#c87f9b] underline underline-offset-4 transition-colors no-underline shrink-0"
+              >
+                View novel →
+              </Link>
+            </div>
+            <LatestPolishedGrid chapters={heroChapters} />
+          </section>
+        )}
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {featuredNovels.map((novel, index) => (
-              <NovelCard key={novel.slug} novel={novel} priority={index === 0} />
-            ))}
-          </div>
+        {/* ── Other currently-reviewing novels (auto-sorted by recency) ── */}
+        {reviewingSections.map(({ novel, chapters }) => (
+          <NovelSection key={novel._id} novel={novel} chapters={chapters} />
+        ))}
 
-          <div className="text-center mt-12">
+        {/* ── Overflow: novels beyond the 3-section limit ── */}
+        {overflow.length > 0 && (
+          <p className="text-sm text-[#7d6f67] mb-10">
+            Also being polished:{" "}
+            {overflow.map((n, i) => (
+              <span key={n.slug}>
+                {i > 0 && " · "}
+                <Link
+                  href={`/novels/${n.slug}` as any}
+                  className="text-[#e499b3] hover:text-[#c87f9b] font-medium transition-colors"
+                >
+                  {n.title}
+                </Link>
+              </span>
+            ))}{" "}
+            →{" "}
             <Link
               href="/novels"
-              className="inline-flex items-center gap-2 text-[#e499b3] font-semibold text-base px-8 py-3.5 border-2 border-[#e499b3] rounded-full hover:bg-[#e499b3] hover:text-white transition-all no-underline"
+              className="text-[#e499b3] hover:text-[#c87f9b] font-medium transition-colors"
             >
-              View All Novels →
+              View all
             </Link>
-          </div>
-        </section>
+          </p>
+        )}
+
+        {/* ── Explore Library link ── */}
+        <div className="text-center mt-4 mb-2">
+          <Link
+            href="/novels"
+            className="inline-flex items-center gap-2 text-[#e499b3] font-semibold text-base px-8 py-3.5 border-2 border-[#e499b3] rounded-full hover:bg-[#e499b3] hover:text-white transition-all no-underline"
+          >
+            Explore the Full Library →
+          </Link>
+        </div>
+
       </main>
 
       <SiteFooter />

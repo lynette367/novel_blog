@@ -26,7 +26,8 @@ novel_blog/
 ├── components/                       # 纯展示 UI 组件库
 │   ├── hero-reviewing-banner.tsx     # 首页第一屏：正在精修小说卡（2×2 网格布局）
 │   ├── hero-announcement-panel.tsx   # 首页第一屏：译者说明/承诺面板（右侧栏）
-│   ├── latest-polished-grid.tsx      # 首页第二屏：最新精修章节卡片网格
+│   ├── latest-polished-grid.tsx      # 6列章节卡片网格（2列/3列/6列响应式）
+│   ├── novel-section.tsx             # 非 Hero 书的首页独立板块（达到最多 2 个）
 │   ├── novel-card.tsx                # 书库 / 列表页小说卡片（封面 16:9 + 信息区）
 │   ├── filterable-novel-grid.tsx     # 带分类筛选的小说网格（客户端交互）
 │   ├── proofread-banner.tsx          # 小说详情页上方精修章节横幅
@@ -88,7 +89,9 @@ novel_blog/
 | `Novel` | 小说列表 / 详情页数据（含 `totalChapters`、`tags`、`seo` 子对象） |
 | `ChapterInfo` | 章节目录列表（含 `isPolished` 人工精修状态、`locked` 锁定状态） |
 | `CurrentlyReviewingNovel` | 首页 Hero 卡：正在精修的小说（含 `reviewedUpToChapter`、`latestPolishedChapterNumber`） |
-| `LatestPolishedChapter` | 首页第二屏：最新完成精修的章节卡片 |
+| `ReviewingNovelWithChapters` | 首页每本 currentlyReviewing 书的板块数据（novel + chapters） |
+| `ReviewingNovelsResult` | `getReviewingNovelsWithChapters` 返回类型：sections（有板块）+ overflow（文字链接） |
+| `LatestPolishedChapter` | 首页章节卡片：最新完成精修的章节卡片 |
 | `RecentProofread` | 小说详情页 proofread-banner 使用的精修章节数据 |
 
 ---
@@ -101,19 +104,26 @@ novel_blog/
 
 <section class="hero-section-wrapper">          ← Hero 第一屏
   <div class="hero-split-grid">                 ← 双栏网格 (desktop 1.2fr / 1fr)
-    <HeroReviewingBanner>                       ← 左栏：正在精修小说卡 (2×2 内部网格)
-      ┌─────────────────────────────────────┐
-      │  [封面图]  │  标题 / 标签 / 章节数  │  ← top row: grid-template-columns: 1fr 1fr
-      ├─────────────────────────────────────┤
-      │  摘要 + 进度条 + CTA 按钮 (全宽)   │  ← bottom row: spans full card width
-      └─────────────────────────────────────┘
+    <HeroReviewingBanner>                       ← 左栏：heroFeatured 小说卡 (2×2 内部网格)
     <HeroAnnouncementPanel>                     ← 右栏：译者承诺 + /contact 链接
 
 <main class="main-content">
-  <section>  Latest Human TL → <LatestPolishedGrid>
-  <section>  Explore Library  → <NovelCard> × N  +  "View All Novels →"
+  <section>  {heroNovel.title} — Latest Refined Chapters
+               → <LatestPolishedGrid>  (6列卡片, 限为 heroFeatured 书的章节)
+  <section>  按最近更新时间降序，最多 2 本其他 currentlyReviewing 书，每本有独立板块
+               → <NovelSection>  (mini 书信 + <LatestPolishedGrid>)
+  [overflow]  若 currentlyReviewing 超过 3 本，多出的显示文字链接：
+               "Also being polished: [A] · [B] → View all"
+  <div>      "Explore the Full Library →" 链接 (/novels)
 <SiteFooter>
 ```
+
+### heroFeatured vs currentlyReviewing 语义
+
+| 字段 | 类型 | 语义 |
+|---|---|---|
+| `heroFeatured` | boolean | 决定展示位置：展示在首页最顶部 Hero。全站唯一 |
+| `currentlyReviewing` | boolean | 决定是否显示：在首页拥有独立板块。可多本同时勾选 |
 
 ---
 

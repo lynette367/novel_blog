@@ -80,6 +80,12 @@ export type CurrentlyReviewingNovel = {
   latestPolishedChapterNumber?: number;
 };
 
+// 首页每本 currentlyReviewing 书的板块数据（书 + 章节列表）
+export type ReviewingNovelWithChapters = {
+  novel: CurrentlyReviewingNovel;
+  chapters: LatestPolishedChapter[];
+};
+
 // 首页 第二屏 "最近精修章节" 数据结构
 export type LatestPolishedChapter = {
   _id: string;
@@ -383,6 +389,92 @@ export const getCurrentlyReviewingNovel = cache(
   }
 );
 
+// 获取 heroFeatured == true 的小说（首页 Hero 区块）
+// fallback 链：heroFeatured → currentlyReviewing[0] → big_brother → 最新 novel
+export const getHeroFeaturedNovel = cache(
+  async (): Promise<CurrentlyReviewingNovel | null> => {
+    const novelProjection = `{
+      _id,
+      title,
+      "slug": slug.current,
+      "excerpt": coalesce(seo.metaDescription, excerpt),
+      description,
+      coverImage,
+      tags,
+      reviewedUpToChapter,
+      totalChapters,
+      "latestPolishedChapterNumber": *[_type == "chapter" && references(^._id) && isPolished == true] | order(number desc)[0].number,
+      "maxChapterNumber": *[_type == "chapter" && references(^._id)] | order(number desc)[0].number,
+      "totalChapterCount": count(*[_type == "chapter" && references(^._id)])
+    }`;
+
+    const heroQuery        = `*[_type == "novel" && heroFeatured == true][0] ${novelProjection}`;
+    const reviewingQuery   = `*[_type == "novel" && currentlyReviewing == true][0] ${novelProjection}`;
+    const bigBrotherQuery  = `*[_type == "novel" && (slug.current match "*big_brother*" || slug.current match "*big-brother*")][0] ${novelProjection}`;
+    const defaultQuery     = `*[_type == "novel"] | order(publishedAt desc)[0] ${novelProjection}`;
+
+    type RawNovelResult = {
+      _id: string;
+      title: string;
+      slug: string;
+      excerpt?: string;
+      description?: string;
+      coverImage?: SanityImageSource;
+      tags?: string[];
+      reviewedUpToChapter?: number;
+      totalChapters?: number;
+      latestPolishedChapterNumber?: number;
+      maxChapterNumber?: number;
+      totalChapterCount?: number;
+    };
+
+    const transformResult = (result: RawNovelResult): CurrentlyReviewingNovel => {
+      const slug = result.slug || "";
+      let tags = result.tags || [];
+      if (slug.includes("big_brother") && !tags.includes("Pseudo-Brothers")) {
+        tags = ["Pseudo-Brothers", ...tags];
+      }
+      const totalChapters = result.totalChapters || result.totalChapterCount || result.maxChapterNumber || 0;
+      const reviewedUpTo = result.reviewedUpToChapter ?? result.latestPolishedChapterNumber ?? 1;
+      return {
+        _id: result._id,
+        title: result.title,
+        slug,
+        excerpt: result.excerpt || "",
+        description: result.description || result.excerpt || "",
+        coverImage: result.coverImage ? coverThumbUrl(result.coverImage) : "/assets/images/0.jpg",
+        tags,
+        reviewedUpToChapter: reviewedUpTo,
+        totalChapters: Math.max(totalChapters, reviewedUpTo),
+        latestPolishedChapterNumber: result.latestPolishedChapterNumber || reviewedUpTo,
+      };
+    };
+
+    try {
+      let result = await client.fetch<RawNovelResult | null>(heroQuery);
+      if (!result) result = await client.fetch<RawNovelResult | null>(reviewingQuery);
+      if (!result) result = await client.fetch<RawNovelResult | null>(bigBrotherQuery);
+      if (!result) result = await client.fetch<RawNovelResult | null>(defaultQuery);
+      if (!result) return null;
+      return transformResult(result);
+    } catch (error) {
+      console.error("Failed to fetch hero featured novel from Sanity:", error);
+      return {
+        _id: "big_brother_default",
+        title: "Big Brother",
+        slug: "big_brother",
+        excerpt: "An intriguing story of pseudo-brothers navigating secrets, growth, and emotions.",
+        description: "An intriguing story of pseudo-brothers navigating secrets, growth, and emotions.",
+        coverImage: "/assets/images/Wife_are_paramount.png",
+        tags: ["Pseudo-Brothers", "Modern", "BL"],
+        reviewedUpToChapter: 5,
+        totalChapters: 50,
+        latestPolishedChapterNumber: 5,
+      };
+    }
+  }
+);
+
 // 获取最新完成人工精修的章节列表（倒序排列，取 3~6 条）
 export const getLatestPolishedChapters = cache(
   async (limit = 6): Promise<LatestPolishedChapter[]> => {
@@ -446,6 +538,152 @@ export const getLatestPolishedChapters = cache(
     } catch (error) {
       console.error("Failed to fetch Latest Human TLchapters from Sanity:", error);
       return [];
+    }
+  }
+);
+
+// 获取指定小说的最新精修章节（用于首页各书独立板块）
+export const getLatestPolishedChaptersForNovel = cache(
+  async (novelSlug: string, limit = 6): Promise<LatestPolishedChapter[]> => {
+    const query = `*[_type == "chapter" && novel->slug.current == $novelSlug && isPolished == true] | order(number desc)[0...${limit}] {
+      _id,
+      "chapterNumber": number,
+      "chapterTitle": title,
+      "excerpt": coalesce(seo.metaDescription, excerpt),
+      "_updatedAt": _updatedAt,
+      "novelTitle": novel->title,
+      "novelSlug": novel->slug.current,
+      "coverImage": coalesce(seo.ogImage, novel->coverImage),
+      "wordCount": count(string::split(content, " "))
+    }`;
+
+    try {
+      type RawChapter = {
+        _id: string;
+        chapterNumber: number;
+        chapterTitle: string;
+        excerpt?: string;
+        _updatedAt?: string;
+        novelTitle: string;
+        novelSlug: string;
+        coverImage?: SanityImageSource;
+        wordCount?: number;
+      };
+
+      const chapters = await client.fetch<RawChapter[]>(query, { novelSlug });
+      return (chapters || []).map((ch) => {
+        const wc = ch.wordCount || 0;
+        return {
+          _id: ch._id,
+          chapterNumber: ch.chapterNumber,
+          chapterTitle: ch.chapterTitle,
+          excerpt: ch.excerpt || undefined,
+          updatedAt: ch._updatedAt || undefined,
+          novelTitle: ch.novelTitle,
+          novelSlug: ch.novelSlug,
+          novelCoverImage: ch.coverImage ? coverThumbUrl(ch.coverImage) : "/assets/images/0.jpg",
+          wordCount: wc,
+          readingMinutes: minutesFromWordCount(wc),
+        };
+      });
+    } catch (error) {
+      console.error(`Failed to fetch polished chapters for novel ${novelSlug}:`, error);
+      return [];
+    }
+  }
+);
+
+// 获取所有 currentlyReviewing 书（排除 heroSlug），按最近更新章节时间降序，
+// 前 displayLimit 本各附 ≤6 个精修章节，超出部分作为 overflow 列表（书名+slug）。
+export type ReviewingNovelsResult = {
+  sections: ReviewingNovelWithChapters[];   // 有完整板块的书（最多 displayLimit 本）
+  overflow: { title: string; slug: string }[]; // 超出 displayLimit 的书（只显示文字链接）
+};
+
+export const getReviewingNovelsWithChapters = cache(
+  async (heroSlug: string, displayLimit = 2): Promise<ReviewingNovelsResult> => {
+    // 查询所有 currentlyReviewing 书，并取每本最近更新的精修章节时间用于排序
+    const novelsQuery = `*[_type == "novel" && currentlyReviewing == true && slug.current != $heroSlug] {
+      _id,
+      title,
+      "slug": slug.current,
+      "excerpt": coalesce(seo.metaDescription, excerpt),
+      description,
+      coverImage,
+      tags,
+      reviewedUpToChapter,
+      totalChapters,
+      "latestPolishedChapterNumber": *[_type == "chapter" && references(^._id) && isPolished == true] | order(number desc)[0].number,
+      "maxChapterNumber": *[_type == "chapter" && references(^._id)] | order(number desc)[0].number,
+      "totalChapterCount": count(*[_type == "chapter" && references(^._id)]),
+      "lastChapterUpdatedAt": *[_type == "chapter" && references(^._id) && isPolished == true] | order(_updatedAt desc)[0]._updatedAt
+    }`;
+
+    type RawNovelItem = {
+      _id: string;
+      title: string;
+      slug: string;
+      excerpt?: string;
+      description?: string;
+      coverImage?: SanityImageSource;
+      tags?: string[];
+      reviewedUpToChapter?: number;
+      totalChapters?: number;
+      latestPolishedChapterNumber?: number;
+      maxChapterNumber?: number;
+      totalChapterCount?: number;
+      lastChapterUpdatedAt?: string;
+    };
+
+    try {
+      let novels = await client.fetch<RawNovelItem[]>(novelsQuery, { heroSlug });
+      if (!novels || novels.length === 0) {
+        return { sections: [], overflow: [] };
+      }
+
+      // 按最近精修章节时间降序排序（无精修章节的排最后）
+      novels = novels.sort((a, b) => {
+        const ta = a.lastChapterUpdatedAt ? new Date(a.lastChapterUpdatedAt).getTime() : 0;
+        const tb = b.lastChapterUpdatedAt ? new Date(b.lastChapterUpdatedAt).getTime() : 0;
+        return tb - ta;
+      });
+
+      const sectionNovels = novels.slice(0, displayLimit);
+      const overflowNovels = novels.slice(displayLimit);
+
+      // 为每本展示书并发拉取章节
+      const sections = await Promise.all(
+        sectionNovels.map(async (raw): Promise<ReviewingNovelWithChapters> => {
+          const slug = raw.slug || "";
+          let tags = raw.tags || [];
+          if (slug.includes("big_brother") && !tags.includes("Pseudo-Brothers")) {
+            tags = ["Pseudo-Brothers", ...tags];
+          }
+          const totalChapters = raw.totalChapters || raw.totalChapterCount || raw.maxChapterNumber || 0;
+          const reviewedUpTo = raw.reviewedUpToChapter ?? raw.latestPolishedChapterNumber ?? 1;
+          const novel: CurrentlyReviewingNovel = {
+            _id: raw._id,
+            title: raw.title,
+            slug,
+            excerpt: raw.excerpt || "",
+            description: raw.description || raw.excerpt || "",
+            coverImage: raw.coverImage ? coverThumbUrl(raw.coverImage) : "/assets/images/0.jpg",
+            tags,
+            reviewedUpToChapter: reviewedUpTo,
+            totalChapters: Math.max(totalChapters, reviewedUpTo),
+            latestPolishedChapterNumber: raw.latestPolishedChapterNumber || reviewedUpTo,
+          };
+          const chapters = await getLatestPolishedChaptersForNovel(slug, 6);
+          return { novel, chapters };
+        })
+      );
+
+      const overflow = overflowNovels.map((n) => ({ title: n.title, slug: n.slug }));
+
+      return { sections, overflow };
+    } catch (error) {
+      console.error("Failed to fetch reviewing novels with chapters:", error);
+      return { sections: [], overflow: [] };
     }
   }
 );

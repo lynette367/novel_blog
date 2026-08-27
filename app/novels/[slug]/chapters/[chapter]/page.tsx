@@ -242,19 +242,19 @@ export default async function ChapterPage({
         {prevChapter ? (
           <Link
             href={`/novels/${slug}/chapters/${prevChapter.number}`}
-            className="flex-1 flex items-center justify-center gap-2 py-4 px-6 bg-white border-2 border-[#f7c6d9] rounded-xl text-[#2b1f2d] font-semibold text-center transition-all hover:bg-[#e499b3] hover:text-white hover:border-[#e499b3] hover:-translate-y-0.5 no-underline"
+            className="flex-1 flex items-center justify-center gap-2 py-4 px-6 bg-brand-peachpink text-white rounded-xl font-semibold text-center transition-all hover:shadow-lg hover:-translate-y-0.5 hover:opacity-90 no-underline"
           >
             ← Previous Chapter
           </Link>
         ) : (
-          <span className="flex-1 flex items-center justify-center gap-2 py-4 px-6 bg-white border-2 border-[#f7c6d9] rounded-xl text-[#2b1f2d] font-semibold text-center opacity-40 cursor-not-allowed">
+          <span className="flex-1 flex items-center justify-center gap-2 py-4 px-6 bg-brand-peachpink text-white rounded-xl font-semibold text-center opacity-40 cursor-not-allowed">
             ← Previous Chapter
           </span>
         )}
 
         <Link
           href={`/novels/${slug}`}
-          className="flex-1 flex items-center justify-center gap-2 py-4 px-6 bg-gradient-to-r from-[#ff69b4] to-[#e499b3] text-white rounded-xl font-semibold text-center transition-all hover:shadow-lg hover:-translate-y-0.5 no-underline"
+          className="flex-1 flex items-center justify-center gap-2 py-4 px-6 bg-brand-peachpink text-white rounded-xl font-semibold text-center transition-all hover:shadow-lg hover:-translate-y-0.5 hover:opacity-90 no-underline"
         >
           📚 Table of Contents
         </Link>
@@ -262,12 +262,12 @@ export default async function ChapterPage({
         {nextChapter ? (
           <Link
             href={`/novels/${slug}/chapters/${nextChapter.number}`}
-            className="flex-1 flex items-center justify-center gap-2 py-4 px-6 bg-white border-2 border-[#f7c6d9] rounded-xl text-[#2b1f2d] font-semibold text-center transition-all hover:bg-[#e499b3] hover:text-white hover:border-[#e499b3] hover:-translate-y-0.5 no-underline"
+            className="flex-1 flex items-center justify-center gap-2 py-4 px-6 bg-brand-peachpink text-white rounded-xl font-semibold text-center transition-all hover:shadow-lg hover:-translate-y-0.5 hover:opacity-90 no-underline"
           >
             Next Chapter →
           </Link>
         ) : (
-          <span className="flex-1 flex items-center justify-center gap-2 py-4 px-6 bg-white border-2 border-[#f7c6d9] rounded-xl text-[#2b1f2d] font-semibold text-center opacity-40 cursor-not-allowed">
+          <span className="flex-1 flex items-center justify-center gap-2 py-4 px-6 bg-brand-peachpink text-white rounded-xl font-semibold text-center opacity-40 cursor-not-allowed">
             Next Chapter →
           </span>
         )}

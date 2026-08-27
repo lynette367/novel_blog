@@ -66,7 +66,15 @@ export const novel = defineType({
       name: "currentlyReviewing",
       title: "🔥 正在精修校对中 (Human TL)",
       type: "boolean",
-      description: "勾选代表此小说为当前主打精修校对的小说，将展示在首页 Hero 区块",
+      description: "勾选后，此小说将在首页拥有独立的板块（书名 + 最新章节列表）。可多本同时勾选。",
+      initialValue: false,
+    }),
+
+    defineField({
+      name: "heroFeatured",
+      title: "⭐ Hero 主推（全站唯一）",
+      type: "boolean",
+      description: "勾选后，此小说将展示在首页最顶部的 Hero 区块。全站只应有一本书勾选此项。（与 currentlyReviewing 解耦：heroFeatured 决定展示位置，currentlyReviewing 决定是否有独立板块）",
       initialValue: false,
     }),
 
