@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+import { NovelDescription } from "@/components/novel-description";
 import { getNovels, getNovelBySlug, getNovelChapters } from "@/lib/novels";
 import { absoluteUrl, SITE_NAME } from "@/lib/siteMetadata";
 
@@ -165,17 +166,19 @@ export default async function NovelDetailPage({
       <main className="page-shell py-8">
         {/* Novel header card */}
         <section className="grid grid-cols-1 md:grid-cols-[280px_1fr] gap-8 mb-8 bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-[#f7c6d9]/30">
-          {/* Cover image */}
-          <div
-            className="w-full h-80 md:h-auto rounded-xl bg-cover bg-center bg-no-repeat shadow-lg"
-            style={{ backgroundImage: `url('${novel.coverImage}')` }}
-            aria-label={`${novel.title} cover image`}
-          >
-            <img
-              src={novel.coverImage}
-              alt={novel.coverImageAlt || `${novel.title} novel cover`}
-              className="absolute inset-0 opacity-0 w-full h-full pointer-events-none"
-            />
+          {/* Cover image — fixed aspect ratio, top-aligned */}
+          <div className="self-start">
+            <div
+              className="w-full rounded-xl overflow-hidden shadow-lg aspect-[2/3] bg-cover bg-center bg-no-repeat"
+              style={{ backgroundImage: `url('${novel.coverImage}')` }}
+              aria-label={`${novel.title} cover image`}
+            >
+              <img
+                src={novel.coverImage}
+                alt={novel.coverImageAlt || `${novel.title} novel cover`}
+                className="absolute inset-0 opacity-0 w-full h-full pointer-events-none"
+              />
+            </div>
           </div>
 
           {/* Novel info */}
@@ -212,18 +215,11 @@ export default async function NovelDetailPage({
               )}
             </div>
 
-            {/* Description */}
-            <div className="text-[#302a2f] text-base leading-relaxed">
-              {descriptionParagraphs.length > 0 ? (
-                descriptionParagraphs.map((paragraph, index) => (
-                  <p key={`${paragraph}-${index}`} className="mb-2">
-                    {paragraph}
-                  </p>
-                ))
-              ) : (
-                <p>{novel.excerpt}</p>
-              )}
-            </div>
+            {/* Description — collapsible client component */}
+            <NovelDescription
+              paragraphs={descriptionParagraphs}
+              excerpt={novel.excerpt}
+            />
 
             {/* Category badge */}
             {novel.tags && novel.tags.length > 0 && (

@@ -118,11 +118,13 @@ export default async function HomePage() {
         </h1>
       </div>
 
-      {/* Hero section */}
-      <section className="page-shell pt-4 pb-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
-          <HeroReviewingBanner novel={heroNovel} />
-          <HeroAnnouncementPanel />
+      {/* Hero section — aligned with chapter cards below */}
+      <section className="page-shell pt-4 pb-6">
+        <div className="rounded-2xl bg-gradient-to-br from-[#fff9f5] via-[#fff4f8] to-[#fdf0f6] border border-[#f7c6d9]/40 p-8 sm:p-10 shadow-sm">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-stretch">
+            <HeroReviewingBanner novel={heroNovel} />
+            <HeroAnnouncementPanel />
+          </div>
         </div>
       </section>
 

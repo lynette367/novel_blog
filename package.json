@@ -19,12 +19,12 @@
     "@sanity/client": "^7.13.0",
     "@sanity/export": "^6.2.0",
     "@sanity/image-url": "^1.2.0",
-    "@sanity/vision": "^6.10.1",
+    "@sanity/vision": "^6.11.0",
     "next": "^16.0.7",
     "next-sanity": "^11.6.9",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
-    "sanity": "^6.10.1",
+    "sanity": "^6.11.0",
     "styled-components": "^6.0.0"
   },
   "devDependencies": {
