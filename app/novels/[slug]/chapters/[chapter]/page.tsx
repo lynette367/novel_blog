@@ -63,12 +63,12 @@ export async function generateMetadata({
 
   const metaTitle =
     chapterData.seo?.metaTitle ||
-    `${chapterData.title} | ${novel.title} - ${SITE_NAME}`;
+    `${chapterData.title} - ${novel.title}`;
 
   const metaDescription =
     chapterData.seo?.metaDescription ||
     novel.seo?.metaDescription ||
-    `Read ${chapterData.title} of ${novel.title} - High-quality Asian BL novel translation. Discover compelling danmei stories in English.`;
+    `Read ${chapterData.title} of ${novel.title} online. High-quality Chinese Danmei & BL web novel chapter in English.`;
 
   const ogImage =
     chapterData.seo?.ogImage ||
@@ -89,10 +89,6 @@ export async function generateMetadata({
       "@id": absoluteUrl(`/novels/${novel.slug}#book`),
       name: novel.title,
       wordCount: novel.totalWordCount || undefined,
-      author: {
-        "@type": "Person",
-        name: novel.author || "Anonymous",
-      },
     },
     position: chapterNumber,
     inLanguage: "en",
@@ -107,7 +103,7 @@ export async function generateMetadata({
   return {
     title: metaTitle,
     description: metaDescription,
-    keywords: [novel.title, chapterData.title, "asian BL novel", "danmei translation", "yaoi fiction"],
+    keywords: [novel.title, chapterData.title, "danmei novels", "chinese danmei", "BL web novel"],
     alternates: {
       canonical: canonicalUrl,
     },

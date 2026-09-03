@@ -4,22 +4,23 @@ import "./globals.css";
 import { SITE_NAME, SITE_URL } from "@/lib/siteMetadata";
 
 const defaultDescription =
-  "Your destination for high-quality Asian BL novel translations. Discover captivating danmei stories, updated regularly with premium English translations.";
+  "Your destination for high-quality Chinese Danmei and Asian BL web novels. Discover captivating stories, daily updates, and completed chapters in English.";
 
 const defaultImage = `${SITE_URL}/assets/images/Wife_are_paramount.png`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Cross The Line | Asian BL Novel Translation & Reviews",
-    template: `%s | ${SITE_NAME}`,
+    default: "Read Chinese Danmei & BL Web Novels Online in English",
+    template: "%s | Danmei Novels",
   },
   description: defaultDescription,
   keywords: [
-    "asian BL novel",
-    "danmei translation",
-    "BL fiction",
-    "Chinese BL",
+    "danmei novels",
+    "chinese danmei",
+    "BL web novel",
+    "asian BL",
+    "read danmei online",
     "Xianxia BL",
   ],
   alternates: {
@@ -30,22 +31,22 @@ export const metadata: Metadata = {
     url: SITE_URL,
     siteName: SITE_NAME,
     locale: "en_US",
-    title: "Cross The Line | Asian BL Novel Translation",
+    title: "Read Chinese Danmei & BL Web Novels Online in English",
     description:
-      "High-quality Asian BL novel translations and danmei stories in English",
+      "Discover popular Chinese Danmei and Asian BL web novels in English with regular updates.",
     images: [
       {
         url: defaultImage,
         width: 1200,
         height: 630,
-        alt: SITE_NAME,
+        alt: "Danmei Novels Online",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Cross The Line | Asian BL Novel Translation",
-    description: "Discover captivating Asian BL novels and danmei translations",
+    title: "Read Chinese Danmei & BL Web Novels Online in English",
+    description: "Discover popular Chinese Danmei and Asian BL web novels in English with regular updates.",
     images: [defaultImage],
   },
 };

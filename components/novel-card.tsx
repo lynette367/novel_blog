@@ -19,12 +19,12 @@ export function NovelCard({ novel, priority = false }: NovelCardProps) {
       <div className="relative w-full aspect-[16/9] overflow-hidden flex-shrink-0 bg-gray-100">
         <Image
           src={novel.coverImage}
-          alt={novel.coverImageAlt || `Cover image for ${novel.title} - English Translation`}
+          alt={novel.coverImageAlt || `${novel.title} - Danmei BL Novel Cover`}
           fill
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           style={{ objectFit: "cover" }}
           priority={priority}
-          title={`Read ${novel.title} English Translation`}
+          title={`Read ${novel.title} - Danmei Novel`}
           className="transition-transform duration-500 group-hover:scale-105"
         />
         {/* Subtle pink top-edge accent on hover */}

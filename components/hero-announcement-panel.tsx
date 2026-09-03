@@ -19,7 +19,7 @@ export function HeroAnnouncementPanel() {
         <p>
           Our team is working through each novel, chapter by chapter, to create a
           meticulously crafted, refined version. Currently, we are focusing our
-          efforts on producing the premium, refined chapters for Big Brother.
+          efforts on producing the premium, refined chapters for Big Brother and Transmigrated To Be the Villain's Sickly Childhood Friend.
         </p>
         <ul className="space-y-1 pt-0.5 text-[11px] font-medium text-[#7d6f67]">
           <li className="flex items-center gap-2"><span>📖</span> Raw MTL chapters available instantly for all novels</li>

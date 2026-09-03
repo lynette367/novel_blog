@@ -35,7 +35,7 @@ export async function generateMetadata(): Promise<Metadata> {
       "@context": "https://schema.org",
       "@type": "WebSite",
       "@id": absoluteUrl("/#website"),
-      name: SITE_NAME,
+      name: "Danmei Novels Online",
       url: absoluteUrl("/"),
       potentialAction: {
         "@type": "SearchAction",
@@ -47,7 +47,7 @@ export async function generateMetadata(): Promise<Metadata> {
       "@context": "https://schema.org",
       "@type": "Organization",
       "@id": absoluteUrl("/#organization"),
-      name: `${SITE_NAME} in English`,
+      name: "Danmei Novels Online",
       url: absoluteUrl("/"),
       logo: {
         "@type": "ImageObject",
@@ -61,16 +61,18 @@ export async function generateMetadata(): Promise<Metadata> {
   ];
 
   return {
-    title: "Read Chinese Danmei & BL Novels",
+    title: {
+      absolute: "Read Chinese Danmei & BL Web Novels Online in English",
+    },
     description:
-      "High-quality English version of popular Chinese Danmei & BL novels. Explore Xianxia, Wuxia, and modern BL stories. Read exclusive daily updates!",
+      "High-quality English versions of popular Chinese Danmei & BL web novels. Explore Xianxia, Wuxia, and modern BL stories. Read exclusive daily updates!",
     alternates: {
       canonical: absoluteUrl("/"),
     },
     openGraph: {
-      title: "CrossTheLine - Read Chinese Danmei & BL Novels English Translation",
+      title: "Read Chinese Danmei & BL Web Novels Online in English",
       description:
-        "High-quality English translations of popular Chinese Danmei novels. Explore Xianxia, Wuxia, and Modern BL stories. Join our community for daily updates and exclusive chapters.",
+        "Discover top-rated Chinese Danmei and Asian BL web novels in English. Explore Xianxia, Wuxia, and modern romances with daily chapters.",
       url: absoluteUrl("/"),
       siteName: SITE_NAME,
       images: [
@@ -84,9 +86,9 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     twitter: {
       card: "summary_large_image",
-      title: "CrossTheLine - Read Chinese Danmei & BL Novels English Translation",
+      title: "Read Chinese Danmei & BL Web Novels Online in English",
       description:
-        "High-quality English translations of popular Chinese Danmei novels. Explore Xianxia, Wuxia, and Modern BL stories.",
+        "Discover top-rated Chinese Danmei and Asian BL web novels in English. Explore Xianxia, Wuxia, and modern romances with daily chapters.",
       images: [heroImage],
     },
     other: {
@@ -114,7 +116,7 @@ export default async function HomePage() {
       {/* SEO H1 */}
       <div className="page-shell pt-6 pb-2">
         <h1 className="text-center font-serif italic text-base font-normal text-[#c87f9b] tracking-wide leading-snug">
-          {SITE_NAME} — High-Quality Chinese Danmei &amp; BL Novels in English
+          Read Chinese Danmei &amp; Asian BL Novels Online in English
         </h1>
       </div>
 

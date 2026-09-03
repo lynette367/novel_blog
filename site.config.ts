@@ -1,15 +1,11 @@
 export const siteConfig = {
   // Site Metadata
   name: process.env.NEXT_PUBLIC_SITE_NAME || "Cross The Line",
-  title: process.env.NEXT_PUBLIC_SITE_TITLE || "Free Chinese Danmei Novels & BL Web Fiction in English",
+  title: process.env.NEXT_PUBLIC_SITE_TITLE || "Read Chinese Danmei & BL Web Novels Online in English",
   description:
     process.env.NEXT_PUBLIC_SITE_DESCRIPTION ||
-    "High-quality English translations of popular web novels. Discover stories, daily updates, and exclusive chapters.",
+    "Discover popular Chinese Danmei and Asian BL web novels in English. Daily updates, completed series, and quality chapters.",
   url: process.env.NEXT_PUBLIC_SITE_URL || "https://www.crosstheline.press",
-
-  // Default Fallback Info
-  defaultAuthor: "Anonymous",
-  defaultTranslator: "Translation Team",
 
   // Support / Donation Links (Leave empty to hide buttons)
   supportLinks: {

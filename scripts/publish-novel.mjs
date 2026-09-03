@@ -69,7 +69,7 @@ function log(message, color = 'reset') {
 }
 
 // 默认摘要
-const DEFAULT_EXCERPT = "Discover this compelling web novel. A captivating story exploring romance, drama, and character development. Read now in English translation.";
+const DEFAULT_EXCERPT = "Discover this captivating Chinese Danmei novel. A popular BL web fiction exploring deep romance and gripping storylines. Read online in English.";
 
 /**
  * 读取文件内容，自动检测编码
@@ -502,7 +502,6 @@ async function createOrUpdateNovel(novelData, coverImageAsset, existingId = null
     description: novelData.description || excerpt,
     totalChapters: novelData.totalChapters || 0,
     publishedAt: new Date().toISOString(),
-    author: novelData.author || 'Anonymous',
   };
   
   if (coverImageAsset) {

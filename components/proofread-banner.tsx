@@ -57,7 +57,7 @@ export function ProofreadBanner({ chapter }: Props) {
             </p>
           ) : (
             <p className="text-sm italic text-[#302a2f] leading-relaxed mb-5 border-l-2 border-[#e499b3] pl-3">
-              Dive into the carefully hand-crafted, human-proofread chapter translation for the best
+              Dive into the carefully hand-crafted, human-proofread refined chapter for the best
               reading experience.
             </p>
           )}

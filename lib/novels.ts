@@ -43,7 +43,6 @@ export type Novel = {
   totalChapters?: number;
   totalWordCount?: number;
   description?: string;
-  author?: string;
   tags?: string[];
   seo?: {
     metaTitle?: string;
@@ -139,7 +138,6 @@ type SanityNovel = {
   coverImage?: SanityImageSource & { alt?: string };
   totalChapters?: number;
   totalWordCount?: number;
-  author?: string;
   tags?: string[];
   seo?: {
     metaTitle?: string;
@@ -198,7 +196,6 @@ function transformNovel(sanityNovel: SanityNovel): Novel {
     totalChapters: sanityNovel.totalChapters || 0,
     totalWordCount: sanityNovel.totalWordCount || 0,
     description: sanityNovel.description || sanityNovel.seo?.metaDescription || sanityNovel.excerpt || "",
-    author: sanityNovel.author || "Anonymous",
     tags,
     seo: sanityNovel.seo
       ? {
@@ -224,7 +221,6 @@ export const getNovels = cache(async (): Promise<Novel[]> => {
     description,
     coverImage,
     totalChapters,
-    author,
     tags,
     seo {
       metaTitle,
@@ -254,7 +250,6 @@ export const getFeaturedNovels = cache(async (limit = 6): Promise<Novel[]> => {
     description,
     coverImage,
     totalChapters,
-    author,
     tags,
     seo {
       metaTitle,
@@ -761,7 +756,6 @@ export const getNovelBySlug = cache(async (slug: string): Promise<Novel | undefi
     description,
     coverImage,
     totalChapters,
-    author,
     tags,
     "totalWordCount": math::sum(
       *[_type == "chapter" && references(^._id) && locked != true]{

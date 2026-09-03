@@ -31,12 +31,6 @@ export const novel = defineType({
       },
     }),
     defineField({
-      name: "author",
-      title: "作者",
-      type: "string",
-      initialValue: "Anonymous",
-    }),
-    defineField({
       name: "description",
       title: "详细描述",
       type: "text",
@@ -94,14 +88,12 @@ export const novel = defineType({
   preview: {
     select: {
       title: "title",
-      author: "author",
       media: "coverImage",
     },
     prepare(selection) {
-      const { title, author } = selection;
+      const { title } = selection;
       return {
         title,
-        subtitle: author || "Anonymous",
         media: selection.media,
       };
     },

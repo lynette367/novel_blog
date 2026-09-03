@@ -18,9 +18,9 @@ export async function generateMetadata(): Promise<Metadata> {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
     "@id": absoluteUrl("/novels#collectionpage"),
-    "name": "Browse Asian BL Novels | Danmei Collection",
+    "name": "Browse Chinese BL & Danmei Web Fiction",
     "url": absoluteUrl("/novels"),
-    "description": `Explore our collection of ${totalNovels} translated Asian BL novels with ${totalChapters}+ chapters. High-quality danmei translations updated regularly.`,
+    "description": `Explore our curated library of ${totalNovels} Chinese Danmei and Asian BL novels with ${totalChapters}+ chapters. Read completed stories in English.`,
     "mainEntityOfPage": {
       "@type": "WebPage",
       "@id": absoluteUrl("/novels"),
@@ -31,15 +31,15 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 
   return {
-    title: "Browse Asian BL Novels | Danmei Collection - Cross The Line",
-    description: `Explore our collection of ${totalNovels} translated Asian BL novels with ${totalChapters}+ chapters. High-quality danmei translations updated regularly.`,
-    keywords: ["BL novels collection", "danmei library", "Asian BL", "translated BL fiction"],
+    title: "Browse Chinese BL & Web Fiction",
+    description: `Explore our curated library of ${totalNovels} Chinese Danmei and Asian BL novels with ${totalChapters}+ chapters. Read completed stories in English.`,
+    keywords: ["danmei novels", "chinese danmei", "BL novels collection", "danmei library", "read danmei online", "asian BL"],
     alternates: {
       canonical: absoluteUrl("/novels"),
     },
     openGraph: {
-      title: "Browse Asian BL Novels | Danmei Collection - Cross The Line",
-      description: `Discover our complete collection of ${totalNovels} translated Asian BL novels with ${totalChapters}+ chapters. Updated regularly.`,
+      title: "Browse Chinese BL & Danmei Web Fiction",
+      description: `Explore our complete collection of ${totalNovels} Chinese Danmei and Asian BL novels with ${totalChapters}+ chapters.`,
       url: absoluteUrl("/novels"),
       siteName: SITE_NAME,
       images: [
@@ -53,8 +53,8 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     twitter: {
       card: "summary_large_image",
-      title: "Browse Asian BL Novels | Danmei Collection - Cross The Line",
-      description: `${totalNovels} translated Asian BL novels with ${totalChapters}+ chapters`,
+      title: "Browse Chinese BL & Danmei Web Fiction",
+      description: `Explore our collection of ${totalNovels} Chinese Danmei and Asian BL novels with ${totalChapters}+ chapters.`,
       images: [ogImage],
     },
     other: {

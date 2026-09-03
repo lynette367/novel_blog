@@ -144,7 +144,6 @@ async function main() {
         const novelDoc = {
             _type: 'novel',
             title: title,
-            author: author,
             seo: {
                 metaDescription: synopsis.slice(0, 300) + '...',
             },

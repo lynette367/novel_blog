@@ -72,7 +72,7 @@ export function LatestPolishedGrid({ chapters }: Props) {
                 </p>
               ) : (
                 <p className="text-sm italic text-gray-400 mb-4 line-clamp-3">
-                  Freshly polished human translation available. Click to read!
+                  Freshly polished refined chapter available. Click to read!
                 </p>
               )}
 

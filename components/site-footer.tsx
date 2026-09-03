@@ -49,19 +49,13 @@ export function SiteFooter() {
           )}
           .
         </p>
-        <div className="flex justify-center gap-8 mt-6 flex-wrap">
-          <a href="#" className="text-[#f7c6d9] no-underline hover:text-[#ffe3ef] transition-colors text-sm">
-            About
-          </a>
-          <a href="#" className="text-[#f7c6d9] no-underline hover:text-[#ffe3ef] transition-colors text-sm">
-            Translation Policy
-          </a>
-          <Link href="/contact" className="text-[#f7c6d9] no-underline hover:text-[#ffe3ef] transition-colors text-sm">
-            Contact
+        <div className="flex justify-center mt-6">
+          <Link
+            href="/contact"
+            className="text-[#f7c6d9] no-underline hover:text-[#ffe3ef] transition-colors text-sm hover:underline underline-offset-4"
+          >
+            Contact &amp; About Us
           </Link>
-          <a href="#" className="text-[#f7c6d9] no-underline hover:text-[#ffe3ef] transition-colors text-sm">
-            Privacy
-          </a>
         </div>
       </div>
     </footer>

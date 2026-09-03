@@ -34,12 +34,12 @@ export async function generateMetadata({
   }
 
   const metaTitle =
-    novel.seo?.metaTitle || `${novel.title} | Asian BL Novel in English - ${SITE_NAME}`;
+    novel.seo?.metaTitle || `${novel.title} | Chinese Danmei & BL Novel in English`;
   const metaDescription =
     novel.seo?.metaDescription ||
-    `Complete ${novel.title} in English. Read all chapters of this captivating Asian BL novel and danmei story. Updated regularly with quality English version.`;
+    `Read ${novel.title} online in English. Complete Chinese Danmei & Asian BL web novel chapters updated regularly.`;
 
-  const canonicalUrl = `https://www.crosstheline.press/novels/${novel.slug}`;
+  const canonicalUrl = absoluteUrl(`/novels/${novel.slug}`);
   const ogImageUrl = novel.seo?.ogImage || novel.coverImage || "/assets/images/0.jpg";
   const ogImageAlt = novel.coverImageAlt || `${novel.title} - BL Danmei Novel Cover`;
 
@@ -51,13 +51,8 @@ export async function generateMetadata({
     "@type": "Book",
     "@id": bookId,
     name: novel.title,
-    author: {
-      "@type": "Person",
-      name: novel.author || "Anonymous",
-    },
     genre: ["BL", "Danmei", "Romance", "LGBT+ Fiction"],
     inLanguage: "en",
-    translator: "Cross The Line",
     numberOfPages: chapters.length,
     wordCount: novel.totalWordCount || undefined,
     description: novel.description ?? novel.excerpt,
@@ -67,15 +62,17 @@ export async function generateMetadata({
   };
 
   return {
-    title: metaTitle,
+    title: {
+      absolute: metaTitle,
+    },
     description: metaDescription,
     keywords: [
       novel.title,
+      "danmei novels",
+      "chinese danmei",
       "asian BL novel",
-      "danmei translation",
       "yaoi fiction",
       "BL romance",
-      "LGBT+ novel",
     ],
     alternates: {
       canonical: canonicalUrl,
@@ -138,19 +135,19 @@ export default async function NovelDetailPage({
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://www.crosstheline.press",
+        item: absoluteUrl("/"),
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Novels",
-        item: "https://www.crosstheline.press/novels",
+        item: absoluteUrl("/novels"),
       },
       {
         "@type": "ListItem",
         position: 3,
         name: novel.title,
-        item: `https://www.crosstheline.press/novels/${slug}`,
+        item: absoluteUrl(`/novels/${slug}`),
       },
     ],
   };
@@ -188,8 +185,6 @@ export default async function NovelDetailPage({
                 {novel.title}
               </h1>
               <div className="flex gap-4 flex-wrap text-[#c87f9b] text-sm mb-4">
-                <span>✍️ Author: {novel.author || "Anonymous"}</span>
-                <span>🌐 Translator: Cross The Line</span>
                 <span>📅 Status: Completed</span>
                 {chapters.length > 0 ? (
                   <span>Total chapters: {chapters.length}</span>
