@@ -40,7 +40,7 @@ export function ProofreadBanner({ chapter }: Props) {
           </div>
         ) : (
           <div className="relative w-full md:w-[42%] aspect-[16/9] md:aspect-auto flex-shrink-0 bg-gradient-to-br from-[#ffe3ef] to-[#fde2e8] flex items-center justify-center p-6">
-            <span className="font-serif text-2xl font-bold text-[#e499b3] opacity-70 text-center">
+            <span className="font-serif text-2xl font-bold text-[#f4a7b9] opacity-70 text-center">
               {chapter.novelTitle}
             </span>
           </div>
@@ -48,7 +48,7 @@ export function ProofreadBanner({ chapter }: Props) {
 
         {/* Right: content */}
         <div className="flex flex-col justify-center p-6 sm:p-8 md:pl-10 flex-1">
-          <div className="flex items-center gap-3 mb-3 text-xs font-bold uppercase tracking-wide text-[#c87f9b]">
+          <div className="flex items-center gap-3 mb-3 text-xs font-bold uppercase tracking-wide text-[#f4a7b9]">
             <span>Latest Human TL Chapter</span>
             <span className="text-[#2b1f2d] font-semibold italic normal-case px-3 py-0.5 bg-white rounded-full border border-[#f7c6d9]/60 text-xs tracking-normal">
               {chapter.novelTitle}
@@ -60,18 +60,18 @@ export function ProofreadBanner({ chapter }: Props) {
           </h2>
 
           {chapter.excerpt ? (
-            <p className="text-sm italic text-[#302a2f] leading-relaxed mb-5 line-clamp-3 border-l-2 border-[#e499b3] pl-3">
+            <p className="text-sm italic text-[#302a2f] leading-relaxed mb-5 line-clamp-3 border-l-2 border-[#f4a7b9] pl-3">
               &ldquo;{chapter.excerpt}&rdquo;
             </p>
           ) : (
-            <p className="text-sm italic text-[#302a2f] leading-relaxed mb-5 border-l-2 border-[#e499b3] pl-3">
+            <p className="text-sm italic text-[#302a2f] leading-relaxed mb-5 border-l-2 border-[#f4a7b9] pl-3">
               Dive into the carefully hand-crafted, human-proofread refined chapter for the best
               reading experience.
             </p>
           )}
 
           <div className="flex items-center justify-between flex-wrap gap-4 pt-4 border-t border-[#f7c6d9]/30">
-            <div className="flex gap-4 text-sm text-[#c87f9b] font-medium">
+            <div className="flex gap-4 text-sm text-[#f4a7b9] font-medium">
               {chapter.readingMinutes ? <span>📖 Est. {chapter.readingMinutes} min read</span> : null}
               {chapter.wordCount ? <span>📝 {chapter.wordCount.toLocaleString()} words</span> : null}
             </div>

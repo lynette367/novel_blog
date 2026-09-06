@@ -58,6 +58,21 @@ export const chapter = defineType({
       initialValue: false,
     }),
     defineField({
+      name: "patreonPublished",
+      title: "🎯 Published on Patreon",
+      type: "boolean",
+      description:
+        "Check this once you've posted this chapter's polished version on Patreon.",
+      initialValue: false,
+    }),
+    defineField({
+      name: "patreonUrl",
+      title: "Patreon Post URL",
+      type: "url",
+      description: "Direct link to this chapter's post on Patreon.",
+      hidden: ({ parent }) => !parent?.patreonPublished,
+    }),
+    defineField({
       name: "seo",
       title: "SEO Settings",
       type: "seo",

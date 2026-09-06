@@ -43,7 +43,7 @@ export function HeroReviewingBanner({ novel }: Props) {
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center p-2 text-center">
-                <span className="font-serif text-xs font-bold text-[#e499b3]">
+                <span className="font-serif text-xs font-bold text-[#f4a7b9]">
                   {novel.title}
                 </span>
               </div>
@@ -56,12 +56,12 @@ export function HeroReviewingBanner({ novel }: Props) {
           <h2 className="font-serif font-semibold text-sm text-[#2b1f2d] leading-snug">
             <Link
               href={novelUrl}
-              className="no-underline text-inherit hover:text-[#e499b3] transition-colors"
+              className="no-underline text-inherit hover:text-[#f4a7b9] transition-colors"
             >
               {novel.title}
             </Link>
           </h2>
-          <p className="text-[10px] font-semibold text-[#e499b3] bg-[#f7c6d9]/20 border border-[#e499b3]/30 rounded-full px-2 py-0.5 w-fit">
+          <p className="text-[10px] font-semibold text-[#f4a7b9] bg-[#f7c6d9]/20 border border-[#f4a7b9]/30 rounded-full px-2 py-0.5 w-fit">
             {novel.totalChapters} Chapters
           </p>
           <div className="flex flex-wrap gap-1">
@@ -79,7 +79,7 @@ export function HeroReviewingBanner({ novel }: Props) {
       </div>
 
       {/* Excerpt */}
-      <p className="text-xs italic text-[#302a2f] leading-relaxed mb-3 border-l-2 border-[#e499b3] pl-2 line-clamp-2">
+      <p className="text-xs italic text-[#302a2f] leading-relaxed mb-3 border-l-2 border-[#f4a7b9] pl-2 line-clamp-2">
         {novel.description || novel.excerpt}
       </p>
 
@@ -87,7 +87,7 @@ export function HeroReviewingBanner({ novel }: Props) {
       <div className="mb-3">
         <div className="flex justify-between items-center text-[10px] font-semibold text-[#302a2f] mb-1">
           <span>Refinement Progress</span>
-          <span className="text-[#e499b3] font-bold">
+          <span className="text-[#f4a7b9] font-bold">
             Ch. {novel.reviewedUpToChapter} / {novel.totalChapters} ({percentage}%)
           </span>
         </div>
@@ -109,7 +109,7 @@ export function HeroReviewingBanner({ novel }: Props) {
         </Link>
         <Link
           href={novelUrl}
-          className="text-[10px] font-bold text-[#e499b3] hover:text-[#c87f9b] underline underline-offset-4 transition-colors"
+          className="text-[10px] font-bold text-[#f4a7b9] hover:text-[#f4a7b9] underline underline-offset-4 transition-colors"
         >
           View Details →
         </Link>

@@ -28,7 +28,7 @@ export function NovelDescription({ paragraphs, excerpt }: Props) {
       {hasMore && (
         <button
           onClick={() => setExpanded((prev) => !prev)}
-          className="mt-1 text-sm font-semibold text-[#e499b3] hover:text-[#c87f9b] transition-colors cursor-pointer bg-transparent border-none p-0 underline underline-offset-4"
+          className="mt-1 text-sm font-semibold text-[#f4a7b9] hover:text-[#f4a7b9] transition-colors cursor-pointer bg-transparent border-none p-0 underline underline-offset-4"
         >
           {expanded ? "Show less ↑" : "Show more ↓"}
         </button>

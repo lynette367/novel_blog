@@ -11,7 +11,7 @@ export function NovelCard({ novel, priority = false }: NovelCardProps) {
   return (
     <Link
       href={`/novels/${novel.slug}`}
-      className="group relative flex flex-col overflow-hidden rounded-2xl border border-[#f7c6d9]/40 bg-white transition-all duration-300 hover:-translate-y-2 hover:shadow-lg hover:border-[#e499b3]/60 no-underline text-inherit"
+      className="group relative flex flex-col overflow-hidden rounded-2xl border border-[#f7c6d9]/40 bg-white transition-all duration-300 hover:-translate-y-2 hover:shadow-lg hover:border-[#f4a7b9]/60 no-underline text-inherit"
       data-slug={novel.slug}
       prefetch={false}
     >
@@ -30,7 +30,7 @@ export function NovelCard({ novel, priority = false }: NovelCardProps) {
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center p-4">
-            <span className="font-serif text-xl font-bold text-[#e499b3] opacity-60 text-center">
+            <span className="font-serif text-xl font-bold text-[#f4a7b9] opacity-60 text-center">
               {novel.title}
             </span>
           </div>
@@ -43,7 +43,7 @@ export function NovelCard({ novel, priority = false }: NovelCardProps) {
       <div className="flex flex-col flex-1 p-5 bg-gradient-to-b from-white to-[#fff9f2]">
         {novel.tags && novel.tags.length > 0 && (
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-bold text-[#e499b3] bg-[#f7c6d9]/20 border border-[#e499b3]/45 px-2.5 py-0.5 rounded-full truncate max-w-[170px]">
+            <span className="text-xs font-bold text-[#f4a7b9] bg-[#f7c6d9]/20 border border-[#f4a7b9]/45 px-2.5 py-0.5 rounded-full truncate max-w-[170px]">
               {novel.tags[0]}
             </span>
           </div>
@@ -52,16 +52,16 @@ export function NovelCard({ novel, priority = false }: NovelCardProps) {
         <h3 className="font-serif font-semibold text-lg text-[#2b1f2d] leading-snug mb-3 line-clamp-2">
           {novel.title}
         </h3>
-        <p className="text-sm text-[#302a2f] italic leading-relaxed mb-4 line-clamp-3 border-l-2 border-[#e499b3] pl-3">
+        <p className="text-sm text-[#302a2f] italic leading-relaxed mb-4 line-clamp-3 border-l-2 border-[#f4a7b9] pl-3">
           {novel.excerpt}
         </p>
         <div className="flex items-center justify-between mt-auto pt-3 border-t border-[#f7c6d9]/30 text-xs">
           {novel.totalChapters ? (
-            <span className="text-[#c87f9b] font-medium">📚 {novel.totalChapters} chapters</span>
+            <span className="text-[#f4a7b9] font-medium">📚 {novel.totalChapters} chapters</span>
           ) : (
             <span />
           )}
-          <span className="text-[#e499b3] font-semibold group-hover:text-[#c87f9b] transition-colors">
+          <span className="text-[#f4a7b9] font-semibold group-hover:text-[#f4a7b9] transition-colors">
             Read →
           </span>
         </div>

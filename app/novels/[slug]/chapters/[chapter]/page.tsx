@@ -173,10 +173,14 @@ export default async function ChapterPage({
 
   const currentIsPolished = currentChapter?.isPolished ?? false;
   const nextIsPolished = nextChapter?.isPolished ?? false;
-  const showPatreonHook =
-    (currentIsPolished && !nextIsPolished) ||
-    (Boolean(novel.patreonAheadChapter) && chapterNumber === novel.patreonAheadChapter);
+  const showPatreonHook = currentIsPolished && !nextIsPolished;
 
+  // 从章节数组直接算出 Patreon 进度，不需要额外查询
+  const patreonChapters = chapters
+    .filter((c) => c.patreonPublished)
+    .sort((a, b) => b.number - a.number);
+  const patreonPublishedCount = patreonChapters.length;
+  const latestPatreonChapter = patreonChapters[0] || null;
   // 新增：当前是不是机翻章节，以及全书精修到第几章了
   const isCurrentRawMtl = currentChapter?.isPolished === false;
   const polishedNumbers = chapters
@@ -222,7 +226,7 @@ export default async function ChapterPage({
         <div className="mx-auto max-w-3xl px-4 sm:px-6 py-3 flex justify-between items-center">
           <Link
             href={`/novels/${slug}`}
-            className="flex items-center gap-2 text-[#e499b3] no-underline font-semibold text-sm hover:text-[#c87f9b] transition-colors px-3 py-1.5 rounded-lg hover:bg-[#fff9f2]"
+            className="flex items-center gap-2 text-[#f4a7b9] no-underline font-semibold text-sm hover:text-[#f4a7b9] transition-colors px-3 py-1.5 rounded-lg hover:bg-[#fff9f2]"
           >
             ← Back to Table of Contents
           </Link>
@@ -231,13 +235,13 @@ export default async function ChapterPage({
 
       {/* Chapter header */}
       <header className="max-w-3xl mx-auto px-4 sm:px-6 pt-10 pb-6 text-center">
-        <div className="text-sm text-[#e499b3] uppercase tracking-[0.15em] font-semibold mb-3">
+        <div className="text-sm text-[#f4a7b9] uppercase tracking-[0.15em] font-semibold mb-3">
           Chapter {chapterNumber}
         </div>
         <h1 className="font-serif text-3xl md:text-4xl text-[#2b1f2d] font-normal leading-snug mb-6">
           {chapterData.title}
         </h1>
-        <div className="flex justify-center gap-8 text-[#c87f9b] text-sm mb-8 flex-wrap">
+        <div className="flex justify-center gap-8 text-[#f4a7b9] text-sm mb-8 flex-wrap">
           <span>📖 Est. {chapterData.readingMinutes} min read</span>
           <span>📝 {chapterData.wordCount.toLocaleString()} words</span>
         </div>
@@ -251,10 +255,7 @@ export default async function ChapterPage({
       )}
 
       {/* Chapter content */}
-      <article className="max-w-3xl mx-auto px-4 sm:px-6 mb-12 bg-white rounded-2xl border border-[#f7c6d9]/20 p-6 sm:p-10 shadow-sm"></article>
-
-      {/* Chapter content */}
-      <article className="max-w-3xl mx-auto px-4 sm:px-6 mb-12 bg-white rounded-2xl border border-[#f7c6d9]/20 p-6 sm:p-10 shadow-sm">
+      <article className="max-w-3xl mx-auto px-4 sm:px-6 mb-12">
         <div
           className="prose prose-stone max-w-none"
           dangerouslySetInnerHTML={{ __html: fullContentHtml }}
@@ -264,9 +265,10 @@ export default async function ChapterPage({
       {/* Patreon hook card (shown at human TL boundary) */}
       {showPatreonHook && (
         <PatreonHookCard
-          patreonAheadChapter={novel.patreonAheadChapter}
+          patreonPublishedCount={patreonPublishedCount}
+          latestPatreonChapterNumber={latestPatreonChapter?.number ?? null}
+          latestPatreonUrl={latestPatreonChapter?.patreonUrl}
           currentChapterNumber={chapterNumber}
-          novelTitle={novel.title}
         />
       )}
 

@@ -121,7 +121,7 @@ export default async function HomePage() {
 
       {/* SEO H1 */}
       <div className="page-shell pt-6 pb-2">
-        <h1 className="text-center font-serif italic text-base font-normal text-[#c87f9b] tracking-wide leading-snug">
+        <h1 className="text-center font-serif italic text-base font-normal text-[#f4a7b9] tracking-wide leading-snug">
           Read Chinese Danmei &amp; Asian BL Novels Online in English
         </h1>
       </div>
@@ -147,7 +147,7 @@ export default async function HomePage() {
               </h2>
               <Link
                 href={`/novels/${heroNovel.slug}` as any}
-                className="text-xs font-semibold text-[#e499b3] hover:text-[#c87f9b] underline underline-offset-4 transition-colors no-underline shrink-0"
+                className="text-xs font-semibold text-[#f4a7b9] hover:text-[#f4a7b9] underline underline-offset-4 transition-colors no-underline shrink-0"
               >
                 View novel →
               </Link>
@@ -170,7 +170,7 @@ export default async function HomePage() {
                 {i > 0 && " · "}
                 <Link
                   href={`/novels/${n.slug}` as any}
-                  className="text-[#e499b3] hover:text-[#c87f9b] font-medium transition-colors"
+                  className="text-[#f4a7b9] hover:text-[#f4a7b9] font-medium transition-colors"
                 >
                   {n.title}
                 </Link>
@@ -179,7 +179,7 @@ export default async function HomePage() {
             →{" "}
             <Link
               href="/novels"
-              className="text-[#e499b3] hover:text-[#c87f9b] font-medium transition-colors"
+              className="text-[#f4a7b9] hover:text-[#f4a7b9] font-medium transition-colors"
             >
               View all
             </Link>
@@ -190,7 +190,7 @@ export default async function HomePage() {
         <div className="text-center mt-4 mb-2">
           <Link
             href="/novels"
-            className="inline-flex items-center gap-2 text-[#e499b3] font-semibold text-base px-8 py-3.5 border-2 border-[#e499b3] rounded-full hover:bg-[#e499b3] hover:text-white transition-all no-underline"
+            className="inline-flex items-center gap-2 text-[#f4a7b9] font-semibold text-base px-8 py-3.5 border-2 border-[#f4a7b9] rounded-full hover:bg-[#f4a7b9] hover:text-white transition-all no-underline"
           >
             Explore the Full Library →
           </Link>

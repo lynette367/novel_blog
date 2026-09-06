@@ -37,7 +37,7 @@ export function LatestPolishedGrid({ chapters }: Props) {
           <Link
             key={ch._id}
             href={chapterUrl}
-            className="group flex flex-col overflow-hidden rounded-2xl border border-[#f7c6d9]/40 bg-white transition-all duration-300 hover:-translate-y-2 hover:shadow-lg hover:border-[#e499b3]/60 no-underline text-inherit"
+            className="group flex flex-col overflow-hidden rounded-2xl border border-[#f7c6d9]/40 bg-white transition-all duration-300 hover:-translate-y-2 hover:shadow-lg hover:border-[#f4a7b9]/60 no-underline text-inherit"
           >
             {/* Cover image with time badge */}
             <div className="relative w-full aspect-[16/9] overflow-hidden rounded-t-2xl bg-gradient-to-br from-[#ffe3ef] to-[#fde2e8]">
@@ -52,7 +52,7 @@ export function LatestPolishedGrid({ chapters }: Props) {
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center p-4">
-                  <span className="font-serif text-xl font-bold text-[#e499b3] opacity-60 text-center">
+                  <span className="font-serif text-xl font-bold text-[#f4a7b9] opacity-60 text-center">
                     {ch.novelTitle}
                   </span>
                 </div>
@@ -65,7 +65,7 @@ export function LatestPolishedGrid({ chapters }: Props) {
             {/* Card content */}
             <div className="flex flex-col flex-1 p-5">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-bold text-[#e499b3] bg-[#f7c6d9]/20 border border-[#e499b3]/45 px-2.5 py-0.5 rounded-full truncate max-w-[170px]">
+                <span className="text-xs font-bold text-[#f4a7b9] bg-[#f7c6d9]/20 border border-[#f4a7b9]/45 px-2.5 py-0.5 rounded-full truncate max-w-[170px]">
                   {ch.novelTitle}
                 </span>
               </div>
@@ -75,7 +75,7 @@ export function LatestPolishedGrid({ chapters }: Props) {
               </h3>
 
               {ch.excerpt ? (
-                <p className="text-sm text-[#302a2f] italic leading-relaxed mb-4 line-clamp-3 border-l-2 border-[#e499b3] pl-3">
+                <p className="text-sm text-[#302a2f] italic leading-relaxed mb-4 line-clamp-3 border-l-2 border-[#f4a7b9] pl-3">
                   &ldquo;{ch.excerpt}&rdquo;
                 </p>
               ) : (
@@ -85,10 +85,10 @@ export function LatestPolishedGrid({ chapters }: Props) {
               )}
 
               <div className="flex items-center justify-between mt-auto pt-3 border-t border-[#f7c6d9]/25 text-xs">
-                <span className="text-[#c87f9b] font-medium">
+                <span className="text-[#f4a7b9] font-medium">
                   📖 {ch.readingMinutes} min read ({ch.wordCount.toLocaleString()} words)
                 </span>
-                <span className="text-[#e499b3] font-semibold group-hover:text-[#c87f9b] transition-colors">
+                <span className="text-[#f4a7b9] font-semibold group-hover:text-[#f4a7b9] transition-colors">
                   Read →
                 </span>
               </div>

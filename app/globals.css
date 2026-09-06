@@ -6,13 +6,17 @@
   --foreground: #2b1f2d;
   --brand-pink: #f7c6d9;
   --brand-blush: #ffe3ef;
-  --brand-pinkdeep: #e499b3;
-  --brand-pinkhover: #c87f9b;
+  --brand-pinkdeep: #f4a7b9;
+  --brand-pinkhover: #f4a7b9;
   --brand-peachpink: #f4a7b9;
   --brand-ink: #2b1f2d;
   --brand-sky: #b8d9ff;
   --brand-sand: #fcdcc2;
   --brand-mist: #f4f9ff;
+  /* InfoCard shared style tokens */
+  --card-border: #bfe2ee;
+  --card-bg: #fffdf2;
+  --card-shadow: 0 6px 20px rgba(191, 226, 238, 0.3);
 }
 
 @theme inline {
@@ -27,6 +31,8 @@
   --color-brand-sky: var(--brand-sky);
   --color-brand-sand: var(--brand-sand);
   --color-brand-mist: var(--brand-mist);
+  --color-card-border: var(--card-border);
+  --color-card-bg: var(--card-bg);
 }
 
 *,

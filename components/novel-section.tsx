@@ -28,7 +28,7 @@ export function NovelSection({ novel, chapters }: Props) {
           <h2 className="font-serif text-2xl font-normal text-[#2b1f2d] tracking-wide">
             <Link
               href={novelUrl}
-              className="no-underline text-inherit hover:text-[#e499b3] transition-colors"
+              className="no-underline text-inherit hover:text-[#f4a7b9] transition-colors"
             >
               {novel.title}
             </Link>
@@ -39,7 +39,7 @@ export function NovelSection({ novel, chapters }: Props) {
         </div>
         <Link
           href={novelUrl}
-          className="text-xs font-semibold text-[#e499b3] hover:text-[#c87f9b] underline underline-offset-4 transition-colors no-underline shrink-0"
+          className="text-xs font-semibold text-[#f4a7b9] hover:text-[#f4a7b9] underline underline-offset-4 transition-colors no-underline shrink-0"
         >
           View novel →
         </Link>
@@ -60,7 +60,7 @@ export function NovelSection({ novel, chapters }: Props) {
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center p-1 text-center">
-                <span className="font-serif text-[9px] font-bold text-[#e499b3] line-clamp-2">
+                <span className="font-serif text-[9px] font-bold text-[#f4a7b9] line-clamp-2">
                   {novel.title}
                 </span>
               </div>
@@ -86,7 +86,7 @@ export function NovelSection({ novel, chapters }: Props) {
 
           {/* Excerpt */}
           {(novel.description || novel.excerpt) && (
-            <p className="text-xs italic text-[#302a2f] leading-relaxed line-clamp-2 border-l-2 border-[#e499b3] pl-2">
+            <p className="text-xs italic text-[#302a2f] leading-relaxed line-clamp-2 border-l-2 border-[#f4a7b9] pl-2">
               {novel.description || novel.excerpt}
             </p>
           )}
@@ -96,7 +96,7 @@ export function NovelSection({ novel, chapters }: Props) {
             <div className="flex-1 min-w-0">
               <div className="flex justify-between items-center text-[10px] font-semibold text-[#302a2f] mb-1">
                 <span>Refinement</span>
-                <span className="text-[#e499b3]">
+                <span className="text-[#f4a7b9]">
                   Ch. {novel.reviewedUpToChapter}/{novel.totalChapters} ({percentage}%)
                 </span>
               </div>

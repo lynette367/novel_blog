@@ -85,13 +85,13 @@ export async function generateMetadata({
       siteName: SITE_NAME,
       images: ogImageUrl
         ? [
-            {
-              url: ogImageUrl,
-              width: 1200,
-              height: 630,
-              alt: ogImageAlt,
-            },
-          ]
+          {
+            url: ogImageUrl,
+            width: 1200,
+            height: 630,
+            alt: ogImageAlt,
+          },
+        ]
         : [],
     },
     twitter: {
@@ -186,7 +186,7 @@ export default async function NovelDetailPage({
               <h1 className="font-serif text-3xl md:text-4xl text-[#2b1f2d] font-normal leading-snug mb-3">
                 {novel.title}
               </h1>
-              <div className="flex gap-4 flex-wrap text-[#c87f9b] text-sm mb-4">
+              <div className="flex gap-4 flex-wrap text-[#f4a7b9] text-sm mb-4">
                 <span>📅 Status: Completed</span>
                 {chapters.length > 0 ? (
                   <span>Total chapters: {chapters.length}</span>
@@ -199,11 +199,11 @@ export default async function NovelDetailPage({
               {/* Tags */}
               {novel.tags && novel.tags.length > 0 && (
                 <div className="flex flex-wrap gap-2 items-center mt-2">
-                  <span className="text-sm text-[#c87f9b]">Tags:</span>
+                  <span className="text-sm text-[#f4a7b9]">Tags:</span>
                   {novel.tags.map((tag, index) => (
                     <span
                       key={index}
-                      className="px-3 py-0.5 bg-[#ffe3ef] text-[#e499b3] rounded-full text-sm font-semibold border border-[#f7c6d9]"
+                      className="px-3 py-0.5 bg-[#ffe3ef] text-[#f4a7b9] rounded-full text-sm font-semibold border border-[#f7c6d9]"
                     >
                       {tag}
                     </span>
@@ -221,7 +221,7 @@ export default async function NovelDetailPage({
             {/* Category badge */}
             {novel.tags && novel.tags.length > 0 && (
               <div className="inline-block">
-                <span className="px-5 py-2 border-2 border-[#e499b3] rounded-full text-[#e499b3] font-semibold text-sm uppercase tracking-wide">
+                <span className="px-5 py-2 border-2 border-[#f4a7b9] rounded-full text-[#f4a7b9] font-semibold text-sm uppercase tracking-wide">
                   {novel.tags[0]}
                 </span>
               </div>
@@ -237,7 +237,7 @@ export default async function NovelDetailPage({
                 Table of Contents
               </h2>
               {chapters.length > 0 ? (
-                <span className="text-[#c87f9b] text-sm">
+                <span className="text-[#f4a7b9] text-sm">
                   {chapters.length} Chapters Available
                 </span>
               ) : null}
@@ -253,12 +253,12 @@ export default async function NovelDetailPage({
                     data-chapter={chapter.number}
                     className="opacity-55 cursor-not-allowed grid grid-cols-1 sm:grid-cols-[80px_1fr] gap-4 items-center p-5 rounded-xl border-2 bg-[#f8fafc] border-[#cbd5e1]"
                   >
-                    <div className="text-2xl font-semibold text-[#c87f9b] text-center sm:text-left">
+                    <div className="text-2xl font-semibold text-[#f4a7b9] text-center sm:text-left">
                       Ch. {chapter.number}
                     </div>
                     <div className="flex flex-col gap-1">
                       <div className="text-lg font-semibold text-[#2b1f2d]">{chapter.title}</div>
-                      <div className="text-sm text-[#c87f9b]">🔒 Coming Soon</div>
+                      <div className="text-sm text-[#f4a7b9]">🔒 Coming Soon</div>
                     </div>
                   </div>
                 ) : (
@@ -266,15 +266,14 @@ export default async function NovelDetailPage({
                     key={chapter.number}
                     href={`/novels/${slug}/chapters/${chapter.number}`}
                     data-chapter={chapter.number}
-                    className={`group relative overflow-hidden grid grid-cols-1 sm:grid-cols-[80px_1fr_auto] gap-4 items-center p-5 rounded-xl border transition-all hover:translate-x-2 hover:shadow-md no-underline text-inherit ${
-                      chapter.isPolished
-                        ? "bg-gradient-to-r from-[#fff8fb] to-white border-[#f7c6d9] [border-left:4px_solid_#ff69b4] shadow-sm"
-                        : "bg-[#f8fafc] border-2 border-[#cbd5e1]"
-                    }`}
+                    className={`group relative overflow-hidden grid grid-cols-1 sm:grid-cols-[80px_1fr_auto] gap-4 items-center p-5 rounded-xl border transition-all hover:translate-x-2 hover:shadow-md no-underline text-inherit ${chapter.isPolished
+                      ? "bg-gradient-to-r from-[#fff8fb] to-white border-[#f7c6d9] [border-left:4px_solid_#f4a7b9] shadow-sm"
+                      : "bg-[#f8fafc] border-2 border-[#cbd5e1]"
+                      }`}
                   >
                     {/* Corner tag */}
                     {chapter.isPolished ? (
-                      <div className="absolute top-0 right-0 bg-gradient-to-r from-[#ff69b4] to-[#e499b3] text-white text-xs font-bold px-3 py-0.5 rounded-bl-xl shadow-sm z-10">
+                      <div className="absolute top-0 right-0 bg-[#f4a7b9] text-white text-xs font-bold px-3 py-0.5 rounded-bl-xl shadow-sm z-10">
                         Human TL
                       </div>
                     ) : (
@@ -283,7 +282,7 @@ export default async function NovelDetailPage({
                       </div>
                     )}
 
-                    <div className="text-xl font-semibold text-[#e499b3] text-center sm:text-left">
+                    <div className="text-xl font-semibold text-[#c87f9b] text-center sm:text-left">
                       Ch. {chapter.number}
                     </div>
 
@@ -302,7 +301,7 @@ export default async function NovelDetailPage({
                       </div>
                     </div>
 
-                    <span className="hidden sm:block text-2xl text-[#e499b3] transition-transform group-hover:translate-x-1.5">
+                    <span className="hidden sm:block text-2xl text-[#f4a7b9] transition-transform group-hover:translate-x-1.5">
                       →
                     </span>
                   </Link>
@@ -310,7 +309,7 @@ export default async function NovelDetailPage({
               )}
             </div>
           ) : (
-            <p className="text-[#c87f9b]">Chapters will be available soon.</p>
+            <p className="text-[#f4a7b9]">Chapters will be available soon.</p>
           )}
         </section>
       </main>

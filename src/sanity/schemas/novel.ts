@@ -79,12 +79,6 @@ export const novel = defineType({
       initialValue: 0,
     }),
     defineField({
-      name: "patreonAheadChapter",
-      title: "Patreon Ahead Chapter (Patreon 提前看至第几章)",
-      type: "number",
-      description: "Patreon 赞助者目前可提前阅读到的最高精修章节编号（用于章节页的 Patreon 引导卡片）",
-    }),
-    defineField({
       name: "publishedAt",
       title: "Published At",
       type: "datetime",

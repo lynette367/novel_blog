@@ -24,7 +24,7 @@ export function SiteHeader({ activePath = "home" }: HeaderProps) {
       <div className="mx-auto max-w-6xl px-4 sm:px-6 py-4 flex justify-between items-center">
         <Link
           href="/"
-          className="text-xl font-semibold tracking-widest text-[#2b1f2d] font-serif no-underline hover:text-[#e499b3] transition-colors"
+          className="text-xl font-semibold tracking-widest text-[#2b1f2d] font-serif no-underline hover:text-[#f4a7b9] transition-colors"
         >
           Cross The Line
         </Link>
@@ -35,8 +35,8 @@ export function SiteHeader({ activePath = "home" }: HeaderProps) {
               href={link.href}
               className={`font-semibold text-sm transition-colors no-underline ${
                 link.key === activePath && !link.fragment
-                  ? "text-[#e499b3] border-b-2 border-[#e499b3] pb-0.5"
-                  : "text-[#c87f9b] hover:text-[#2b1f2d]"
+                  ? "text-[#f4a7b9] border-b-2 border-[#f4a7b9] pb-0.5"
+                  : "text-[#f4a7b9] hover:text-[#2b1f2d]"
               }`}
             >
               {link.label}

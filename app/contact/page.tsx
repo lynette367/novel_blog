@@ -27,13 +27,13 @@ export default function ContactPage() {
       {/* Hero Header */}
       <section className="bg-[#2b1f2d] py-16 px-6 text-center">
         <div className="max-w-2xl mx-auto">
-          <p className="font-serif text-xs tracking-[0.25em] uppercase text-[#e499b3] mb-5">
+          <p className="font-serif text-xs tracking-[0.25em] uppercase text-[#f4a7b9] mb-5">
             About &amp; Inquiries
           </p>
           <h1 className="font-serif text-4xl md:text-5xl font-normal text-[#f7c6d9] mb-5 tracking-wide">
             Contact &amp; About Us
           </h1>
-          <p className="text-[#c87f9b] text-base leading-relaxed">
+          <p className="text-[#f4a7b9] text-base leading-relaxed">
             Have a question, feedback, noticed a typo, or want to know more about our platform?
             We&apos;re glad to connect with fellow readers!
           </p>
@@ -47,7 +47,7 @@ export default function ContactPage() {
             <h2 className="font-serif text-2xl font-normal text-[#2b1f2d] mb-2">
               General Inquiries &amp; Feedback
             </h2>
-            <p className="text-[#c87f9b] text-sm leading-relaxed">
+            <p className="text-[#f4a7b9] text-sm leading-relaxed">
               Reach out to us directly via email for any inquiries, suggestions, or chapter typo reports.
             </p>
           </div>
@@ -61,12 +61,12 @@ export default function ContactPage() {
                 <h3 className="font-serif text-base font-normal text-[#2b1f2d] mb-1">
                   Official Email
                 </h3>
-                <p className="text-[#c87f9b] text-sm mb-2 leading-snug">
+                <p className="text-[#f4a7b9] text-sm mb-2 leading-snug">
                   For general questions, feedback, and collaboration
                 </p>
                 <a
                   href="mailto:contact@crosstheline.press"
-                  className="text-sm font-semibold text-[#e499b3] no-underline hover:text-[#c87f9b] hover:underline transition-colors"
+                  className="text-sm font-semibold text-[#f4a7b9] no-underline hover:text-[#f4a7b9] hover:underline transition-colors"
                 >
                   contact@crosstheline.press
                 </a>
@@ -80,12 +80,12 @@ export default function ContactPage() {
                 <h3 className="font-serif text-base font-normal text-[#2b1f2d] mb-1">
                   Report an Issue / Typo
                 </h3>
-                <p className="text-[#c87f9b] text-sm mb-2 leading-snug">
+                <p className="text-[#f4a7b9] text-sm mb-2 leading-snug">
                   Found a broken chapter link or typo? Let us know so we can fix it quickly.
                 </p>
                 <a
                   href="mailto:contact@crosstheline.press?subject=Typo%20or%20Issue%20Report"
-                  className="text-sm font-semibold text-[#e499b3] no-underline hover:text-[#c87f9b] hover:underline transition-colors"
+                  className="text-sm font-semibold text-[#f4a7b9] no-underline hover:text-[#f4a7b9] hover:underline transition-colors"
                 >
                   contact@crosstheline.press
                 </a>
@@ -103,7 +103,7 @@ export default function ContactPage() {
             <h2 className="font-serif text-2xl font-normal text-[#2b1f2d] mb-2">
               About the Platform &amp; Policies
             </h2>
-            <p className="text-[#c87f9b] text-sm leading-relaxed max-w-xl mx-auto">
+            <p className="text-[#f4a7b9] text-sm leading-relaxed max-w-xl mx-auto">
               Learn more about our mission, content guidelines, and privacy practices.
             </p>
           </div>
