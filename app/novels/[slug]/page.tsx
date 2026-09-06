@@ -40,7 +40,7 @@ export async function generateMetadata({
     `Read ${novel.title} online in English. Complete Chinese Danmei & Asian BL web novel chapters updated regularly.`;
 
   const canonicalUrl = absoluteUrl(`/novels/${novel.slug}`);
-  const ogImageUrl = novel.seo?.ogImage || novel.coverImage || "/assets/images/0.jpg";
+  const ogImageUrl = novel.seo?.ogImage || novel.coverImage;
   const ogImageAlt = novel.coverImageAlt || `${novel.title} - BL Danmei Novel Cover`;
 
   const chapters = await getNovelChapters(novel.slug);
@@ -83,20 +83,22 @@ export async function generateMetadata({
       description: novel.seo?.ogDescription || metaDescription,
       url: canonicalUrl,
       siteName: SITE_NAME,
-      images: [
-        {
-          url: ogImageUrl,
-          width: 1200,
-          height: 630,
-          alt: ogImageAlt,
-        },
-      ],
+      images: ogImageUrl
+        ? [
+            {
+              url: ogImageUrl,
+              width: 1200,
+              height: 630,
+              alt: ogImageAlt,
+            },
+          ]
+        : [],
     },
     twitter: {
       card: "summary_large_image",
       title: metaTitle,
       description: metaDescription,
-      images: [ogImageUrl],
+      images: ogImageUrl ? [ogImageUrl] : [],
     },
     robots: {
       index: true,

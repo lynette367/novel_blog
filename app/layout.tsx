@@ -6,8 +6,6 @@ import { SITE_NAME, SITE_URL } from "@/lib/siteMetadata";
 const defaultDescription =
   "Your destination for high-quality Chinese Danmei and Asian BL web novels. Discover captivating stories, daily updates, and completed chapters in English.";
 
-const defaultImage = `${SITE_URL}/assets/images/Wife_are_paramount.png`;
-
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
@@ -34,20 +32,11 @@ export const metadata: Metadata = {
     title: "Read Chinese Danmei & BL Web Novels Online in English",
     description:
       "Discover popular Chinese Danmei and Asian BL web novels in English with regular updates.",
-    images: [
-      {
-        url: defaultImage,
-        width: 1200,
-        height: 630,
-        alt: "Danmei Novels Online",
-      },
-    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Read Chinese Danmei & BL Web Novels Online in English",
     description: "Discover popular Chinese Danmei and Asian BL web novels in English with regular updates.",
-    images: [defaultImage],
   },
 };
 

@@ -1,59 +1,70 @@
 import { defineType, defineField } from "sanity";
+import { WordCountInput } from "../components/WordCountInput";
 
 export const chapter = defineType({
   name: "chapter",
-  title: "章节",
+  title: "Chapter",
   type: "document",
   fields: [
     defineField({
       name: "novel",
-      title: "所属小说",
+      title: "Belongs to Novel",
       type: "reference",
       to: [{ type: "novel" }],
       validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: "number",
-      title: "章节编号",
+      title: "Chapter Number",
       type: "number",
-      description: "章节编号对应前台 URL，如 /chapters/2",
+      description: "Chapter number corresponding to frontend URL, e.g. /chapters/2",
       validation: (Rule) => Rule.required().min(1),
     }),
     defineField({
       name: "title",
-      title: "章节标题",
+      title: "Chapter Title",
       type: "string",
       validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: "content",
-      title: "章节内容",
+      title: "Chapter Content",
       type: "text",
       rows: 20,
       validation: (Rule) => Rule.required(),
     }),
     defineField({
+      name: "wordCount",
+      title: "Word Count",
+      type: "number",
+      readOnly: true,
+      description: "Automatically calculated from chapter content (Read-only)",
+      components: {
+        input: WordCountInput,
+      },
+    }),
+    defineField({
       name: "locked",
-      title: "🔒 锁定章节 (校对中)",
+      title: "🔒 Lock Chapter (Proofreading in progress)",
       type: "boolean",
-      description: "开启后前台暂不对读者公开",
+      description: "When enabled, this chapter is temporarily hidden from readers on the frontend",
       initialValue: false,
     }),
     defineField({
       name: "isPolished",
-      title: "✨ 人工精修 (Human Proofed)",
+      title: "✨ Human Proofed",
       type: "boolean",
-      description: "勾选代表此章节已经过人工精修润色",
+      description: "Check if this chapter has been manually polished and proofread",
       initialValue: false,
     }),
     defineField({
       name: "seo",
-      title: "SEO 设置",
+      title: "SEO Settings",
       type: "seo",
     }),
     defineField({
       name: "publishedAt",
-      title: "发布日期",
+      title: "Published At",
       type: "datetime",
       initialValue: () => new Date().toISOString(),
     }),
@@ -65,20 +76,23 @@ export const chapter = defineType({
       novelTitle: "novel.title",
       locked: "locked",
       isPolished: "isPolished",
+      content: "content",
     },
-    prepare({ title, number, novelTitle, locked, isPolished }) {
+    prepare({ title, number, novelTitle, locked, isPolished, content }) {
       const lockIcon = locked ? "🔒 " : "";
       const polishIcon = isPolished ? "✨ " : "";
       const prefix = `${lockIcon}${polishIcon}`;
+      const words = typeof content === "string" ? content.trim().split(/\s+/).filter(Boolean).length : 0;
+      const countText = words > 0 ? ` · ${words.toLocaleString()} words` : "";
       return {
-        title: number != null ? `${prefix}Chapter ${number}: ${title || "未命名"}` : `${prefix}${title || "未命名"}`,
-        subtitle: novelTitle ? `《${novelTitle}》` : "",
+        title: number != null ? `${prefix}Chapter ${number}: ${title || "Untitled"}` : `${prefix}${title || "Untitled"}`,
+        subtitle: `${novelTitle ? `《${novelTitle}》` : ""}${countText}`,
       };
     },
   },
   orderings: [
     {
-      title: "章节编号",
+      title: "Chapter Number",
       name: "numberAsc",
       by: [{ field: "number", direction: "asc" }],
     },

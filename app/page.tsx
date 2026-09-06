@@ -21,7 +21,7 @@ const getCachedHeroFeaturedNovel = cache(getHeroFeaturedNovel);
 export async function generateMetadata(): Promise<Metadata> {
   const heroNovel = await getCachedHeroFeaturedNovel();
 
-  const heroImage = heroNovel ? heroNovel.coverImage : "/assets/images/0.jpg";
+  const heroImage = heroNovel?.coverImage || "";
   const heroImageAlt = heroNovel ? heroNovel.title : SITE_NAME;
 
   const sameAs = [
@@ -49,12 +49,16 @@ export async function generateMetadata(): Promise<Metadata> {
       "@id": absoluteUrl("/#organization"),
       name: "Danmei Novels Online",
       url: absoluteUrl("/"),
-      logo: {
-        "@type": "ImageObject",
-        url: absoluteUrl("/assets/images/0.jpg"),
-        width: 600,
-        height: 600,
-      },
+      ...(heroImage
+        ? {
+            logo: {
+              "@type": "ImageObject",
+              url: heroImage,
+              width: 600,
+              height: 600,
+            },
+          }
+        : {}),
       description: siteConfig.description,
       sameAs,
     },
@@ -75,21 +79,23 @@ export async function generateMetadata(): Promise<Metadata> {
         "Discover top-rated Chinese Danmei and Asian BL web novels in English. Explore Xianxia, Wuxia, and modern romances with daily chapters.",
       url: absoluteUrl("/"),
       siteName: SITE_NAME,
-      images: [
-        {
-          url: heroImage,
-          width: 1200,
-          height: 630,
-          alt: heroImageAlt,
-        },
-      ],
+      images: heroImage
+        ? [
+            {
+              url: heroImage,
+              width: 1200,
+              height: 630,
+              alt: heroImageAlt,
+            },
+          ]
+        : [],
     },
     twitter: {
       card: "summary_large_image",
       title: "Read Chinese Danmei & BL Web Novels Online in English",
       description:
         "Discover top-rated Chinese Danmei and Asian BL web novels in English. Explore Xianxia, Wuxia, and modern romances with daily chapters.",
-      images: [heroImage],
+      images: heroImage ? [heroImage] : [],
     },
     other: {
       "script:application/ld+json": JSON.stringify(schemaData),

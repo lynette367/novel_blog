@@ -1,54 +1,54 @@
 import type { StructureBuilder } from "sanity/structure";
 
-// 自定义 Sanity Studio 结构
-// 让章节显示在对应小说目录下
+// Custom Sanity Studio Structure
+// Groups chapters under their corresponding novel
 export const structure = (S: StructureBuilder) =>
   S.list()
     .id("root")
-    .title("内容管理")
+    .title("Content")
     .items([
-      // 小说管理 - 包含嵌套的章节
+      // Novel Management - with nested chapters
       S.listItem()
         .id("novels")
-        .title("小说管理")
+        .title("Novels")
         .icon(() => "📚")
         .child(
           S.documentTypeList("novel")
             .id("novel-list")
-            .title("所有小说")
+            .title("All Novels")
             .child((novelId) =>
               S.list()
                 .id(`novel-${novelId}`)
-                .title("小说详情")
+                .title("Novel Details")
                 .items([
-                  // 编辑小说信息
+                  // Novel Information
                   S.listItem()
                     .id(`novel-info-${novelId}`)
-                    .title("小说信息")
+                    .title("Novel Info")
                     .icon(() => "📖")
                     .child(
                       S.document()
                         .schemaType("novel")
                         .documentId(novelId)
                     ),
-                  // 该小说的所有章节
+                  // Chapters under this novel
                   S.listItem()
                     .id(`chapters-${novelId}`)
-                    .title("章节列表")
+                    .title("Chapter List")
                     .icon(() => "📝")
                     .child(
                       S.documentList()
                         .id(`chapter-list-${novelId}`)
-                        .title("章节")
+                        .title("Chapters")
                         .schemaType("chapter")
                         .filter('_type == "chapter" && novel._ref == $novelId')
                         .params({ novelId })
                         .defaultOrdering([{ field: "number", direction: "asc" }])
                     ),
-                  // 添加新章节
+                  // Add New Chapter
                   S.listItem()
                     .id(`add-chapter-${novelId}`)
-                    .title("添加新章节")
+                    .title("Add New Chapter")
                     .icon(() => "➕")
                     .child(
                       S.document()

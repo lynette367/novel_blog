@@ -7,11 +7,11 @@ import { structure } from "./src/sanity/structure";
 const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || "lke4t7vu";
 const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || "production";
 
-// 初始值模板 - 用于创建关联到特定小说的章节
+// Initial value template - used to create chapters linked to a specific novel
 const initialValueTemplates: Template[] = [
   {
     id: "chapter-for-novel",
-    title: "新章节",
+    title: "New Chapter",
     schemaType: "chapter",
     parameters: [{ name: "novelId", type: "string" }],
     value: (params: { novelId: string }) => ({

@@ -16,17 +16,25 @@ export function NovelCard({ novel, priority = false }: NovelCardProps) {
       prefetch={false}
     >
       {/* Cover image — no category tag */}
-      <div className="relative w-full aspect-[16/9] overflow-hidden flex-shrink-0 bg-gray-100">
-        <Image
-          src={novel.coverImage}
-          alt={novel.coverImageAlt || `${novel.title} - Danmei BL Novel Cover`}
-          fill
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          style={{ objectFit: "cover" }}
-          priority={priority}
-          title={`Read ${novel.title} - Danmei Novel`}
-          className="transition-transform duration-500 group-hover:scale-105"
-        />
+      <div className="relative w-full aspect-[16/9] overflow-hidden flex-shrink-0 bg-gradient-to-br from-[#ffe3ef] to-[#fde2e8]">
+        {novel.coverImage ? (
+          <Image
+            src={novel.coverImage}
+            alt={novel.coverImageAlt || `${novel.title} - Danmei BL Novel Cover`}
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            style={{ objectFit: "cover" }}
+            priority={priority}
+            title={`Read ${novel.title} - Danmei Novel`}
+            className="transition-transform duration-500 group-hover:scale-105"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center p-4">
+            <span className="font-serif text-xl font-bold text-[#e499b3] opacity-60 text-center">
+              {novel.title}
+            </span>
+          </div>
+        )}
         {/* Subtle pink top-edge accent on hover */}
         <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-[#ffd3de] to-[#f4a7b9] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
       </div>

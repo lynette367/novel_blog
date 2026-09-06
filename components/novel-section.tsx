@@ -49,14 +49,22 @@ export function NovelSection({ novel, chapters }: Props) {
       <div className="flex items-start gap-4 mb-6 p-4 rounded-2xl border border-[#f7c6d9]/30 bg-white/60">
         {/* Mini cover */}
         <Link href={novelUrl} className="shrink-0 block" aria-label={`View ${novel.title}`}>
-          <div className="relative w-14 aspect-[2/3] rounded-lg overflow-hidden shadow-sm">
-            <Image
-              src={novel.coverImage || "/assets/images/0.jpg"}
-              alt={`${novel.title} Cover`}
-              fill
-              sizes="56px"
-              style={{ objectFit: "cover" }}
-            />
+          <div className="relative w-14 aspect-[2/3] rounded-lg overflow-hidden shadow-sm bg-gradient-to-br from-[#ffe3ef] to-[#fde2e8]">
+            {novel.coverImage ? (
+              <Image
+                src={novel.coverImage}
+                alt={`${novel.title} Cover`}
+                fill
+                sizes="56px"
+                style={{ objectFit: "cover" }}
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center p-1 text-center">
+                <span className="font-serif text-[9px] font-bold text-[#e499b3] line-clamp-2">
+                  {novel.title}
+                </span>
+              </div>
+            )}
           </div>
         </Link>
 

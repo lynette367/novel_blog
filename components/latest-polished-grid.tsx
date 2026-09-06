@@ -40,15 +40,23 @@ export function LatestPolishedGrid({ chapters }: Props) {
             className="group flex flex-col overflow-hidden rounded-2xl border border-[#f7c6d9]/40 bg-white transition-all duration-300 hover:-translate-y-2 hover:shadow-lg hover:border-[#e499b3]/60 no-underline text-inherit"
           >
             {/* Cover image with time badge */}
-            <div className="relative w-full aspect-[16/9] overflow-hidden rounded-t-2xl bg-gray-100">
-              <Image
-                src={ch.novelCoverImage || "/assets/images/0.jpg"}
-                alt={`${ch.novelTitle} Chapter ${ch.chapterNumber}`}
-                fill
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 380px"
-                style={{ objectFit: "cover" }}
-                className="transition-transform duration-500 group-hover:scale-105"
-              />
+            <div className="relative w-full aspect-[16/9] overflow-hidden rounded-t-2xl bg-gradient-to-br from-[#ffe3ef] to-[#fde2e8]">
+              {ch.novelCoverImage ? (
+                <Image
+                  src={ch.novelCoverImage}
+                  alt={`${ch.novelTitle} Chapter ${ch.chapterNumber}`}
+                  fill
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 380px"
+                  style={{ objectFit: "cover" }}
+                  className="transition-transform duration-500 group-hover:scale-105"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center p-4">
+                  <span className="font-serif text-xl font-bold text-[#e499b3] opacity-60 text-center">
+                    {ch.novelTitle}
+                  </span>
+                </div>
+              )}
               <div className="absolute top-2.5 right-2.5 bg-[#fde2e8] text-[#d66b85] border border-[#f8bccb]/60 px-2.5 py-0.5 rounded-full text-xs font-semibold shadow-none uppercase tracking-wider">
                 ✨ {relativeTime}
               </div>

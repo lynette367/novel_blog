@@ -31,15 +31,23 @@ export function HeroReviewingBanner({ novel }: Props) {
       <div className="grid grid-cols-[3fr_4fr] gap-3 mb-3">
         {/* Cover image — enlarged, no max-h cap */}
         <Link href={novelUrl} className="block" aria-label={`View ${novel.title}`}>
-          <div className="relative w-full h-[120px] aspect-[4/3] rounded-xl overflow-hidden shadow-md">
-            <Image
-              src={novel.coverImage || "/assets/images/0.jpg"}
-              alt={`${novel.title} Cover`}
-              fill
-              sizes="(max-width: 768px) 40vw, 160px"
-              style={{ objectFit: "cover" }}
-              priority
-            />
+          <div className="relative w-full h-[120px] aspect-[4/3] rounded-xl overflow-hidden shadow-md bg-gradient-to-br from-[#ffe3ef] to-[#fde2e8]">
+            {novel.coverImage ? (
+              <Image
+                src={novel.coverImage}
+                alt={`${novel.title} Cover`}
+                fill
+                sizes="(max-width: 768px) 40vw, 160px"
+                style={{ objectFit: "cover" }}
+                priority
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center p-2 text-center">
+                <span className="font-serif text-xs font-bold text-[#e499b3]">
+                  {novel.title}
+                </span>
+              </div>
+            )}
           </div>
         </Link>
 

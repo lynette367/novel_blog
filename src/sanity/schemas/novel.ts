@@ -2,12 +2,12 @@ import { defineType, defineField } from "sanity";
 
 export const novel = defineType({
   name: "novel",
-  title: "小说",
+  title: "Novel",
   type: "document",
   fields: [
     defineField({
       name: "title",
-      title: "标题",
+      title: "Title",
       type: "string",
       validation: (Rule) => Rule.required(),
     }),
@@ -22,23 +22,23 @@ export const novel = defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: 'tags',
-      title: 'Tags (NovelUpdates Style)',
-      type: 'array',
-      of: [{ type: 'string' }],
+      name: "tags",
+      title: "Tags (NovelUpdates Style)",
+      type: "array",
+      of: [{ type: "string" }],
       options: {
-        layout: 'tags', // 输入完回车即生成标签块
+        layout: "tags",
       },
     }),
     defineField({
       name: "description",
-      title: "详细描述",
+      title: "Description",
       type: "text",
       rows: 5,
     }),
     defineField({
       name: "seo",
-      title: "SEO 设置",
+      title: "SEO Settings",
       type: "seo",
     }),
     defineField({
@@ -58,29 +58,35 @@ export const novel = defineType({
     }),
     defineField({
       name: "currentlyReviewing",
-      title: "🔥 正在精修校对中 (Human TL)",
+      title: "🔥 Currently Proofreading (Human TL)",
       type: "boolean",
-      description: "勾选后，此小说将在首页拥有独立的板块（书名 + 最新章节列表）。可多本同时勾选。",
+      description: "When checked, this novel will have a dedicated section on the homepage (title + latest chapters). Multiple novels can be selected.",
       initialValue: false,
     }),
 
     defineField({
       name: "heroFeatured",
-      title: "⭐ Hero 主推（全站唯一）",
+      title: "⭐ Hero Featured (Site Exclusive)",
       type: "boolean",
-      description: "勾选后，此小说将展示在首页最顶部的 Hero 区块。全站只应有一本书勾选此项。（与 currentlyReviewing 解耦：heroFeatured 决定展示位置，currentlyReviewing 决定是否有独立板块）",
+      description: "When checked, this novel will be featured in the top Hero section of the homepage. Only one novel should be selected site-wide.",
       initialValue: false,
     }),
 
     defineField({
       name: "totalChapters",
-      title: "总章节数",
+      title: "Total Chapters",
       type: "number",
       initialValue: 0,
     }),
     defineField({
+      name: "patreonAheadChapter",
+      title: "Patreon Ahead Chapter (Patreon 提前看至第几章)",
+      type: "number",
+      description: "Patreon 赞助者目前可提前阅读到的最高精修章节编号（用于章节页的 Patreon 引导卡片）",
+    }),
+    defineField({
       name: "publishedAt",
-      title: "发布日期",
+      title: "Published At",
       type: "datetime",
       initialValue: () => new Date().toISOString(),
     }),

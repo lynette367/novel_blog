@@ -2,9 +2,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SiteFooter } from "@/components/site-footer";
 import { ReadingProgress } from "./reading-progress";
+import { PatreonHookCard } from "@/components/patreon-hook-card";
 import { getNovelBySlug, getChapterContent, getNovelChapters } from "@/lib/novels";
 import { absoluteUrl, SITE_NAME } from "@/lib/siteMetadata";
 import type { Metadata } from "next";
+import { MtlBanner } from "@/components/mtl-banner";
 
 export const dynamic = "force-static";
 
@@ -73,8 +75,7 @@ export async function generateMetadata({
   const ogImage =
     chapterData.seo?.ogImage ||
     novel.seo?.ogImage ||
-    novel.coverImage ||
-    absoluteUrl("/assets/images/0.jpg");
+    novel.coverImage;
 
   const ogImageAlt = novel.coverImageAlt || `${novel.title} - BL Danmei Novel Cover`;
 
@@ -117,20 +118,22 @@ export async function generateMetadata({
       description: metaDescription,
       url: canonicalUrl,
       siteName: SITE_NAME,
-      images: [
-        {
-          url: ogImage,
-          width: 1200,
-          height: 630,
-          alt: ogImageAlt,
-        },
-      ],
+      images: ogImage
+        ? [
+          {
+            url: ogImage,
+            width: 1200,
+            height: 630,
+            alt: ogImageAlt,
+          },
+        ]
+        : [],
     },
     twitter: {
       card: "summary_large_image",
       title: metaTitle,
       description: metaDescription,
-      images: [ogImage],
+      images: ogImage ? [ogImage] : [],
     },
     other: {
       "script:application/ld+json": JSON.stringify(schemaData),
@@ -163,9 +166,24 @@ export default async function ChapterPage({
   const chapters = await getNovelChapters(slug);
   const readableChapters = chapters.filter((c) => !c.locked);
   const currentIndex = readableChapters.findIndex((c) => c.number === chapterNumber);
+  const currentChapter = currentIndex >= 0 ? readableChapters[currentIndex] : null;
   const prevChapter = currentIndex > 0 ? readableChapters[currentIndex - 1] : null;
   const nextChapter =
     currentIndex < readableChapters.length - 1 ? readableChapters[currentIndex + 1] : null;
+
+  const currentIsPolished = currentChapter?.isPolished ?? false;
+  const nextIsPolished = nextChapter?.isPolished ?? false;
+  const showPatreonHook =
+    (currentIsPolished && !nextIsPolished) ||
+    (Boolean(novel.patreonAheadChapter) && chapterNumber === novel.patreonAheadChapter);
+
+  // 新增：当前是不是机翻章节，以及全书精修到第几章了
+  const isCurrentRawMtl = currentChapter?.isPolished === false;
+  const polishedNumbers = chapters
+    .filter((c) => c.isPolished)
+    .map((c) => c.number);
+  const latestPolishedNumber =
+    polishedNumbers.length > 0 ? Math.max(...polishedNumbers) : null;
 
   // Build content HTML with optional mid-chapter illustration
   const paragraphs = chapterData.content
@@ -225,6 +243,16 @@ export default async function ChapterPage({
         </div>
       </header>
 
+      {isCurrentRawMtl && (
+        <MtlBanner
+          novelTitle={novel.title}
+          latestPolishedNumber={latestPolishedNumber}
+        />
+      )}
+
+      {/* Chapter content */}
+      <article className="max-w-3xl mx-auto px-4 sm:px-6 mb-12 bg-white rounded-2xl border border-[#f7c6d9]/20 p-6 sm:p-10 shadow-sm"></article>
+
       {/* Chapter content */}
       <article className="max-w-3xl mx-auto px-4 sm:px-6 mb-12 bg-white rounded-2xl border border-[#f7c6d9]/20 p-6 sm:p-10 shadow-sm">
         <div
@@ -232,6 +260,15 @@ export default async function ChapterPage({
           dangerouslySetInnerHTML={{ __html: fullContentHtml }}
         />
       </article>
+
+      {/* Patreon hook card (shown at human TL boundary) */}
+      {showPatreonHook && (
+        <PatreonHookCard
+          patreonAheadChapter={novel.patreonAheadChapter}
+          currentChapterNumber={chapterNumber}
+          novelTitle={novel.title}
+        />
+      )}
 
       {/* Chapter navigation */}
       <nav className="max-w-3xl mx-auto mb-16 px-4 sm:px-6 flex flex-col sm:flex-row gap-4">

@@ -11,7 +11,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const totalChapters = novels.reduce((sum, n) => sum + (n.totalChapters || 0), 0);
 
   const firstNovel = novels[0];
-  const ogImage = firstNovel ? firstNovel.coverImage : "/assets/images/0.jpg";
+  const ogImage = firstNovel?.coverImage || "";
   const ogImageAlt = firstNovel ? (firstNovel.coverImageAlt || firstNovel.title) : SITE_NAME;
 
   const schemaData = {
@@ -42,20 +42,22 @@ export async function generateMetadata(): Promise<Metadata> {
       description: `Explore our complete collection of ${totalNovels} Chinese Danmei and Asian BL novels with ${totalChapters}+ chapters.`,
       url: absoluteUrl("/novels"),
       siteName: SITE_NAME,
-      images: [
-        {
-          url: ogImage,
-          width: 1200,
-          height: 630,
-          alt: ogImageAlt,
-        },
-      ],
+      images: ogImage
+        ? [
+            {
+              url: ogImage,
+              width: 1200,
+              height: 630,
+              alt: ogImageAlt,
+            },
+          ]
+        : [],
     },
     twitter: {
       card: "summary_large_image",
       title: "Browse Chinese BL & Danmei Web Fiction",
       description: `Explore our collection of ${totalNovels} Chinese Danmei and Asian BL novels with ${totalChapters}+ chapters.`,
-      images: [ogImage],
+      images: ogImage ? [ogImage] : [],
     },
     other: {
       "script:application/ld+json": JSON.stringify(schemaData),

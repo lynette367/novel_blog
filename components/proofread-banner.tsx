@@ -26,17 +26,25 @@ export function ProofreadBanner({ chapter }: Props) {
         </div>
 
         {/* Left: cover image */}
-        <div className="relative w-full md:w-[42%] aspect-[16/9] md:aspect-auto flex-shrink-0 bg-gray-100">
-          <Image
-            src={chapter.coverImage || "/assets/images/0.jpg"}
-            alt={`${chapter.novelTitle} - Chapter ${chapter.chapterNumber} Cover`}
-            fill
-            sizes="(max-width: 768px) 100vw, 420px"
-            style={{ objectFit: "cover" }}
-            priority
-            className="transition-transform duration-500 group-hover:scale-105"
-          />
-        </div>
+        {chapter.coverImage ? (
+          <div className="relative w-full md:w-[42%] aspect-[16/9] md:aspect-auto flex-shrink-0 bg-gray-100">
+            <Image
+              src={chapter.coverImage}
+              alt={`${chapter.novelTitle} - Chapter ${chapter.chapterNumber} Cover`}
+              fill
+              sizes="(max-width: 768px) 100vw, 420px"
+              style={{ objectFit: "cover" }}
+              priority
+              className="transition-transform duration-500 group-hover:scale-105"
+            />
+          </div>
+        ) : (
+          <div className="relative w-full md:w-[42%] aspect-[16/9] md:aspect-auto flex-shrink-0 bg-gradient-to-br from-[#ffe3ef] to-[#fde2e8] flex items-center justify-center p-6">
+            <span className="font-serif text-2xl font-bold text-[#e499b3] opacity-70 text-center">
+              {chapter.novelTitle}
+            </span>
+          </div>
+        )}
 
         {/* Right: content */}
         <div className="flex flex-col justify-center p-6 sm:p-8 md:pl-10 flex-1">

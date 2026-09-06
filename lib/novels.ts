@@ -44,6 +44,7 @@ export type Novel = {
   totalWordCount?: number;
   description?: string;
   tags?: string[];
+  patreonAheadChapter?: number;
   seo?: {
     metaTitle?: string;
     metaDescription?: string;
@@ -139,6 +140,7 @@ type SanityNovel = {
   totalChapters?: number;
   totalWordCount?: number;
   tags?: string[];
+  patreonAheadChapter?: number;
   seo?: {
     metaTitle?: string;
     metaDescription?: string;
@@ -190,13 +192,14 @@ function transformNovel(sanityNovel: SanityNovel): Novel {
     excerpt: sanityNovel.seo?.metaDescription || sanityNovel.excerpt || "",
     coverImage: sanityNovel.coverImage
       ? coverThumbUrl(sanityNovel.coverImage)
-      : "/assets/images/0.jpg",
+      : "",
     coverImageAlt: sanityNovel.coverImage?.alt,
     path: `/novels/${slug}`,
     totalChapters: sanityNovel.totalChapters || 0,
     totalWordCount: sanityNovel.totalWordCount || 0,
     description: sanityNovel.description || sanityNovel.seo?.metaDescription || sanityNovel.excerpt || "",
     tags,
+    patreonAheadChapter: sanityNovel.patreonAheadChapter,
     seo: sanityNovel.seo
       ? {
         metaTitle: sanityNovel.seo.metaTitle,
@@ -360,7 +363,7 @@ export const getCurrentlyReviewingNovel = cache(
         slug,
         excerpt: result.excerpt || "",
         description: result.description || result.excerpt || "",
-        coverImage: result.coverImage ? coverThumbUrl(result.coverImage) : "/assets/images/0.jpg",
+        coverImage: result.coverImage ? coverThumbUrl(result.coverImage) : "",
         tags,
         reviewedUpToChapter: reviewedUpTo,
         totalChapters: Math.max(totalChapters, reviewedUpTo),
@@ -374,7 +377,7 @@ export const getCurrentlyReviewingNovel = cache(
         slug: "big_brother",
         excerpt: "An intriguing story of pseudo-brothers navigating secrets, growth, and emotions.",
         description: "An intriguing story of pseudo-brothers navigating secrets, growth, and emotions.",
-        coverImage: "/assets/images/Wife_are_paramount.png",
+        coverImage: "",
         tags: ["Pseudo-Brothers", "Modern", "BL"],
         reviewedUpToChapter: 5,
         totalChapters: 50,
@@ -403,10 +406,10 @@ export const getHeroFeaturedNovel = cache(
       "totalChapterCount": count(*[_type == "chapter" && references(^._id)])
     }`;
 
-    const heroQuery        = `*[_type == "novel" && heroFeatured == true][0] ${novelProjection}`;
-    const reviewingQuery   = `*[_type == "novel" && currentlyReviewing == true][0] ${novelProjection}`;
-    const bigBrotherQuery  = `*[_type == "novel" && (slug.current match "*big_brother*" || slug.current match "*big-brother*")][0] ${novelProjection}`;
-    const defaultQuery     = `*[_type == "novel"] | order(publishedAt desc)[0] ${novelProjection}`;
+    const heroQuery = `*[_type == "novel" && heroFeatured == true][0] ${novelProjection}`;
+    const reviewingQuery = `*[_type == "novel" && currentlyReviewing == true][0] ${novelProjection}`;
+    const bigBrotherQuery = `*[_type == "novel" && (slug.current match "*big_brother*" || slug.current match "*big-brother*")][0] ${novelProjection}`;
+    const defaultQuery = `*[_type == "novel"] | order(publishedAt desc)[0] ${novelProjection}`;
 
     type RawNovelResult = {
       _id: string;
@@ -437,7 +440,7 @@ export const getHeroFeaturedNovel = cache(
         slug,
         excerpt: result.excerpt || "",
         description: result.description || result.excerpt || "",
-        coverImage: result.coverImage ? coverThumbUrl(result.coverImage) : "/assets/images/0.jpg",
+        coverImage: result.coverImage ? coverThumbUrl(result.coverImage) : "",
         tags,
         reviewedUpToChapter: reviewedUpTo,
         totalChapters: Math.max(totalChapters, reviewedUpTo),
@@ -460,7 +463,7 @@ export const getHeroFeaturedNovel = cache(
         slug: "big_brother",
         excerpt: "An intriguing story of pseudo-brothers navigating secrets, growth, and emotions.",
         description: "An intriguing story of pseudo-brothers navigating secrets, growth, and emotions.",
-        coverImage: "/assets/images/Wife_are_paramount.png",
+        coverImage: "",
         tags: ["Pseudo-Brothers", "Modern", "BL"],
         reviewedUpToChapter: 5,
         totalChapters: 50,
@@ -525,7 +528,7 @@ export const getLatestPolishedChapters = cache(
           updatedAt: ch._updatedAt || undefined,
           novelTitle: ch.novelTitle,
           novelSlug: ch.novelSlug,
-          novelCoverImage: ch.coverImage ? coverThumbUrl(ch.coverImage) : "/assets/images/0.jpg",
+          novelCoverImage: ch.coverImage ? coverThumbUrl(ch.coverImage) : undefined,
           wordCount: wc,
           readingMinutes: minutesFromWordCount(wc),
         };
@@ -576,7 +579,7 @@ export const getLatestPolishedChaptersForNovel = cache(
           updatedAt: ch._updatedAt || undefined,
           novelTitle: ch.novelTitle,
           novelSlug: ch.novelSlug,
-          novelCoverImage: ch.coverImage ? coverThumbUrl(ch.coverImage) : "/assets/images/0.jpg",
+          novelCoverImage: ch.coverImage ? coverThumbUrl(ch.coverImage) : undefined,
           wordCount: wc,
           readingMinutes: minutesFromWordCount(wc),
         };
@@ -662,7 +665,7 @@ export const getReviewingNovelsWithChapters = cache(
             slug,
             excerpt: raw.excerpt || "",
             description: raw.description || raw.excerpt || "",
-            coverImage: raw.coverImage ? coverThumbUrl(raw.coverImage) : "/assets/images/0.jpg",
+            coverImage: raw.coverImage ? coverThumbUrl(raw.coverImage) : "",
             tags,
             reviewedUpToChapter: reviewedUpTo,
             totalChapters: Math.max(totalChapters, reviewedUpTo),
@@ -735,7 +738,7 @@ export const getRecentlyProofreadChapter = cache(
         chapterNumber: chapter.number,
         chapterTitle: chapter.title,
         excerpt: chapter.excerpt || undefined,
-        coverImage: chapter.coverImage ? coverThumbUrl(chapter.coverImage) : "/assets/images/0.jpg",
+        coverImage: chapter.coverImage ? coverThumbUrl(chapter.coverImage) : undefined,
         wordCount,
         readingMinutes,
       };
@@ -757,6 +760,7 @@ export const getNovelBySlug = cache(async (slug: string): Promise<Novel | undefi
     coverImage,
     totalChapters,
     tags,
+    patreonAheadChapter,
     "totalWordCount": math::sum(
       *[_type == "chapter" && references(^._id) && locked != true]{
         "wordCount": count(string::split(content, " "))
