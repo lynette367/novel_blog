@@ -36,7 +36,10 @@ const POLISHED_CHAPTER_PROJECTION = `{
   "novelTitle": novel->title,
   "novelSlug": novel->slug.current,
   "coverImage": coalesce(seo.ogImage, novel->coverImage),
-  "wordCount": count(string::split(content, " "))
+  "wordCount": count(string::split(content, " ")),
+  isPolished,
+  patreonPublished,
+  patreonUrl
 }`;
 
 type RawChapter = {
@@ -49,10 +52,15 @@ type RawChapter = {
   novelSlug: string;
   coverImage?: SanityImageSource;
   wordCount?: number;
+  isPolished?: boolean;
+  patreonPublished?: boolean;
+  patreonUrl?: string;
 };
 
 function mapChapter(ch: RawChapter): LatestPolishedChapter {
   const wc = ch.wordCount || 0;
+  // Patreon 独占：Patreon 已有精修，但网站上仍为 MTL
+  const isPatreonOnly = ch.patreonPublished === true && ch.isPolished !== true;
   return {
     _id: ch._id,
     chapterNumber: ch.chapterNumber,
@@ -64,6 +72,8 @@ function mapChapter(ch: RawChapter): LatestPolishedChapter {
     novelCoverImage: ch.coverImage ? coverThumbUrl(ch.coverImage) : undefined,
     wordCount: wc,
     readingMinutes: minutesFromWordCount(wc),
+    isPatreonOnly,
+    patreonUrl: ch.patreonUrl || undefined,
   };
 }
 
@@ -108,16 +118,16 @@ export const getHeroFeaturedNovel = cache(
   }
 );
 
-// 获取最新完成精修的章节列表（倒序，最多 limit 条）
+// 获取最新章节列表：同时包含网站精修（isPolished）和 Patreon 独占（patreonPublished && !isPolished）
 export const getLatestPolishedChapters = cache(
   async (limit = 6): Promise<LatestPolishedChapter[]> => {
     try {
       let chapters = await client.fetch<RawChapter[]>(
-        `*[_type == "chapter" && defined(novel) && isPolished == true] | order(number desc)[0...${limit}] ${POLISHED_CHAPTER_PROJECTION}`
+        `*[_type == "chapter" && defined(novel) && (isPolished == true || patreonPublished == true)] | order(_updatedAt desc)[0...${limit}] ${POLISHED_CHAPTER_PROJECTION}`
       );
       if (!chapters || chapters.length === 0) {
         chapters = await client.fetch<RawChapter[]>(
-          `*[_type == "chapter" && defined(novel)] | order(number desc)[0...${limit}] ${POLISHED_CHAPTER_PROJECTION}`
+          `*[_type == "chapter" && defined(novel)] | order(_updatedAt desc)[0...${limit}] ${POLISHED_CHAPTER_PROJECTION}`
         );
       }
       return (chapters || []).map(mapChapter);
@@ -128,10 +138,10 @@ export const getLatestPolishedChapters = cache(
   }
 );
 
-// 获取指定小说的最新精修章节（供首页各书独立板块 + reviews.ts 复用）
+// 获取指定小说的最新精修/Patreon 章节（供首页各书独立板块 + reviews.ts 复用）
 export const getLatestPolishedChaptersForNovel = cache(
   async (novelSlug: string, limit = 6): Promise<LatestPolishedChapter[]> => {
-    const query = `*[_type == "chapter" && novel->slug.current == $novelSlug && isPolished == true] | order(number desc)[0...${limit}] ${POLISHED_CHAPTER_PROJECTION}`;
+    const query = `*[_type == "chapter" && novel->slug.current == $novelSlug && (isPolished == true || patreonPublished == true)] | order(_updatedAt desc)[0...${limit}] ${POLISHED_CHAPTER_PROJECTION}`;
     try {
       const chapters = await client.fetch<RawChapter[]>(query, { novelSlug });
       return (chapters || []).map(mapChapter);

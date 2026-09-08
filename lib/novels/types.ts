@@ -69,6 +69,10 @@ export type LatestPolishedChapter = {
   novelCoverImage?: string;
   wordCount: number;
   readingMinutes: number;
+  /** true = Patreon 独占章节（网站仍为 MTL，Patreon 已有精修）*/
+  isPatreonOnly?: boolean;
+  /** Patreon 独占章节的直链 URL */
+  patreonUrl?: string;
 };
 
 // 首页"最近精修章节"Hero 使用的章节数据结构

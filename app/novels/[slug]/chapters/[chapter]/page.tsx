@@ -181,8 +181,9 @@ export default async function ChapterPage({
     .sort((a, b) => b.number - a.number);
   const patreonPublishedCount = patreonChapters.length;
   const latestPatreonChapter = patreonChapters[0] || null;
-  // 新增：当前是不是机翻章节，以及全书精修到第几章了
   const isCurrentRawMtl = currentChapter?.isPolished === false;
+  const isCurrentChapterOnPatreon = currentChapter?.patreonPublished === true;
+  const currentChapterPatreonUrl = currentChapter?.patreonUrl;
   const polishedNumbers = chapters
     .filter((c) => c.isPolished)
     .map((c) => c.number);
@@ -251,6 +252,9 @@ export default async function ChapterPage({
         <MtlBanner
           novelTitle={novel.title}
           latestPolishedNumber={latestPolishedNumber}
+          isCurrentChapterOnPatreon={isCurrentChapterOnPatreon}
+          patreonUrl={currentChapterPatreonUrl}
+          currentChapterNumber={chapterNumber}
         />
       )}
 

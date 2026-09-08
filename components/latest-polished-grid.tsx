@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import type { LatestPolishedChapter } from "@/lib/novels";
+import siteConfig from "@/site.config";
 
 type Props = {
   chapters: LatestPolishedChapter[];
@@ -22,6 +23,140 @@ function formatRelativeTime(dateString?: string): string {
   return `${Math.floor(months / 12)}y ago`;
 }
 
+// ── Patreon-only card ───────────────────────────────────────────────────────
+function PatreonChapterCard({ ch }: { ch: LatestPolishedChapter }) {
+  const href = ch.patreonUrl || siteConfig.supportLinks.patreon || "#";
+
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="group flex flex-col overflow-hidden rounded-2xl border border-[#c9a96e]/40 bg-white transition-all duration-300 hover:-translate-y-2 hover:shadow-lg hover:border-[#c9a96e]/70 no-underline text-inherit"
+    >
+      {/* Cover image */}
+      <div className="relative w-full aspect-[16/9] overflow-hidden rounded-t-2xl bg-gradient-to-br from-[#fdf6e8] to-[#f7ecd3]">
+        {ch.novelCoverImage ? (
+          <Image
+            src={ch.novelCoverImage}
+            alt={`${ch.novelTitle} Chapter ${ch.chapterNumber}`}
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 380px"
+            style={{ objectFit: "cover" }}
+            className="transition-transform duration-500 group-hover:scale-105"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center p-4">
+            <span className="font-serif text-xl font-bold text-[#c9a96e] opacity-60 text-center">
+              {ch.novelTitle}
+            </span>
+          </div>
+        )}
+        {/* Patreon tier badge */}
+        <div className="absolute top-2.5 right-2.5 bg-[#fdf6e8] text-[#8b6f3f] border border-[#c9a96e]/60 px-2.5 py-0.5 rounded-full text-xs font-semibold shadow-none uppercase tracking-wider">
+          🔒 Patreon Tier
+        </div>
+      </div>
+
+      {/* Card content */}
+      <div className="flex flex-col flex-1 p-5">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-xs font-bold text-[#c9a96e] bg-[#fdf6e8] border border-[#c9a96e]/45 px-2.5 py-0.5 rounded-full truncate max-w-[170px]">
+            {ch.novelTitle}
+          </span>
+        </div>
+
+        <h3 className="font-serif font-semibold text-lg text-[#2b1f2d] leading-snug mb-3 line-clamp-2">
+          Chapter {ch.chapterNumber}: {ch.chapterTitle}
+        </h3>
+
+        <p className="text-sm text-[#6b5738] leading-relaxed mb-4">
+          Chapter {ch.chapterNumber} is currently live on our Patreon.{" "}
+          Read ahead of everyone else instantly!
+        </p>
+
+        <div className="flex items-center justify-between mt-auto pt-3 border-t border-[#c9a96e]/20 text-xs">
+          <span className="text-[#c9a96e] font-medium">
+            ✨ Patreon Early Access
+          </span>
+          <span className="text-[#8b6f3f] font-semibold group-hover:text-[#5d4327] transition-colors">
+            Read on Patreon 🚀
+          </span>
+        </div>
+      </div>
+    </a>
+  );
+}
+
+// ── Regular polished card ────────────────────────────────────────────────────
+function PolishedChapterCard({ ch }: { ch: LatestPolishedChapter }) {
+  const chapterUrl = `/novels/${ch.novelSlug}/chapters/${ch.chapterNumber}` as any;
+  const relativeTime = formatRelativeTime(ch.updatedAt);
+
+  return (
+    <Link
+      href={chapterUrl}
+      className="group flex flex-col overflow-hidden rounded-2xl border border-[#f7c6d9]/40 bg-white transition-all duration-300 hover:-translate-y-2 hover:shadow-lg hover:border-[#f4a7b9]/60 no-underline text-inherit"
+    >
+      {/* Cover image with time badge */}
+      <div className="relative w-full aspect-[16/9] overflow-hidden rounded-t-2xl bg-gradient-to-br from-[#ffe3ef] to-[#fde2e8]">
+        {ch.novelCoverImage ? (
+          <Image
+            src={ch.novelCoverImage}
+            alt={`${ch.novelTitle} Chapter ${ch.chapterNumber}`}
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 380px"
+            style={{ objectFit: "cover" }}
+            className="transition-transform duration-500 group-hover:scale-105"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center p-4">
+            <span className="font-serif text-xl font-bold text-[#f4a7b9] opacity-60 text-center">
+              {ch.novelTitle}
+            </span>
+          </div>
+        )}
+        <div className="absolute top-2.5 right-2.5 bg-[#fde2e8] text-[#d66b85] border border-[#f8bccb]/60 px-2.5 py-0.5 rounded-full text-xs font-semibold shadow-none uppercase tracking-wider">
+          ✨ {relativeTime}
+        </div>
+      </div>
+
+      {/* Card content */}
+      <div className="flex flex-col flex-1 p-5">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-xs font-bold text-[#f4a7b9] bg-[#f7c6d9]/20 border border-[#f4a7b9]/45 px-2.5 py-0.5 rounded-full truncate max-w-[170px]">
+            {ch.novelTitle}
+          </span>
+        </div>
+
+        <h3 className="font-serif font-semibold text-lg text-[#2b1f2d] leading-snug mb-3 line-clamp-2">
+          Chapter {ch.chapterNumber}: {ch.chapterTitle}
+        </h3>
+
+        {ch.excerpt ? (
+          <p className="text-sm text-[#302a2f] italic leading-relaxed mb-4 line-clamp-3 border-l-2 border-[#f4a7b9] pl-3">
+            &ldquo;{ch.excerpt}&rdquo;
+          </p>
+        ) : (
+          <p className="text-sm italic text-gray-400 mb-4 line-clamp-3">
+            Freshly polished refined chapter available. Click to read!
+          </p>
+        )}
+
+        <div className="flex items-center justify-between mt-auto pt-3 border-t border-[#f7c6d9]/25 text-xs">
+          <span className="text-[#f4a7b9] font-medium">
+            📖 {ch.readingMinutes} min read ({ch.wordCount.toLocaleString()} words)
+          </span>
+          <span className="text-[#f4a7b9] font-semibold group-hover:text-[#f4a7b9] transition-colors">
+            Read →
+          </span>
+        </div>
+      </div>
+    </Link>
+  );
+}
+
+// ── Grid ─────────────────────────────────────────────────────────────────────
 export function LatestPolishedGrid({ chapters }: Props) {
   if (!chapters || chapters.length === 0) {
     return null;
@@ -29,73 +164,13 @@ export function LatestPolishedGrid({ chapters }: Props) {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-      {chapters.map((ch) => {
-        const chapterUrl = `/novels/${ch.novelSlug}/chapters/${ch.chapterNumber}` as any;
-        const relativeTime = formatRelativeTime(ch.updatedAt);
-
-        return (
-          <Link
-            key={ch._id}
-            href={chapterUrl}
-            className="group flex flex-col overflow-hidden rounded-2xl border border-[#f7c6d9]/40 bg-white transition-all duration-300 hover:-translate-y-2 hover:shadow-lg hover:border-[#f4a7b9]/60 no-underline text-inherit"
-          >
-            {/* Cover image with time badge */}
-            <div className="relative w-full aspect-[16/9] overflow-hidden rounded-t-2xl bg-gradient-to-br from-[#ffe3ef] to-[#fde2e8]">
-              {ch.novelCoverImage ? (
-                <Image
-                  src={ch.novelCoverImage}
-                  alt={`${ch.novelTitle} Chapter ${ch.chapterNumber}`}
-                  fill
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 380px"
-                  style={{ objectFit: "cover" }}
-                  className="transition-transform duration-500 group-hover:scale-105"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center p-4">
-                  <span className="font-serif text-xl font-bold text-[#f4a7b9] opacity-60 text-center">
-                    {ch.novelTitle}
-                  </span>
-                </div>
-              )}
-              <div className="absolute top-2.5 right-2.5 bg-[#fde2e8] text-[#d66b85] border border-[#f8bccb]/60 px-2.5 py-0.5 rounded-full text-xs font-semibold shadow-none uppercase tracking-wider">
-                ✨ {relativeTime}
-              </div>
-            </div>
-
-            {/* Card content */}
-            <div className="flex flex-col flex-1 p-5">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-bold text-[#f4a7b9] bg-[#f7c6d9]/20 border border-[#f4a7b9]/45 px-2.5 py-0.5 rounded-full truncate max-w-[170px]">
-                  {ch.novelTitle}
-                </span>
-              </div>
-
-              <h3 className="font-serif font-semibold text-lg text-[#2b1f2d] leading-snug mb-3 line-clamp-2">
-                Chapter {ch.chapterNumber}: {ch.chapterTitle}
-              </h3>
-
-              {ch.excerpt ? (
-                <p className="text-sm text-[#302a2f] italic leading-relaxed mb-4 line-clamp-3 border-l-2 border-[#f4a7b9] pl-3">
-                  &ldquo;{ch.excerpt}&rdquo;
-                </p>
-              ) : (
-                <p className="text-sm italic text-gray-400 mb-4 line-clamp-3">
-                  Freshly polished refined chapter available. Click to read!
-                </p>
-              )}
-
-              <div className="flex items-center justify-between mt-auto pt-3 border-t border-[#f7c6d9]/25 text-xs">
-                <span className="text-[#f4a7b9] font-medium">
-                  📖 {ch.readingMinutes} min read ({ch.wordCount.toLocaleString()} words)
-                </span>
-                <span className="text-[#f4a7b9] font-semibold group-hover:text-[#f4a7b9] transition-colors">
-                  Read →
-                </span>
-              </div>
-            </div>
-          </Link>
-        );
-      })}
+      {chapters.map((ch) =>
+        ch.isPatreonOnly ? (
+          <PatreonChapterCard key={ch._id} ch={ch} />
+        ) : (
+          <PolishedChapterCard key={ch._id} ch={ch} />
+        )
+      )}
     </div>
   );
 }
