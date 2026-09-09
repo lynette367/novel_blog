@@ -45,7 +45,7 @@ export function MtlBanner({
             style={{ backgroundColor: "rgba(201,169,110,0.1)", border: "1px solid rgba(201,169,110,0.3)" }}
           >
             <p className="text-sm font-semibold text-[#7a5c1e] mb-1">
-              ✨ Good News!
+              ✨ Good News! ✨
             </p>
             <p className="text-sm text-[#6b5738] leading-relaxed mb-3">
               The fully hand-polished, human-edited
