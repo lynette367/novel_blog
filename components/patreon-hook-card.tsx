@@ -57,8 +57,7 @@ export function PatreonHookCard({
         )}
 
         <p className="text-xs sm:text-sm text-[#9c8560] leading-relaxed">
-          If you don&apos;t mind the raw computer translation, feel free to
-          keep reading below — thank you for staying with the story!
+          Prefer to stay on the free tier? No problem! The polished Chapter 8 will be released here for free soon. Hang tight and stay tuned!
         </p>
       </InfoCard>
     </div>
