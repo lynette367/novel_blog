@@ -51,10 +51,18 @@ export type CurrentlyReviewingNovel = {
   latestPolishedChapterNumber?: number;
 };
 
+// 首页每本小说展示的章节数据（Patreon提前看 + 精修章节）
+export type NovelHomepageChapters = {
+  patreonChapters: LatestPolishedChapter[];
+  polishedChapters: LatestPolishedChapter[];
+};
+
 // 首页每本 currentlyReviewing 书的板块数据（书 + 章节列表）
 export type ReviewingNovelWithChapters = {
   novel: CurrentlyReviewingNovel;
   chapters: LatestPolishedChapter[];
+  patreonChapters?: LatestPolishedChapter[];
+  polishedChapters?: LatestPolishedChapter[];
 };
 
 // 首页 第二屏 "最近精修章节" 数据结构
@@ -102,6 +110,19 @@ export type ChapterContent = {
   readingMinutes: number;
   ogImageUrl?: string;
   seo?: ChapterSeo;
+};
+
+export type WeeklyQuoteData = {
+  _id?: string;
+  title: string;
+  slug: string;
+  seoTitle?: string;
+  quoteText: string;
+  novelTitle: string;
+  chapter: string;
+  insight?: string;
+  targetChapterUrl: string;
+  publishedAt?: string;
 };
 
 export type ReviewingNovelsResult = {

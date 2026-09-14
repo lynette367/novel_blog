@@ -59,4 +59,15 @@ export const structure = (S: StructureBuilder) =>
                 ])
             )
         ),
+      // Weekly Quote Management
+      S.listItem()
+        .id("weeklyQuotes")
+        .title("Weekly Quotes")
+        .icon(() => "💬")
+        .child(
+          S.documentTypeList("weeklyQuote")
+            .id("weekly-quote-list")
+            .title("All Weekly Quotes")
+            .defaultOrdering([{ field: "publishedAt", direction: "desc" }])
+        ),
     ]);

@@ -5,12 +5,13 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { HeroReviewingBanner } from "@/components/hero-reviewing-banner";
 import { HeroAnnouncementPanel } from "@/components/hero-announcement-panel";
-import { LatestPolishedGrid } from "@/components/latest-polished-grid";
+import { WeeklyQuote } from "@/components/weekly-quote";
 import { NovelSection } from "@/components/novel-section";
 import {
   getHeroFeaturedNovel,
-  getLatestPolishedChaptersForNovel,
+  getNovelHomepageChapters,
   getReviewingNovelsWithChapters,
+  getLatestWeeklyQuote,
 } from "@/lib/novels";
 import { absoluteUrl, SITE_NAME } from "@/lib/siteMetadata";
 
@@ -107,10 +108,13 @@ export default async function HomePage() {
   const heroNovel = await getCachedHeroFeaturedNovel();
   const heroSlug = heroNovel?.slug ?? "";
 
-  // Fetch hero chapters + other reviewing novels concurrently
-  const [heroChapters, reviewingResult] = await Promise.all([
-    heroSlug ? getLatestPolishedChaptersForNovel(heroSlug, 6) : Promise.resolve([]),
+  // Fetch all data concurrently: hero chapters + other reviewing novels + latest quote
+  const [heroChapters, reviewingResult, latestQuote] = await Promise.all([
+    heroSlug
+      ? getNovelHomepageChapters(heroSlug)
+      : Promise.resolve({ patreonChapters: [], polishedChapters: [] }),
     getReviewingNovelsWithChapters(heroSlug, 2),
+    getLatestWeeklyQuote(),
   ]);
 
   const { sections: reviewingSections, overflow } = reviewingResult;
@@ -126,42 +130,37 @@ export default async function HomePage() {
         </h1>
       </div>
 
-      {/* Hero section — aligned with chapter cards below */}
+      {/* Hero banner */}
       <section className="page-shell pt-4 pb-6">
-        <div className="rounded-2xl bg-gradient-to-br from-[#fff9f5] via-[#fff4f8] to-[#fdf0f6] border border-[#f7c6d9]/40 p-8 sm:p-10 shadow-sm">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-stretch">
-            <HeroReviewingBanner novel={heroNovel} />
-            <HeroAnnouncementPanel />
-          </div>
+        <div className="rounded-2xl bg-gradient-to-br from-[#fff9f5] via-[#fff4f8] to-[#fdf0f6] border border-[#f7c6d9]/40 p-6 sm:p-8 shadow-sm">
+          <HeroReviewingBanner novel={heroNovel} />
         </div>
       </section>
 
-      <main className="page-shell pt-4 pb-12">
+      <main className="page-shell pt-2 pb-12">
 
-        {/* ── Hero novel chapter section ── */}
+        {/* Hero novel — same NovelSection, no overview strip */}
         {heroNovel && (
-          <section className="mb-14">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="font-serif text-2xl font-normal text-[#2b1f2d] tracking-wide">
-                {heroNovel.title} — Latest Refined Chapters
-              </h2>
-              <Link
-                href={`/novels/${heroNovel.slug}` as any}
-                className="text-xs font-semibold text-[#f4a7b9] hover:text-[#f4a7b9] underline underline-offset-4 transition-colors no-underline shrink-0"
-              >
-                View novel →
-              </Link>
-            </div>
-            <LatestPolishedGrid chapters={heroChapters} />
-          </section>
+          <NovelSection
+            novel={heroNovel}
+            patreonChapters={heroChapters.patreonChapters}
+            polishedChapters={heroChapters.polishedChapters}
+            showOverview={false}
+          />
         )}
 
-        {/* ── Other currently-reviewing novels (auto-sorted by recency) ── */}
-        {reviewingSections.map(({ novel, chapters }) => (
-          <NovelSection key={novel._id} novel={novel} chapters={chapters} />
+        {/* All other refining novels — same NovelSection, with overview strip */}
+        {reviewingSections.map(({ novel, patreonChapters, polishedChapters }) => (
+          <NovelSection
+            key={novel._id}
+            novel={novel}
+            patreonChapters={patreonChapters}
+            polishedChapters={polishedChapters}
+            showOverview={true}
+          />
         ))}
 
-        {/* ── Overflow: novels beyond the 3-section limit ── */}
+        {/* Overflow novels (text links) */}
         {overflow.length > 0 && (
           <p className="text-sm text-[#7d6f67] mb-10">
             Also being polished:{" "}
@@ -175,18 +174,25 @@ export default async function HomePage() {
                   {n.title}
                 </Link>
               </span>
-            ))}{" "}
-            →{" "}
-            <Link
-              href="/novels"
-              className="text-[#f4a7b9] hover:text-[#f4a7b9] font-medium transition-colors"
-            >
+            ))}
+            {" "}→{" "}
+            <Link href="/novels" className="text-[#f4a7b9] hover:text-[#f4a7b9] font-medium transition-colors">
               View all
             </Link>
           </p>
         )}
 
-        {/* ── Explore Library link ── */}
+        {/* Weekly Quote — below all refining novels, above Reader's Note */}
+        <div className="mb-14">
+          <WeeklyQuote {...latestQuote} />
+        </div>
+
+        {/* Reader's Note */}
+        <div className="mb-10">
+          <HeroAnnouncementPanel />
+        </div>
+
+        {/* Library CTA */}
         <div className="text-center mt-4 mb-2">
           <Link
             href="/novels"

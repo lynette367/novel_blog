@@ -4,6 +4,7 @@ import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
 import type {
   CurrentlyReviewingNovel,
   LatestPolishedChapter,
+  NovelHomepageChapters,
   RecentProofread,
   RawNovelResult,
 } from "../types";
@@ -97,6 +98,8 @@ export const getCurrentlyReviewingNovel = cache(
   }
 );
 
+
+
 // 获取 heroFeatured == true 的小说（fallback 链：heroFeatured → currentlyReviewing → 最新发布）
 export const getHeroFeaturedNovel = cache(
   async (): Promise<CurrentlyReviewingNovel | null> => {
@@ -148,6 +151,31 @@ export const getLatestPolishedChaptersForNovel = cache(
     } catch (error) {
       console.error(`Failed to fetch polished chapters for novel ${novelSlug}:`, error);
       return [];
+    }
+  }
+);
+
+// 获取指定小说的首页展示章节（Patreon提前看最多5章 + 精修章节最多5章）
+export const getNovelHomepageChapters = cache(
+  async (novelSlug: string): Promise<NovelHomepageChapters> => {
+    // 1. Patreon 独占提前看章节：已在 Patreon 发布但网站尚未精修
+    const patreonQuery = `*[_type == "chapter" && novel->slug.current == $novelSlug && patreonPublished == true && (isPolished == false || !defined(isPolished))] | order(number desc)[0...5] ${POLISHED_CHAPTER_PROJECTION}`;
+    // 2. 本站精修章节：已完成精修
+    const polishedQuery = `*[_type == "chapter" && novel->slug.current == $novelSlug && isPolished == true] | order(number desc)[0...5] ${POLISHED_CHAPTER_PROJECTION}`;
+
+    try {
+      const [patreonRaw, polishedRaw] = await Promise.all([
+        client.fetch<RawChapter[]>(patreonQuery, { novelSlug }),
+        client.fetch<RawChapter[]>(polishedQuery, { novelSlug }),
+      ]);
+
+      return {
+        patreonChapters: (patreonRaw || []).map(mapChapter),
+        polishedChapters: (polishedRaw || []).map(mapChapter),
+      };
+    } catch (error) {
+      console.error(`Failed to fetch homepage chapters for novel ${novelSlug}:`, error);
+      return { patreonChapters: [], polishedChapters: [] };
     }
   }
 );

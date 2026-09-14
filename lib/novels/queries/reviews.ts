@@ -6,12 +6,12 @@ import type {
   RawNovelResult,
 } from "../types";
 import { transformReviewingNovel } from "../transform";
-import { getLatestPolishedChaptersForNovel } from "./homepage";
+import { getNovelHomepageChapters } from "./homepage";
 
 type RawNovelItem = RawNovelResult & { lastChapterUpdatedAt?: string };
 
 // 获取所有 currentlyReviewing 书（排除 heroSlug），
-// 前 displayLimit 本各附 ≤6 个精修章节，超出部分作为 overflow 文字链接。
+// 前 displayLimit 本各附 Patreon提前看章节 + 精修章节，超出部分作为 overflow 文字链接。
 export const getReviewingNovelsWithChapters = cache(
   async (heroSlug: string, displayLimit = 2): Promise<ReviewingNovelsResult> => {
     const query = `*[_type == "novel" && currentlyReviewing == true && slug.current != $heroSlug] {
@@ -47,8 +47,13 @@ export const getReviewingNovelsWithChapters = cache(
       const sections = await Promise.all(
         sectionNovels.map(async (raw): Promise<ReviewingNovelWithChapters> => {
           const novel = transformReviewingNovel(raw);
-          const chapters = await getLatestPolishedChaptersForNovel(novel.slug, 6);
-          return { novel, chapters };
+          const { patreonChapters, polishedChapters } = await getNovelHomepageChapters(novel.slug);
+          return {
+            novel,
+            chapters: [...patreonChapters, ...polishedChapters],
+            patreonChapters,
+            polishedChapters,
+          };
         })
       );
 

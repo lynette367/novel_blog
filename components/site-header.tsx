@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Route } from "next";
 
 type HeaderProps = {
-  activePath?: "home" | "novels" | "contact";
+  activePath?: "home" | "novels" | "quotes" | "contact";
 };
 
 type HeaderLink = {
@@ -15,6 +15,7 @@ type HeaderLink = {
 const navLinks: HeaderLink[] = [
   { href: "/" as Route, label: "Home", key: "home" },
   { href: "/novels" as Route, label: "Novels", key: "novels" },
+  { href: "/weekly-quotes" as Route, label: "Quotes", key: "quotes" },
   { href: "/contact" as Route, label: "Contact", key: "contact" },
 ];
 

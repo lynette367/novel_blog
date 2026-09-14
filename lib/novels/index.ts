@@ -4,8 +4,10 @@ export type {
   ChapterInfo,
   CurrentlyReviewingNovel,
   ReviewingNovelWithChapters,
+  NovelHomepageChapters,
   LatestPolishedChapter,
   RecentProofread,
+  WeeklyQuoteData,
   ChapterSeo,
   ChapterContent,
   ReviewingNovelsResult,
@@ -34,8 +36,17 @@ export {
   getHeroFeaturedNovel,
   getLatestPolishedChapters,
   getLatestPolishedChaptersForNovel,
+  getNovelHomepageChapters,
   getRecentlyProofreadChapter,
 } from "./queries/homepage";
+
+// ── Weekly Quotes queries ───────────────────────────────────────────────────
+export {
+  getLatestWeeklyQuote,
+  getWeeklyQuoteBySlug,
+  getAllWeeklyQuoteSlugs,
+  FALLBACK_WEEKLY_QUOTE,
+} from "./queries/quotes";
 
 // ── Reviews query ───────────────────────────────────────────────────────────
 export { getReviewingNovelsWithChapters } from "./queries/reviews";
