@@ -40,37 +40,32 @@ export function MtlBanner({
           </p>
 
           {/* CTA block */}
-          <div
-            className="rounded-xl p-4 mb-4"
-            style={{ backgroundColor: "rgba(201,169,110,0.1)", border: "1px solid rgba(201,169,110,0.3)" }}
+          {/* CTA block */}
+          <p className="text-sm font-semibold text-[#7a5c1e] mb-1">
+            ✨ Good News! ✨
+          </p>
+          <p className="text-sm text-[#6b5738] leading-relaxed mb-3">
+            The fully hand-polished, human-edited version of{" "}
+            {currentChapterNumber ? (
+              <>Chapter {currentChapterNumber}</>
+            ) : (
+              "this exact chapter"
+            )}{" "}
+            is <strong>already live on our Patreon</strong>! Skip the chaotic computer text and enjoy the smooth story right now. 🎉
+          </p>
+          <a
+            href={ctaUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 py-2.5 px-5 rounded-full font-semibold text-sm text-white no-underline transition-all hover:shadow-md hover:-translate-y-0.5"
+            style={{ backgroundColor: "#f4a7b9" }}
           >
-            <p className="text-sm font-semibold text-[#7a5c1e] mb-1">
-              ✨ Good News! ✨
-            </p>
-            <p className="text-sm text-[#6b5738] leading-relaxed mb-3">
-              The fully hand-polished, human-edited
-              version of{" "}
-              {currentChapterNumber ? (
-                <>Chapter {currentChapterNumber}</>
-              ) : (
-                "this exact chapter"
-              )}{" "}
-              is <strong>already live on our Patreon</strong>! Skip the chaotic
-              computer text and enjoy the smooth story right now. 🎉
-            </p>
-            <a
-              href={ctaUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 py-2.5 px-5 rounded-full font-semibold text-sm text-white no-underline transition-all hover:shadow-md hover:-translate-y-0.5"
-              style={{ background: "linear-gradient(to right, #c9a96e, #8b7355)" }}
-            >
-              🚀 👉 Unlock the Polished Version on Patreon Now
-            </a>
-          </div>
+            🚀 👉 Unlock the Polished Version on Patreon Now
+          </a>
+
 
           {/* Free release note */}
-          <p className="text-xs text-[#9c8560] leading-relaxed">
+          <p className="text-xs text-[#9c8560] leading-relaxed mt-4">
             🕒 Note: The hand-polished version will be published here for free
             soon. Stay tuned!
           </p>
