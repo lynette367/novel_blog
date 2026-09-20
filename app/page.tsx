@@ -12,6 +12,7 @@ import {
   getNovelHomepageChapters,
   getReviewingNovelsWithChapters,
   getLatestWeeklyQuote,
+  transformReviewingNovel,
 } from "@/lib/novels";
 import { absoluteUrl, SITE_NAME } from "@/lib/siteMetadata";
 
@@ -105,8 +106,8 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function HomePage() {
-  const heroNovel = await getCachedHeroFeaturedNovel();
-  const heroSlug = heroNovel?.slug ?? "";
+  const rawHeroNovel = await getCachedHeroFeaturedNovel();
+  const heroSlug = rawHeroNovel?.slug ?? "";
 
   // Fetch all data concurrently: hero chapters + other reviewing novels + latest quote
   const [heroChapters, reviewingResult, latestQuote] = await Promise.all([
@@ -118,6 +119,10 @@ export default async function HomePage() {
   ]);
 
   const { sections: reviewingSections, overflow } = reviewingResult;
+
+  const heroNovel = rawHeroNovel
+    ? transformReviewingNovel(rawHeroNovel, heroChapters.patreonChapters)
+    : null;
 
   return (
     <>

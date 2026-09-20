@@ -242,21 +242,21 @@ export default async function ChapterPage({
         <h1 className="font-serif text-3xl md:text-4xl text-[#2b1f2d] font-normal leading-snug mb-6">
           {chapterData.title}
         </h1>
-        <div className="flex justify-center gap-8 text-[#f4a7b9] text-sm mb-8 flex-wrap">
+        <div className="flex justify-center gap-8 text-[#f4a7b9] text-sm mb-4 flex-wrap">
           <span>📖 Est. {chapterData.readingMinutes} min read</span>
           <span>📝 {chapterData.wordCount.toLocaleString()} words</span>
         </div>
-      </header>
 
-      {isCurrentRawMtl && (
-        <MtlBanner
-          novelTitle={novel.title}
-          latestPolishedNumber={latestPolishedNumber}
-          isCurrentChapterOnPatreon={isCurrentChapterOnPatreon}
-          patreonUrl={currentChapterPatreonUrl}
-          currentChapterNumber={chapterNumber}
-        />
-      )}
+        {isCurrentRawMtl && (
+          <MtlBanner
+            novelTitle={novel.title}
+            latestPolishedNumber={latestPolishedNumber}
+            isCurrentChapterOnPatreon={isCurrentChapterOnPatreon}
+            patreonUrl={currentChapterPatreonUrl}
+            currentChapterNumber={chapterNumber}
+          />
+        )}
+      </header>
 
       {/* Chapter content */}
       <article className="max-w-3xl mx-auto px-4 sm:px-6 mb-12">
@@ -269,10 +269,7 @@ export default async function ChapterPage({
       {/* Patreon hook card (shown at human TL boundary) */}
       {showPatreonHook && (
         <PatreonHookCard
-          patreonPublishedCount={patreonPublishedCount}
-          latestPatreonChapterNumber={latestPatreonChapter?.number ?? null}
           latestPatreonUrl={latestPatreonChapter?.patreonUrl}
-          currentChapterNumber={chapterNumber}
         />
       )}
 

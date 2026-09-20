@@ -2,13 +2,13 @@ import Link from "next/link";
 import type { Route } from "next";
 
 type HeaderProps = {
-  activePath?: "home" | "novels" | "quotes" | "contact" | "lore";
+  activePath?: "home" | "novels" | "quotes" | "Lore" | "lore" | "Recs" | "contact";
 };
 
 type HeaderLink = {
   href: Route | { pathname: Route; hash?: string };
   label: string;
-  key: HeaderProps["activePath"];
+  key: "home" | "novels" | "quotes" | "Lore" | "Recs";
   fragment?: boolean;
 };
 
@@ -16,8 +16,8 @@ const navLinks: HeaderLink[] = [
   { href: "/" as Route, label: "Home", key: "home" },
   { href: "/novels" as Route, label: "Novels", key: "novels" },
   { href: "/weekly-quotes" as Route, label: "Quotes", key: "quotes" },
-  { href: "/lore/triad-ranks" as Route, label: "Lore", key: "lore" },
-  { href: "/contact" as Route, label: "Contact", key: "contact" },
+  { href: "/lore/triad-ranks" as Route, label: "Lore", key: "Lore" },
+  { href: "/bl-recs" as Route, label: "Recs", key: "Recs" },
 ];
 
 export function SiteHeader({ activePath = "home" }: HeaderProps) {
@@ -36,7 +36,7 @@ export function SiteHeader({ activePath = "home" }: HeaderProps) {
               key={link.label}
               href={link.href}
               className={`font-semibold text-sm transition-colors no-underline ${
-                link.key === activePath && !link.fragment
+                link.key.toLowerCase() === activePath.toLowerCase() && !link.fragment
                   ? "text-[#f4a7b9] border-b-2 border-[#f4a7b9] pb-0.5"
                   : "text-[#f4a7b9] hover:text-[#2b1f2d]"
               }`}

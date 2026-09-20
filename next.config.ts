@@ -11,6 +11,26 @@ const nextConfig: NextConfig = {
         destination: "/contact",
         permanent: true,
       },
+      {
+        source: "/weeklyquotes",
+        destination: "/weekly-quotes",
+        permanent: true,
+      },
+      {
+        source: "/weeklyquotes/:slug*",
+        destination: "/weekly-quotes/:slug*",
+        permanent: true,
+      },
+      {
+        source: "/quotes",
+        destination: "/weekly-quotes",
+        permanent: true,
+      },
+      {
+        source: "/quotes/:slug*",
+        destination: "/weekly-quotes/:slug*",
+        permanent: true,
+      },
     ];
   },
   images: {

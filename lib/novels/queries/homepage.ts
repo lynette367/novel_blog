@@ -23,6 +23,7 @@ const REVIEWING_NOVEL_PROJECTION = `{
   reviewedUpToChapter,
   totalChapters,
   "latestPolishedChapterNumber": *[_type == "chapter" && references(^._id) && isPolished == true] | order(number desc)[0].number,
+  "latestPatreonChapterNumber": *[_type == "chapter" && references(^._id) && patreonPublished == true] | order(number desc)[0].number,
   "maxChapterNumber": *[_type == "chapter" && references(^._id)] | order(number desc)[0].number,
   "totalChapterCount": count(*[_type == "chapter" && references(^._id)])
 }`;

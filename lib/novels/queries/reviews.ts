@@ -25,6 +25,7 @@ export const getReviewingNovelsWithChapters = cache(
       reviewedUpToChapter,
       totalChapters,
       "latestPolishedChapterNumber": *[_type == "chapter" && references(^._id) && isPolished == true] | order(number desc)[0].number,
+      "latestPatreonChapterNumber": *[_type == "chapter" && references(^._id) && patreonPublished == true] | order(number desc)[0].number,
       "maxChapterNumber": *[_type == "chapter" && references(^._id)] | order(number desc)[0].number,
       "totalChapterCount": count(*[_type == "chapter" && references(^._id)]),
       "lastChapterUpdatedAt": *[_type == "chapter" && references(^._id) && isPolished == true] | order(_updatedAt desc)[0]._updatedAt
@@ -46,8 +47,8 @@ export const getReviewingNovelsWithChapters = cache(
 
       const sections = await Promise.all(
         sectionNovels.map(async (raw): Promise<ReviewingNovelWithChapters> => {
-          const novel = transformReviewingNovel(raw);
-          const { patreonChapters, polishedChapters } = await getNovelHomepageChapters(novel.slug);
+          const { patreonChapters, polishedChapters } = await getNovelHomepageChapters(raw.slug);
+          const novel = transformReviewingNovel(raw, patreonChapters);
           return {
             novel,
             chapters: [...patreonChapters, ...polishedChapters],

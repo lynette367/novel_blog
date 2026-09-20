@@ -246,39 +246,52 @@ export default async function NovelDetailPage({
 
           {chapters.length > 0 ? (
             <div className="flex flex-col gap-3" id="chapterList">
-              {chapters.map((chapter) =>
-                chapter.locked ? (
-                  <div
-                    key={chapter.number}
-                    data-chapter={chapter.number}
-                    className="opacity-55 cursor-not-allowed grid grid-cols-1 sm:grid-cols-[80px_1fr] gap-4 items-center p-5 rounded-xl border-2 bg-[#f8fafc] border-[#cbd5e1]"
-                  >
-                    <div className="text-2xl font-semibold text-[#f4a7b9] text-center sm:text-left">
-                      Ch. {chapter.number}
+              {chapters.map((chapter) => {
+                if (chapter.locked) {
+                  return (
+                    <div
+                      key={chapter.number}
+                      data-chapter={chapter.number}
+                      className="opacity-55 cursor-not-allowed grid grid-cols-1 sm:grid-cols-[80px_1fr] gap-4 items-center p-5 rounded-xl border-2 bg-[#f8fafc] border-[#cbd5e1]"
+                    >
+                      <div className="text-2xl font-semibold text-[#f4a7b9] text-center sm:text-left">
+                        Ch. {chapter.number}
+                      </div>
+                      <div className="flex flex-col gap-1">
+                        <div className="text-lg font-semibold text-[#2b1f2d]">{chapter.title}</div>
+                        <div className="text-sm text-[#f4a7b9]">🔒 Coming Soon</div>
+                      </div>
                     </div>
-                    <div className="flex flex-col gap-1">
-                      <div className="text-lg font-semibold text-[#2b1f2d]">{chapter.title}</div>
-                      <div className="text-sm text-[#f4a7b9]">🔒 Coming Soon</div>
-                    </div>
-                  </div>
-                ) : (
+                  );
+                }
+
+                const isHumanTl = chapter.isPolished;
+                const isCurrentChapterOnPatreon = !isHumanTl && chapter.patreonPublished === true;
+                const isHighlight = isHumanTl || isCurrentChapterOnPatreon;
+
+                return (
                   <Link
                     key={chapter.number}
                     href={`/novels/${slug}/chapters/${chapter.number}`}
                     data-chapter={chapter.number}
-                    className={`group relative overflow-hidden grid grid-cols-1 sm:grid-cols-[80px_1fr_auto] gap-4 items-center p-5 rounded-xl border transition-all hover:translate-x-2 hover:shadow-md no-underline text-inherit ${chapter.isPolished
-                      ? "bg-gradient-to-r from-[#fff8fb] to-white border-[#f7c6d9] [border-left:4px_solid_#f4a7b9] shadow-sm"
-                      : "bg-[#f8fafc] border-2 border-[#cbd5e1]"
-                      }`}
+                    className={`group relative overflow-hidden grid grid-cols-1 sm:grid-cols-[80px_1fr_auto] gap-4 items-center p-5 rounded-xl border transition-all hover:translate-x-2 hover:shadow-md no-underline text-inherit ${
+                      isHighlight
+                        ? "bg-gradient-to-r from-[#fff8fb] to-white border-[#f7c6d9] [border-left:4px_solid_#f4a7b9] shadow-sm"
+                        : "bg-[#f8fafc] border-2 border-[#cbd5e1]"
+                    }`}
                   >
                     {/* Corner tag */}
-                    {chapter.isPolished ? (
+                    {isHumanTl ? (
                       <div className="absolute top-0 right-0 bg-[#f4a7b9] text-white text-xs font-bold px-3 py-0.5 rounded-bl-xl shadow-sm z-10">
                         Human TL
                       </div>
+                    ) : isCurrentChapterOnPatreon ? (
+                      <div className="absolute top-0 right-0 bg-[#f4a7b9] text-white text-xs font-bold px-3 py-0.5 rounded-bl-xl shadow-sm z-10">
+                        Patreon
+                      </div>
                     ) : (
                       <div className="absolute top-0 right-0 bg-gradient-to-r from-[#94a3b8] to-[#64748b] text-white text-xs font-bold px-3 py-0.5 rounded-bl-xl shadow-sm z-10">
-                        Raw TL
+                        Raw MTL
                       </div>
                     )}
 
@@ -305,8 +318,8 @@ export default async function NovelDetailPage({
                       →
                     </span>
                   </Link>
-                )
-              )}
+                );
+              })}
             </div>
           ) : (
             <p className="text-[#f4a7b9]">Chapters will be available soon.</p>

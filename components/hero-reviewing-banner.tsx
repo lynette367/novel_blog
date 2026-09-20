@@ -12,8 +12,10 @@ export function HeroReviewingBanner({ novel }: Props) {
   }
 
   const novelUrl = `/novels/${novel.slug}` as any;
-  const latestPolishedChapterNumber = novel.latestPolishedChapterNumber || novel.reviewedUpToChapter || 1;
-  const latestChapterUrl = `/novels/${novel.slug}/chapters/${latestPolishedChapterNumber}` as any;
+  const readChapterNumber =
+    novel.reviewedUpToChapter || novel.latestPolishedChapterNumber || 1;
+  const latestChapterUrl =
+    `/novels/${novel.slug}/chapters/${readChapterNumber}` as any;
 
   const percentage = Math.min(
     100,
@@ -106,7 +108,7 @@ export function HeroReviewingBanner({ novel }: Props) {
           href={latestChapterUrl}
           className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-[#f4a7b9] hover:bg-[#e896a9] text-white rounded-full font-semibold text-sm transition-all shadow-[0_4px_12px_rgba(244,167,185,0.3)] hover:-translate-y-0.5 no-underline"
         >
-          Read Ch. {latestPolishedChapterNumber} (Latest Refined) <span>→</span>
+          Read Ch. {readChapterNumber} <span>→</span>
         </Link>
         <Link
           href={novelUrl}

@@ -18,10 +18,10 @@ export function NovelSection({
   showOverview = true,
 }: Props) {
   const novelUrl = `/novels/${novel.slug}` as any;
-  const latestChapterNumber =
-    novel.latestPolishedChapterNumber || novel.reviewedUpToChapter || 1;
+  const readChapterNumber =
+    novel.reviewedUpToChapter || novel.latestPolishedChapterNumber || 1;
   const latestChapterUrl =
-    `/novels/${novel.slug}/chapters/${latestChapterNumber}` as any;
+    `/novels/${novel.slug}/chapters/${readChapterNumber}` as any;
   const percentage = Math.min(
     100,
     Math.max(0, Math.round((novel.reviewedUpToChapter / (novel.totalChapters || 1)) * 100))
@@ -114,7 +114,7 @@ export function NovelSection({
                 href={latestChapterUrl}
                 className="shrink-0 inline-flex items-center gap-1 px-3 py-1.5 bg-[#f4a7b9] hover:bg-[#e896a9] text-white rounded-full font-semibold text-xs transition-all shadow-sm no-underline"
               >
-                Ch. {latestChapterNumber} →
+                Read Ch. {readChapterNumber} →
               </Link>
             </div>
           </div>

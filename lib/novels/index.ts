@@ -8,6 +8,8 @@ export type {
   LatestPolishedChapter,
   RecentProofread,
   WeeklyQuoteData,
+  QuoteBlock,
+  QuoteSection,
   ChapterSeo,
   ChapterContent,
   ReviewingNovelsResult,
@@ -21,6 +23,9 @@ export {
   illustrationUrl,
   minutesFromWordCount,
 } from "./image-utils";
+
+// ── Transform utilities ─────────────────────────────────────────────────────
+export { transformNovel, transformReviewingNovel } from "./transform";
 
 // ── Novel queries ───────────────────────────────────────────────────────────
 export {

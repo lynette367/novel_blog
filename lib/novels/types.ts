@@ -49,6 +49,7 @@ export type CurrentlyReviewingNovel = {
   reviewedUpToChapter: number;
   totalChapters: number;
   latestPolishedChapterNumber?: number;
+  latestPatreonChapterNumber?: number;
 };
 
 // 首页每本小说展示的章节数据（Patreon提前看 + 精修章节）
@@ -112,17 +113,27 @@ export type ChapterContent = {
   seo?: ChapterSeo;
 };
 
+export type QuoteBlock = string | { em: string } | { quote: string };
+
+export type QuoteSection = {
+  heading?: string;
+  blocks: QuoteBlock[];
+};
+
 export type WeeklyQuoteData = {
   _id?: string;
   title: string;
   slug: string;
   seoTitle?: string;
+  seoDescription?: string;
   quoteText: string;
   novelTitle: string;
-  chapter: string;
+  chapter?: string;
   insight?: string;
-  targetChapterUrl: string;
+  targetChapterUrl?: string;
+  targetUrl?: string;
   publishedAt?: string;
+  sections?: QuoteSection[];
 };
 
 export type ReviewingNovelsResult = {
@@ -188,6 +199,7 @@ export type RawNovelResult = {
   reviewedUpToChapter?: number;
   totalChapters?: number;
   latestPolishedChapterNumber?: number;
+  latestPatreonChapterNumber?: number;
   maxChapterNumber?: number;
   totalChapterCount?: number;
 };

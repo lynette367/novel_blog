@@ -4,11 +4,11 @@ import type { WeeklyQuoteData } from "@/lib/novels";
 type WeeklyQuoteProps = Partial<WeeklyQuoteData>;
 
 export function WeeklyQuote({
-  quoteText = "He had always thought that losing someone was the same as being left behind.",
+  quoteText = "If I die, then I die.",
   novelTitle = "Big Brother",
-  chapter = "Chapter 12",
-  slug = "losing-someone-vs-being-left-behind",
-  targetChapterUrl = "/novels/big_brother/chapters/12",
+  chapter = "Chapter 21",
+  slug = "the-brother-core-pain-and-strength",
+  targetChapterUrl = "/novels/big_brother/chapters/21",
 }: WeeklyQuoteProps) {
   const quoteDetailUrl = `/weekly-quotes/${slug}` as any;
   const chapterUrl = (targetChapterUrl || "/novels") as any;
