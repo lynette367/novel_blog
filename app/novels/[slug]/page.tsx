@@ -163,8 +163,8 @@ export default async function NovelDetailPage({
       <SiteHeader activePath="novels" />
 
       <main className="page-shell py-8">
-        {/* Novel header card */}
-        <section className="grid grid-cols-1 md:grid-cols-[280px_1fr] gap-8 mb-8 bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-[#f7c6d9]/30">
+        {/* Novel header — no card, just a bottom rule to separate from the chapter list */}
+        <section className="grid grid-cols-1 md:grid-cols-[280px_1fr] gap-8 mb-10 pb-8 border-b border-[#f7c6d9]/50">
           {/* Cover image — fixed aspect ratio, top-aligned */}
           <div className="self-start">
             <div
@@ -229,9 +229,9 @@ export default async function NovelDetailPage({
           </div>
         </section>
 
-        {/* Chapter list */}
-        <section className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-[#f7c6d9]/30">
-          <div className="flex justify-between items-center mb-6 pb-4 border-b border-[#f7c6d9]">
+        {/* Chapter list — no outer container, section flows directly on the page */}
+        <section>
+          <div className="flex justify-between items-center mb-3 pb-4 border-b border-[#f7c6d9]">
             <div>
               <h2 className="font-serif text-2xl text-[#2b1f2d] font-normal tracking-wide">
                 Table of Contents
@@ -243,6 +243,18 @@ export default async function NovelDetailPage({
               ) : null}
             </div>
           </div>
+
+          {/* Human TL donation callout */}
+          <p className="text-sm text-[#7d6d5d] mb-6 pb-4 border-b border-[#f7c6d9]/50">
+            Tired of machine-translated (Raw MTL) chapters?{" "}
+            <Link
+              href="https://ko-fi.com/crosstheline46370"
+              className="text-[#8b7355] font-semibold underline underline-offset-2 hover:text-[#6d5d4b]"
+            >
+              Donate $20 on Ko-fi
+            </Link>{" "}
+            and include the title in your message, and we&apos;ll get <em>{novel.title}</em> human proofread.
+          </p>
 
           {chapters.length > 0 ? (
             <div className="flex flex-col gap-3" id="chapterList">
@@ -274,11 +286,10 @@ export default async function NovelDetailPage({
                     key={chapter.number}
                     href={`/novels/${slug}/chapters/${chapter.number}`}
                     data-chapter={chapter.number}
-                    className={`group relative overflow-hidden grid grid-cols-1 sm:grid-cols-[80px_1fr_auto] gap-4 items-center p-5 rounded-xl border transition-all hover:translate-x-2 hover:shadow-md no-underline text-inherit ${
-                      isHighlight
+                    className={`group relative overflow-hidden grid grid-cols-1 sm:grid-cols-[80px_1fr_auto] gap-4 items-center p-5 rounded-xl border transition-all hover:translate-x-2 hover:shadow-md no-underline text-inherit ${isHighlight
                         ? "bg-gradient-to-r from-[#fff8fb] to-white border-[#f7c6d9] [border-left:4px_solid_#f4a7b9] shadow-sm"
                         : "bg-[#f8fafc] border-2 border-[#cbd5e1]"
-                    }`}
+                      }`}
                   >
                     {/* Corner tag */}
                     {isHumanTl ? (

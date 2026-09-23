@@ -5,7 +5,12 @@ import { FilterableNovelGrid } from "@/components/filterable-novel-grid";
 import { getNovels } from "@/lib/novels";
 import { absoluteUrl, SITE_NAME } from "@/lib/siteMetadata";
 
-export async function generateMetadata(): Promise<Metadata> {
+type PageProps = {
+  searchParams: Promise<{ tag?: string }>;
+};
+
+export async function generateMetadata({ searchParams }: PageProps): Promise<Metadata> {
+  const { tag } = await searchParams;
   const novels = await getNovels();
   const totalNovels = novels.length;
   const totalChapters = novels.reduce((sum, n) => sum + (n.totalChapters || 0), 0);
@@ -14,16 +19,24 @@ export async function generateMetadata(): Promise<Metadata> {
   const ogImage = firstNovel?.coverImage || "";
   const ogImageAlt = firstNovel ? (firstNovel.coverImageAlt || firstNovel.title) : SITE_NAME;
 
+  const canonicalPath = tag ? `/novels?tag=${encodeURIComponent(tag)}` : "/novels";
+  const title = tag
+    ? `${tag} Chinese BL & Danmei Novels`
+    : "Browse Chinese BL & Web Fiction";
+  const description = tag
+    ? `Browse our ${tag} Chinese Danmei and Asian BL novels, translated to English.`
+    : `Explore our curated library of ${totalNovels} Chinese Danmei and Asian BL novels with ${totalChapters}+ chapters. Read completed stories in English.`;
+
   const schemaData = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
     "@id": absoluteUrl("/novels#collectionpage"),
-    "name": "Browse Chinese BL & Danmei Web Fiction",
-    "url": absoluteUrl("/novels"),
-    "description": `Explore our curated library of ${totalNovels} Chinese Danmei and Asian BL novels with ${totalChapters}+ chapters. Read completed stories in English.`,
+    "name": tag ? `${tag} Chinese BL & Danmei Web Fiction` : "Browse Chinese BL & Danmei Web Fiction",
+    "url": absoluteUrl(canonicalPath),
+    "description": description,
     "mainEntityOfPage": {
       "@type": "WebPage",
-      "@id": absoluteUrl("/novels"),
+      "@id": absoluteUrl(canonicalPath),
     },
     "isPartOf": {
       "@id": absoluteUrl("/#website"),
@@ -31,16 +44,16 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 
   return {
-    title: "Browse Chinese BL & Web Fiction",
-    description: `Explore our curated library of ${totalNovels} Chinese Danmei and Asian BL novels with ${totalChapters}+ chapters. Read completed stories in English.`,
+    title,
+    description,
     keywords: ["danmei novels", "chinese danmei", "BL novels collection", "danmei library", "read danmei online", "asian BL"],
     alternates: {
-      canonical: absoluteUrl("/novels"),
+      canonical: absoluteUrl(canonicalPath),
     },
     openGraph: {
-      title: "Browse Chinese BL & Danmei Web Fiction",
-      description: `Explore our complete collection of ${totalNovels} Chinese Danmei and Asian BL novels with ${totalChapters}+ chapters.`,
-      url: absoluteUrl("/novels"),
+      title,
+      description,
+      url: absoluteUrl(canonicalPath),
       siteName: SITE_NAME,
       images: ogImage
         ? [
@@ -55,8 +68,8 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     twitter: {
       card: "summary_large_image",
-      title: "Browse Chinese BL & Danmei Web Fiction",
-      description: `Explore our collection of ${totalNovels} Chinese Danmei and Asian BL novels with ${totalChapters}+ chapters.`,
+      title,
+      description,
       images: ogImage ? [ogImage] : [],
     },
     other: {
@@ -65,8 +78,10 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default async function NovelsPage() {
+export default async function NovelsPage({ searchParams }: PageProps) {
+  const { tag } = await searchParams;
   const novels = await getNovels();
+  const activeTag = tag && tag.trim() ? tag : "ALL";
 
   return (
     <>
@@ -77,7 +92,7 @@ export default async function NovelsPage() {
             Explore Chinese Danmei &amp; BL Library
           </h2>
         </div>
-        <FilterableNovelGrid novels={novels} />
+        <FilterableNovelGrid novels={novels} activeTag={activeTag} />
       </main>
       <SiteFooter />
     </>
