@@ -66,11 +66,10 @@ function ChapterListItem({
       <div className="flex flex-col flex-1 min-w-0 justify-center">
         <div className="flex items-center gap-2 flex-wrap mb-1">
           <span
-            className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide ${
-              isPatreon
-                ? "text-[#d66b85] bg-[#fde2e8] border border-[#f8bccb]/60"
-                : "text-[#3f6777] bg-white border border-[#b8d9ff]"
-            }`}
+            className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide ${isPatreon
+              ? "text-[#d66b85] bg-[#fde2e8] border border-[#f8bccb]/60"
+              : "text-[#3f6777] bg-white border border-[#b8d9ff]"
+              }`}
           >
             {isPatreon ? "🔒 Patreon" : "✨ Free"}
           </span>
@@ -165,13 +164,7 @@ export function NovelChapterGrid({
               <span className="text-xs sm:text-sm font-semibold text-[#d66b85]">
                 Patreon Premium Chapters
               </span>
-              <span className="text-[10px] font-bold text-[#d66b85] bg-[#fde2e8] border border-[#f8bccb]/60 px-2 py-0.5 rounded-full uppercase tracking-wider">
-                Early Access
-              </span>
             </div>
-            <span className="text-[11px] text-[#9c8560] hidden sm:inline">
-              Polished early on Patreon · Free MTL on site
-            </span>
           </div>
 
           <ChapterList items={effectivePatreonChapters} variant="patreon" />
