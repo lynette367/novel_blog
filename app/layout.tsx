@@ -1,10 +1,19 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import "./globals.css";
 import { SITE_NAME, SITE_URL } from "@/lib/siteMetadata";
 
 const defaultDescription =
   "Your destination for high-quality Chinese Danmei and Asian BL web novels. Discover captivating stories, daily updates, and completed chapters in English.";
+
+// 1. 正确配置 Viewport（Next.js 官方推荐写法，避免手动在 <head> 里写 meta 导致冲突）
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  minimumScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -48,10 +57,16 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <meta
-          name="viewport"
-          content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no"
-        />
+        {/* 2. 完美修复后的 Microsoft Clarity 追踪代码 */}
+        <Script id="microsoft-clarity" strategy="afterInteractive">
+          {`
+            (function(c,l,a,r,i,t,y){
+              c[a] = c[a] || function () { (c[a].q = c[a].q || []).push(arguments) };
+              t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+              y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+            })(window, document, "clarity", "script", "yncaf17d0k");
+          `}
+        </Script>
       </head>
       <body>
         {children}
