@@ -5,12 +5,9 @@ import { FilterableNovelGrid } from "@/components/filterable-novel-grid";
 import { getNovels } from "@/lib/novels";
 import { absoluteUrl, SITE_NAME } from "@/lib/siteMetadata";
 
-type PageProps = {
-  searchParams: Promise<{ tag?: string }>;
-};
+export const dynamic = "force-static";
 
-export async function generateMetadata({ searchParams }: PageProps): Promise<Metadata> {
-  const { tag } = await searchParams;
+export async function generateMetadata(): Promise<Metadata> {
   const novels = await getNovels();
   const totalNovels = novels.length;
   const totalChapters = novels.reduce((sum, n) => sum + (n.totalChapters || 0), 0);
@@ -19,19 +16,15 @@ export async function generateMetadata({ searchParams }: PageProps): Promise<Met
   const ogImage = firstNovel?.coverImage || "";
   const ogImageAlt = firstNovel ? (firstNovel.coverImageAlt || firstNovel.title) : SITE_NAME;
 
-  const canonicalPath = tag ? `/novels?tag=${encodeURIComponent(tag)}` : "/novels";
-  const title = tag
-    ? `${tag} Chinese BL & Danmei Novels`
-    : "Browse Chinese BL & Web Fiction";
-  const description = tag
-    ? `Browse our ${tag} Chinese Danmei and Asian BL novels, translated to English.`
-    : `Explore our curated library of ${totalNovels} Chinese Danmei and Asian BL novels with ${totalChapters}+ chapters. Read completed stories in English.`;
+  const canonicalPath = "/novels";
+  const title = "Browse Chinese BL & Web Fiction";
+  const description = `Explore our curated library of ${totalNovels} Chinese Danmei and Asian BL novels with ${totalChapters}+ chapters. Read completed stories in English.`;
 
   const schemaData = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
     "@id": absoluteUrl("/novels#collectionpage"),
-    "name": tag ? `${tag} Chinese BL & Danmei Web Fiction` : "Browse Chinese BL & Danmei Web Fiction",
+    "name": "Browse Chinese BL & Danmei Web Fiction",
     "url": absoluteUrl(canonicalPath),
     "description": description,
     "mainEntityOfPage": {
@@ -78,10 +71,8 @@ export async function generateMetadata({ searchParams }: PageProps): Promise<Met
   };
 }
 
-export default async function NovelsPage({ searchParams }: PageProps) {
-  const { tag } = await searchParams;
+export default async function NovelsPage() {
   const novels = await getNovels();
-  const activeTag = tag && tag.trim() ? tag : "ALL";
 
   return (
     <>
@@ -92,7 +83,7 @@ export default async function NovelsPage({ searchParams }: PageProps) {
             Explore Chinese Danmei &amp; BL Library
           </h2>
         </div>
-        <FilterableNovelGrid novels={novels} activeTag={activeTag} />
+        <FilterableNovelGrid novels={novels} />
       </main>
       <SiteFooter />
     </>

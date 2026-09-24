@@ -24,168 +24,110 @@ function formatRelativeTime(dateString?: string): string {
   return `${Math.floor(months / 12)}y ago`;
 }
 
-// ── Patreon 独占提前看卡片 ───────────────────────────────────────────────────
-// 点击后直接进入本站 MTL 章节页面，由 MTL 页面顶部的 MtlBanner 进行引导
+type ChapterVariant = "patreon" | "polished";
+
+// ── 单行章节列表项（左缩略图 + 右侧信息，无卡片边框/阴影）────────────────────────
+function ChapterListItem({
+  ch,
+  variant,
+}: {
+  ch: LatestPolishedChapter;
+  variant: ChapterVariant;
+}) {
+  const chapterUrl = `/novels/${ch.novelSlug}/chapters/${ch.chapterNumber}` as any;
+  const relativeTime = formatRelativeTime(ch.updatedAt);
+  const isPatreon = variant === "patreon";
+
+  return (
+    <Link
+      href={chapterUrl}
+      className="group flex gap-4 py-3.5 first:pt-0 last:pb-0 -mx-3 px-3 rounded-md transition-colors duration-200 hover:bg-[#faf6ee] no-underline text-inherit"
+    >
+      {/* Thumbnail */}
+      <div className="relative w-14 h-20 sm:w-16 sm:h-24 flex-shrink-0 rounded-md overflow-hidden bg-gradient-to-br from-[#ffe3ef] to-[#fde2e8]">
+        {ch.novelCoverImage ? (
+          <Image
+            src={ch.novelCoverImage}
+            alt={`${ch.novelTitle} Chapter ${ch.chapterNumber}`}
+            fill
+            sizes="64px"
+            style={{ objectFit: "cover" }}
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center p-1">
+            <span className="font-serif text-[9px] font-bold text-[#f4a7b9] opacity-60 text-center line-clamp-2">
+              {ch.novelTitle}
+            </span>
+          </div>
+        )}
+      </div>
+
+      {/* Info */}
+      <div className="flex flex-col flex-1 min-w-0 justify-center">
+        <div className="flex items-center gap-2 flex-wrap mb-1">
+          <span
+            className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide ${
+              isPatreon
+                ? "text-[#d66b85] bg-[#fde2e8] border border-[#f8bccb]/60"
+                : "text-[#3f6777] bg-white border border-[#b8d9ff]"
+            }`}
+          >
+            {isPatreon ? "🔒 Patreon" : "✨ Free"}
+          </span>
+          <span className="text-[11px] text-[#9c8560]">{relativeTime}</span>
+        </div>
+
+        <h3 className="font-serif font-semibold text-sm sm:text-base text-[#2b1f2d] leading-snug line-clamp-1 group-hover:text-[#f4a7b9] transition-colors">
+          Ch. {ch.chapterNumber}: {ch.chapterTitle}
+        </h3>
+
+        {ch.excerpt ? (
+          <p className="text-xs text-[#7d6f67] italic leading-relaxed line-clamp-1 mt-0.5">
+            &ldquo;{ch.excerpt}&rdquo;
+          </p>
+        ) : !isPatreon ? (
+          <p className="text-xs text-[#7d6f67] leading-relaxed line-clamp-1 mt-0.5">
+            {ch.readingMinutes} min · {ch.wordCount.toLocaleString()} words
+          </p>
+        ) : null}
+      </div>
+
+      <span className="hidden sm:flex items-center text-[#f4a7b9] group-hover:text-[#d66b85] transition-colors shrink-0">
+        →
+      </span>
+    </Link>
+  );
+}
+
+// 兼容旧组件名导出（原先是完整卡片，现在统一走列表项，variant 决定角标文案）
 export function PatreonChapterCard({ ch }: { ch: LatestPolishedChapter }) {
-  const chapterUrl = `/novels/${ch.novelSlug}/chapters/${ch.chapterNumber}` as any;
-  const relativeTime = formatRelativeTime(ch.updatedAt);
-
-  return (
-    <Link
-      href={chapterUrl}
-      className="group flex flex-col overflow-hidden rounded-xl border border-[#f7c6d9]/50 bg-gradient-to-b from-[#fffefc] to-[#fff4f8] transition-all duration-200 hover:-translate-y-1 hover:shadow-md hover:border-[#f4a7b9]/80 no-underline text-inherit"
-    >
-      {/* 封面与 Patreon 时间角标 */}
-      <div className="relative w-full aspect-[16/10] overflow-hidden rounded-t-xl bg-gradient-to-br from-[#ffe3ef] to-[#fde2e8]">
-        {ch.novelCoverImage ? (
-          <Image
-            src={ch.novelCoverImage}
-            alt={`${ch.novelTitle} Chapter ${ch.chapterNumber}`}
-            fill
-            sizes="(max-width: 768px) 33vw, (max-width: 1200px) 33vw, 220px"
-            style={{ objectFit: "cover" }}
-            className="transition-transform duration-500 group-hover:scale-105"
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center p-2">
-            <span className="font-serif text-sm font-bold text-[#f4a7b9] opacity-60 text-center line-clamp-1">
-              {ch.novelTitle}
-            </span>
-          </div>
-        )}
-        <div className="absolute top-2 right-2 bg-[#fde2e8]/95 backdrop-blur-sm text-[#d66b85] border border-[#f8bccb]/60 px-2 py-0.5 rounded-full text-[10px] font-semibold shadow-none uppercase tracking-wider">
-          🔒 {relativeTime}
-        </div>
-      </div>
-
-      {/* 卡片内容 */}
-      <div className="flex flex-col flex-1 p-3 sm:p-3.5">
-        <div className="flex items-center justify-between mb-1.5">
-          <span className="text-[10px] font-bold text-[#d66b85] bg-[#fde2e8] border border-[#f8bccb]/60 px-2 py-0.5 rounded-full truncate max-w-[130px]">
-            {ch.novelTitle}
-          </span>
-        </div>
-
-        <h3 className="font-serif font-semibold text-xs sm:text-sm text-[#2b1f2d] leading-snug mb-1.5 line-clamp-2 group-hover:text-[#f4a7b9] transition-colors">
-          Ch. {ch.chapterNumber}: {ch.chapterTitle}
-        </h3>
-
-        {ch.excerpt ? (
-          <p className="text-[11px] text-[#302a2f] italic leading-relaxed line-clamp-2 border-l border-[#f4a7b9] pl-1.5 mb-2">
-            &ldquo;{ch.excerpt}&rdquo;
-          </p>
-        ) : (
-          <p className="text-[11px] text-[#7d6f67] leading-relaxed line-clamp-2 mb-2">
-            Polished on Patreon · Click to read MTL on site
-          </p>
-        )}
-
-        <div className="flex items-center justify-between mt-auto pt-2 border-t border-[#f7c6d9]/25 text-[10px] sm:text-[11px]">
-          <span className="text-[#f4a7b9] font-medium">
-            📖 {ch.readingMinutes}m read
-          </span>
-          <span className="text-[#f4a7b9] font-semibold group-hover:text-[#d66b85] transition-colors flex items-center gap-0.5">
-            Read <span className="group-hover:translate-x-0.5 transition-transform">→</span>
-          </span>
-        </div>
-      </div>
-    </Link>
-  );
+  return <ChapterListItem ch={ch} variant="patreon" />;
 }
 
-// ── 本站精修卡片（采用 InfoCard 3px brand-sky #b8d9ff 边框与温润奶油底设计）─────────
 export function PolishedChapterCard({ ch }: { ch: LatestPolishedChapter }) {
-  const chapterUrl = `/novels/${ch.novelSlug}/chapters/${ch.chapterNumber}` as any;
-  const relativeTime = formatRelativeTime(ch.updatedAt);
-
-  return (
-    <Link
-      href={chapterUrl}
-      className="group flex flex-col overflow-hidden rounded-2xl border-[3px] border-[#b8d9ff] bg-[#fffdf2] shadow-[0_6px_20px_rgba(184,217,255,0.35)] transition-all duration-200 hover:-translate-y-1 hover:border-[#8ecde2] hover:shadow-[0_10px_25px_rgba(184,217,255,0.55)] no-underline text-inherit"
-    >
-      {/* 封面与精修角标 */}
-      <div className="relative w-full aspect-[16/10] overflow-hidden rounded-t-[13px] bg-gradient-to-br from-[#dcf2f9] to-[#eaf6fa]">
-        {ch.novelCoverImage ? (
-          <Image
-            src={ch.novelCoverImage}
-            alt={`${ch.novelTitle} Chapter ${ch.chapterNumber}`}
-            fill
-            sizes="(max-width: 768px) 33vw, (max-width: 1200px) 33vw, 220px"
-            style={{ objectFit: "cover" }}
-            className="transition-transform duration-500 group-hover:scale-105"
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center p-2">
-            <span className="font-serif text-sm font-bold text-[#467385] opacity-60 text-center line-clamp-1">
-              {ch.novelTitle}
-            </span>
-          </div>
-        )}
-        <div className="absolute top-2 right-2 bg-white/90 backdrop-blur-sm text-[#3f6777] border border-[#b8d9ff] px-2 py-0.5 rounded-full text-[10px] font-semibold shadow-xs uppercase tracking-wider">
-          ✨ {relativeTime}
-        </div>
-      </div>
-
-      {/* 卡片内容 */}
-      <div className="flex flex-col flex-1 p-3 sm:p-3.5">
-        <div className="flex items-center justify-between mb-1.5">
-          <span className="text-[10px] font-bold text-[#3f6777] bg-white/80 border border-[#b8d9ff]/70 px-2 py-0.5 rounded-full truncate max-w-[130px] shadow-2xs">
-            {ch.novelTitle}
-          </span>
-        </div>
-
-        <h3 className="font-serif font-semibold text-xs sm:text-sm text-[#5c4a42] leading-snug mb-1.5 line-clamp-2 group-hover:text-[#2d6175] transition-colors">
-          Ch. {ch.chapterNumber}: {ch.chapterTitle}
-        </h3>
-
-        {ch.excerpt ? (
-          <p className="text-[11px] text-[#6d5e56] italic leading-relaxed line-clamp-2 border-l-2 border-[#b8d9ff] pl-1.5 mb-2">
-            &ldquo;{ch.excerpt}&rdquo;
-          </p>
-        ) : (
-          <p className="text-[11px] text-[#7d6f67] leading-relaxed line-clamp-2 mb-2">
-            📖 {ch.readingMinutes} min · {ch.wordCount.toLocaleString()} words
-          </p>
-        )}
-
-        <div className="flex items-center justify-between mt-auto pt-2 border-t border-[#b8d9ff]/40 text-[10px] sm:text-[11px]">
-          <span className="text-[#3f6777] font-medium">
-            📖 {ch.readingMinutes}m read
-          </span>
-          <span className="text-[#3f6777] font-semibold group-hover:text-[#224b5c] transition-colors flex items-center gap-0.5">
-            Read <span className="group-hover:translate-x-0.5 transition-transform">→</span>
-          </span>
-        </div>
-      </div>
-    </Link>
-  );
+  return <ChapterListItem ch={ch} variant="polished" />;
 }
 
-// ── 章节卡片单行容器（桌面 5 个留白，iPad/iPhone 3 个支持滑动）───────────────────
-function ChapterCardRow({
+// ── 一组章节的纯列表（分割线代替卡片边框，不再横向滚动）──────────────────────────
+function ChapterList({
   items,
-  renderCard,
+  variant,
 }: {
   items: LatestPolishedChapter[];
-  renderCard: (ch: LatestPolishedChapter) => React.ReactNode;
+  variant: ChapterVariant;
 }) {
   if (!items || items.length === 0) return null;
 
   return (
-    <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory scrollbar-none pb-2 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:mx-0 lg:px-0 lg:grid lg:grid-cols-5 lg:overflow-visible lg:gap-3.5">
+    <div className="flex flex-col divide-y divide-[#f0e6d2]">
       {items.map((ch) => (
-        <div
-          key={ch._id}
-          className="shrink-0 snap-start w-[calc((100%-2*0.75rem)/3)] min-w-[130px] lg:w-auto"
-        >
-          {renderCard(ch)}
-        </div>
+        <ChapterListItem key={ch._id} ch={ch} variant={variant} />
       ))}
     </div>
   );
 }
 
-// ── 综合小说章节网格（拆分 Patreon 和 精修两个板块）──────────────────────────────
+// ── 综合小说章节列表（拆分 Patreon 和 精修两个板块）──────────────────────────────
 export function NovelChapterGrid({
   patreonChapters = [],
   polishedChapters = [],
@@ -215,12 +157,12 @@ export function NovelChapterGrid({
 
   return (
     <div className="space-y-6">
-      {/* ── 板块一：Patreon 提前看章节（最多 5 章，不满 5 章自然留白）── */}
+      {/* ── 板块一：Patreon 提前看章节（最多 5 章）── */}
       {effectivePatreonChapters.length > 0 && (
         <div>
-          <div className="flex items-center justify-between gap-2 mb-3">
+          <div className="flex items-center justify-between gap-2 mb-1 pb-2 border-b border-[#f7c6d9]/40">
             <div className="flex items-center gap-2">
-              <span className="text-xs sm:text-sm font-semibold text-[#d66b85] flex items-center gap-1.5">
+              <span className="text-xs sm:text-sm font-semibold text-[#d66b85]">
                 Patreon Premium Chapters
               </span>
               <span className="text-[10px] font-bold text-[#d66b85] bg-[#fde2e8] border border-[#f8bccb]/60 px-2 py-0.5 rounded-full uppercase tracking-wider">
@@ -232,22 +174,19 @@ export function NovelChapterGrid({
             </span>
           </div>
 
-          <ChapterCardRow
-            items={effectivePatreonChapters}
-            renderCard={(ch) => <PatreonChapterCard ch={ch} />}
-          />
+          <ChapterList items={effectivePatreonChapters} variant="patreon" />
         </div>
       )}
 
-      {/* ── 板块二：本站精修章节（最多 5 章，不满 5 章自然留白）── */}
+      {/* ── 板块二：本站精修章节（最多 5 章）── */}
       {effectivePolishedChapters.length > 0 && (
         <div>
-          <div className="flex items-center justify-between gap-2 mb-3">
+          <div className="flex items-center justify-between gap-2 mb-1 pb-2 border-b border-[#f7c6d9]/40">
             <div className="flex items-center gap-2">
-              <span className="text-xs sm:text-sm font-semibold text-[#5c4a42] flex items-center gap-1.5">
+              <span className="text-xs sm:text-sm font-semibold text-[#5c4a42]">
                 Free Refined Chapters
               </span>
-              <span className="text-[10px] font-bold text-[#3f6777] bg-white border border-[#b8d9ff] px-2 py-0.5 rounded-full uppercase tracking-wider shadow-2xs">
+              <span className="text-[10px] font-bold text-[#3f6777] bg-white border border-[#b8d9ff] px-2 py-0.5 rounded-full uppercase tracking-wider">
                 Free
               </span>
             </div>
@@ -256,10 +195,7 @@ export function NovelChapterGrid({
             </span>
           </div>
 
-          <ChapterCardRow
-            items={effectivePolishedChapters}
-            renderCard={(ch) => <PolishedChapterCard ch={ch} />}
-          />
+          <ChapterList items={effectivePolishedChapters} variant="polished" />
         </div>
       )}
     </div>

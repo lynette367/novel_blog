@@ -1,16 +1,61 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import type { Route } from "next";
 import type { Novel } from "@/lib/novels";
 
 type Props = {
   novels: Novel[];
-  activeTag?: string;
+  initialTag?: string;
 };
 
 const ALL_TAG = "ALL";
 
-export function FilterableNovelGrid({ novels, activeTag = ALL_TAG }: Props) {
+export function FilterableNovelGrid({ novels, initialTag = ALL_TAG }: Props) {
   const tags = getAllTags(novels);
+  const [activeTag, setActiveTag] = useState<string>(initialTag);
+
+  useEffect(() => {
+    // Read category or tag from query params in client
+    const params = new URLSearchParams(window.location.search);
+    const tagParam = params.get("tag") || params.get("category");
+    if (tagParam) {
+      const match = tags.find((t) => t.toLowerCase() === tagParam.trim().toLowerCase());
+      if (match) {
+        setActiveTag(match);
+      }
+    }
+
+    const handlePopState = () => {
+      const p = new URLSearchParams(window.location.search);
+      const t = p.get("tag") || p.get("category");
+      if (t) {
+        const match = tags.find((item) => item.toLowerCase() === t.trim().toLowerCase());
+        setActiveTag(match || ALL_TAG);
+      } else {
+        setActiveTag(ALL_TAG);
+      }
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, [tags]);
+
+  const handleTagClick = (tag: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    setActiveTag(tag);
+
+    const url = new URL(window.location.href);
+    if (tag === ALL_TAG) {
+      url.searchParams.delete("tag");
+      url.searchParams.delete("category");
+    } else {
+      url.searchParams.set("tag", tag);
+      url.searchParams.delete("category");
+    }
+    window.history.pushState({}, "", url.pathname + (url.search ? url.search : ""));
+  };
 
   const filteredNovels =
     activeTag === ALL_TAG
@@ -23,25 +68,25 @@ export function FilterableNovelGrid({ novels, activeTag = ALL_TAG }: Props) {
 
   return (
     <>
-      {/* Filter Tabs — real links so each category has its own crawlable URL */}
+      {/* Filter Tabs — client-side filtering with crawlable fallback URLs */}
       <div className="py-5 mb-8 border-b border-[#f7c6d9]">
         <div className="flex flex-wrap justify-center gap-2.5">
           {tags.map((tag) => {
             const isActive = tag.toLowerCase() === activeTag.toLowerCase();
             const href = (tag === ALL_TAG ? "/novels" : `/novels?tag=${encodeURIComponent(tag)}`) as Route;
             return (
-              <Link
+              <a
                 key={tag}
                 href={href}
-                prefetch={false}
-                className={`rounded-full px-4 py-1.5 text-xs font-semibold border transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[#f4a7b9] ${
+                onClick={(e) => handleTagClick(tag, e)}
+                className={`rounded-full px-4 py-1.5 text-xs font-semibold border transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[#f4a7b9] cursor-pointer ${
                   isActive
                     ? "bg-[#f4a7b9] text-white border-transparent shadow-[0_4px_10px_rgba(244,167,185,0.3)]"
                     : "bg-white text-[#2b1f2d] border-[#f7c6d9] hover:bg-[#ffe3ef] hover:border-[#f4a7b9]/60"
                 }`}
               >
                 {tag}
-              </Link>
+              </a>
             );
           })}
         </div>
@@ -49,9 +94,15 @@ export function FilterableNovelGrid({ novels, activeTag = ALL_TAG }: Props) {
 
       {/* Novel List */}
       <div className="flex flex-col divide-y divide-[#f0e6d2]">
-        {filteredNovels.map((novel) => (
-          <NovelListItem key={novel.slug} novel={novel} />
-        ))}
+        {filteredNovels.length > 0 ? (
+          filteredNovels.map((novel) => (
+            <NovelListItem key={novel.slug} novel={novel} />
+          ))
+        ) : (
+          <p className="text-center text-[#7d6f67] py-12">
+            No novels found in this category.
+          </p>
+        )}
       </div>
     </>
   );

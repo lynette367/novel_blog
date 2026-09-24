@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { getNovels, getNovelChapters, getAllWeeklyQuoteSlugs } from "@/lib/novels";
 import { SITE_URL } from "@/lib/siteMetadata";
 import { clusters, BL_RECS_PATH, clusterPath } from "@/lib/bl-recs";
-
+export const dynamic = "force-static";
 // 无论来源是环境变量还是 SITE_URL 兜底值，统一去掉末尾斜杠，
 // 避免和下面 withOrigin 里补的前导斜杠拼接成双斜杠（//）。
 function cleanTrailingSlash(url: string): string {

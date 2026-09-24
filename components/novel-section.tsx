@@ -1,13 +1,17 @@
 import Link from "next/link";
-import Image from "next/image";
-import { LatestPolishedGrid } from "@/components/latest-polished-grid";
+import { NovelChapterGrid } from "@/components/latest-polished-grid";
 import type { CurrentlyReviewingNovel, LatestPolishedChapter } from "@/lib/novels";
 
 type Props = {
   novel: CurrentlyReviewingNovel;
   patreonChapters?: LatestPolishedChapter[];
   polishedChapters?: LatestPolishedChapter[];
-  /** false = Hero 小说下方：不显示封面/简介/进度条；true（默认）= 显示完整概览 */
+  /**
+   * @deprecated The overview strip (mini cover + tags + excerpt + progress bar)
+   * has been removed — every novel section now just shows the title + chapter
+   * list. This prop is kept optional so existing call sites (e.g. page.tsx
+   * passing showOverview={false}/{true}) don't need to change immediately.
+   */
   showOverview?: boolean;
 };
 
@@ -15,22 +19,13 @@ export function NovelSection({
   novel,
   patreonChapters = [],
   polishedChapters = [],
-  showOverview = true,
 }: Props) {
   const novelUrl = `/novels/${novel.slug}` as any;
-  const readChapterNumber =
-    novel.reviewedUpToChapter || novel.latestPolishedChapterNumber || 1;
-  const latestChapterUrl =
-    `/novels/${novel.slug}/chapters/${readChapterNumber}` as any;
-  const percentage = Math.min(
-    100,
-    Math.max(0, Math.round((novel.reviewedUpToChapter / (novel.totalChapters || 1)) * 100))
-  );
 
   return (
     <section className="mb-14">
-      {/* Section header */}
-      <div className="flex flex-wrap items-end justify-between gap-3 mb-6">
+      {/* Section header — just the novel title, no overview strip */}
+      <div className="flex flex-wrap items-end justify-between gap-3 mb-5 pb-3 border-b border-[#f7c6d9]/40">
         <div className="flex items-center gap-3">
           <h2 className="font-serif text-2xl font-normal text-[#2b1f2d] tracking-wide">
             <Link
@@ -52,77 +47,8 @@ export function NovelSection({
         </Link>
       </div>
 
-      {/* Novel info strip: cover + tags + excerpt + progress (only for non-hero novels) */}
-      {showOverview && (
-        <div className="flex items-start gap-4 mb-6 p-4 rounded-2xl border border-[#f7c6d9]/30 bg-white/60">
-          {/* Mini cover */}
-          <Link href={novelUrl} className="shrink-0 block" aria-label={`View ${novel.title}`}>
-            <div className="relative w-14 aspect-[2/3] rounded-lg overflow-hidden shadow-sm bg-gradient-to-br from-[#ffe3ef] to-[#fde2e8]">
-              {novel.coverImage ? (
-                <Image
-                  src={novel.coverImage}
-                  alt={`${novel.title} Cover`}
-                  fill
-                  sizes="56px"
-                  style={{ objectFit: "cover" }}
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center p-1 text-center">
-                  <span className="font-serif text-[9px] font-bold text-[#f4a7b9] line-clamp-2">
-                    {novel.title}
-                  </span>
-                </div>
-              )}
-            </div>
-          </Link>
-
-          {/* Meta */}
-          <div className="flex flex-col gap-2 flex-1 min-w-0">
-            {novel.tags && novel.tags.length > 0 && (
-              <div className="flex flex-wrap gap-1.5">
-                {novel.tags.slice(0, 3).map((tag) => (
-                  <span
-                    key={tag}
-                    className="text-[10px] font-medium text-[#2b1f2d] bg-white border border-[#f7c6d9]/60 rounded-full px-2 py-0.5"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            )}
-            {(novel.description || novel.excerpt) && (
-              <p className="text-xs italic text-[#302a2f] leading-relaxed line-clamp-2 border-l-2 border-[#f4a7b9] pl-2">
-                {novel.description || novel.excerpt}
-              </p>
-            )}
-            <div className="flex items-center gap-3 mt-1">
-              <div className="flex-1 min-w-0">
-                <div className="flex justify-between items-center text-[10px] font-semibold text-[#302a2f] mb-1">
-                  <span>Refinement</span>
-                  <span className="text-[#f4a7b9]">
-                    Ch. {novel.reviewedUpToChapter}/{novel.totalChapters} ({percentage}%)
-                  </span>
-                </div>
-                <div className="w-full bg-[#ffe3ef] h-1.5 rounded-full overflow-hidden border border-[#f7c6d9]/40">
-                  <div
-                    className="bg-gradient-to-r from-[#ffd3de] to-[#f4a7b9] h-full rounded-full transition-all duration-500"
-                    style={{ width: `${Math.max(percentage, 4)}%` }}
-                  />
-                </div>
-              </div>
-              <Link
-                href={latestChapterUrl}
-                className="shrink-0 inline-flex items-center gap-1 px-3 py-1.5 bg-[#f4a7b9] hover:bg-[#e896a9] text-white rounded-full font-semibold text-xs transition-all shadow-sm no-underline"
-              >
-                Read Ch. {readChapterNumber} →
-              </Link>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Chapter grid — same component, same UI for every novel */}
-      <LatestPolishedGrid
+      {/* Chapter list — no card wrapper, no overview strip above it */}
+      <NovelChapterGrid
         patreonChapters={patreonChapters}
         polishedChapters={polishedChapters}
       />

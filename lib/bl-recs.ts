@@ -156,6 +156,14 @@ export const clusters: RecCluster[] = [
     count: 11,
     tags: ["188 Men", "Scumbag Gong", "Chasing the Wife", "Drama"],
   },
+  {
+    slug: "priest-reverse-seme-uke",
+    title: "Why Priest Readers Always Get the Seme and Uke Wrong",
+    summary:
+      "From Guardian to Sha Po Lang, discover Priest's signature dynamic of strong ukes, beautiful semes, and reverse expectations across 6 classic works.",
+    count: 6,
+    tags: ["Priest", "Strong Uke", "Beautiful Seme", "Reversals"],
+  },
 ];
 
 export const clusterPath = (slug: string) => `${BL_RECS_PATH}/${slug}`;
