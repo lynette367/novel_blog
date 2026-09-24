@@ -5,7 +5,7 @@ export const siteConfig = {
   description:
     process.env.NEXT_PUBLIC_SITE_DESCRIPTION ||
     "Discover popular Chinese Danmei and Asian BL web novels in English. Daily updates, completed series, and quality chapters.",
-  url: process.env.NEXT_PUBLIC_SITE_URL || "https://www.crosstheline.press",
+  url: process.env.NEXT_PUBLIC_SITE_URL || "https://crossthelinebl.pages.dev",
 
   // Support / Donation Links (Leave empty to hide buttons)
   supportLinks: {
