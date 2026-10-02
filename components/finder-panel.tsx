@@ -24,51 +24,44 @@ export function FinderPanel() {
       </p>
 
       <h2 className="mt-2 text-2xl font-bold">
-        Found a Novel You Want to Read?
+        Found a Novel You Want to Read
       </h2>
 
       <p className="mt-4 max-w-2xl text-sm leading-relaxed text-brand-ink/70">
-        If one of the novels in this list caught your attention but you can&apos;t
-        find an English version, we can help you track it down.
+        If you are intersted in any of the novels in this list, donate {FINDER.price} on Ko-fi and put the novel&apos;s title in your
+        message. We&apos;ll help you locate an English version.
       </p>
 
-      <div className="mt-6 border-t border-card-border pt-6">
-        <h3 className="font-bold">Want us to look?</h3>
-
-        <p className="mt-2 text-sm leading-relaxed text-brand-ink/70">
-          Donate {FINDER.price} on Ko-fi and put the novel&apos;s title in your
-          message. We&apos;ll research it and see whether we can locate a
-          legitimate English reading or purchase option.
-        </p>
-
-        <div className="mt-5">
-          <a
-            href={FINDER.payUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={primary}
-          >
-            Donate {FINDER.price} on Ko-fi →
-          </a>
-        </div>
+      <div className="mt-5">
+        <a
+          href={FINDER.payUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={primary}
+        >
+          Donate {FINDER.price} on Ko-fi →
+        </a>
       </div>
 
-      <div className="mt-5 flex flex-col gap-2 border-t border-card-border pt-5 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-xs leading-relaxed text-brand-ink/50">
-          Can&apos;t remember the title? A character name, plot detail, screenshot,
-          or anything else you remember can help.
-        </p>
+      <div className="mt-5 flex flex-col gap-4 border-t border-card-border pt-5 sm:flex-row sm:items-center sm:justify-between">
+        {/* 左侧文字容器：在宽屏下占 2/3 宽度，内部 p 标签上下平铺 */}
+        <div className="flex flex-col gap-1 sm:w-2/3">
+          <p className="text-xs leading-relaxed text-brand-ink/50">
+            Can&apos;t remember the title? A character name, plot detail, screenshot,
+            or anything else you remember can help.
+          </p>
+          <p className="text-xs leading-relaxed text-brand-ink/40">
+            Unless the novel is already on our recommendation list, please email us the details first.
+            We will review the clues and let you know if we can track it down before you make a donation.
+          </p>
+        </div>
 
+        {/* 右侧按钮：自动挤到最右边 */}
         <Link href="/contact" className={`${secondary} shrink-0 text-xs no-underline`}>
           Email us the details
         </Link>
       </div>
 
-      <p className="mt-4 text-xs leading-relaxed text-brand-ink/40">
-        We can&apos;t promise that every novel has a legitimate English release or
-        that we&apos;ll be able to find one. This is a reader-supported search,
-        not a translation or publishing request.
-      </p>
     </section>
   );
 }

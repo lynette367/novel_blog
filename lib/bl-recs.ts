@@ -164,6 +164,14 @@ export const clusters: RecCluster[] = [
     count: 6,
     tags: ["Priest", "Strong Uke", "Beautiful Seme", "Reversals"],
   },
+  {
+    slug: "xianxia-danmei-like-tgcf",
+    title: "3 BL Danmei Novels Like Heaven Official's Blessing (TGCF)",
+    summary:
+      "Centuries of devotion, reincarnation, ancient gods, and unwavering bonds: three xianxia danmei novels to explore if you loved TGCF.",
+    count: 3,
+    tags: ["TGCF", "Xianxia", "Reincarnation", "Fated Love"],
+  },
 ];
 
 export const clusterPath = (slug: string) => `${BL_RECS_PATH}/${slug}`;

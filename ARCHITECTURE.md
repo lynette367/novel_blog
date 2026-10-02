@@ -24,6 +24,11 @@ _最后更新：2026-09-14_
 ```
 novel_blog/
 ├── app/                              # Next.js 16 App Router
+│   ├── bl-recs/                      # BL 小说推荐集群体系 (Topic Clusters)
+│   │   ├── page.tsx                  # 集群支柱页 (/bl-recs，主题目录大纲)
+│   │   ├── layout.tsx                # 集群共享 Layout
+│   │   ├── bl-recs.css               # 集群专属样式（Editorial 排版 / 引导链接）
+│   │   └── [cluster-slug]/           # 独立集群详情页 (SSG 预渲染，如 xianxia-danmei-like-tgcf)
 │   ├── contact/                      # 联系我们页 (/contact)
 │   ├── novels/
 │   │   ├── page.tsx                  # 小说书库列表页 (/novels)
@@ -113,4 +118,76 @@ novel_blog/
    - 未填写时自动将章节压缩为 `Ch X`，长书名截断为前 22 字符，动态计算剩余字符预算，确保 Title ≤ 60 字符、Description 在 140~150 字符安全线内。
 3. **结构化语义与 JSON-LD**：
    - 全站自动注入 `WebSite`、`Book`、`Chapter`、`BreadcrumbList`、`Quotation` 等 Schema.org 结构化标记。
+
+---
+
+## 📚 BL 推荐集群 (BL Recs Topic Clusters) 开发规范
+
+在 `/app/bl-recs/` 下新增任何集群详情页（Topic Cluster Page）时，**必须严格遵循以下规范与流程**：
+
+### 1. 集群支柱页（`/bl-recs`）目录注册 (Single Source of Truth)
+- 新建集群页后，**必须且仅需**在 `lib/bl-recs.ts` 的 `clusters` 列表中注册该条目：
+  ```ts
+  {
+    slug: "xianxia-danmei-like-tgcf",
+    title: "3 BL Danmei Novels Like Heaven Official's Blessing (TGCF)",
+    summary: "Centuries of devotion, reincarnation, ancient gods, and unwavering bonds: three xianxia danmei novels to explore if you loved TGCF.",
+    count: 3,
+    tags: ["TGCF", "Xianxia", "Reincarnation", "Fated Love"],
+  }
+  ```
+- **自动同步机制**：`clusters` 是单一事实来源，会自动同步到：
+  1. `/bl-recs` 支柱页的目录展示列表。
+  2. `/bl-recs` 支柱页的 Schema.org `ItemList` 结构化数据。
+  3. `app/sitemap.ts` 网站地图动态路由生成。
+
+### 2. SEO Title & Description 字数红线 (Strict Character Limits)
+- **SEO Title**：**严格控制在 50 ~ 60 字符以内**（不得超过 60 字符），防止在搜索引擎结果页（SERP）中被省略号（`...`）截断。
+  - 格式范例：`3 BL Danmei Novels Like Heaven Official's Blessing (TGCF) | Cross The Line`
+- **Meta Description**：**严格控制在 140 ~ 155 字符以内**（不得超过 160 字符），保证在移动端与桌面端完整展示核心导读与点击吸引点。
+- **页面 Meta 配置必备**：
+  - `export const dynamic = "force-static";`
+  - `alternates: { canonical: absoluteUrl(PATH) }`
+  - `openGraph`（类型为 `article`，带站点名与社交分享图）与 `twitter`（`summary_large_image`）。
+  - `BreadcrumbList` 与 `ItemList` 的 Schema.org JSON-LD。
+
+### 3. UI 设计与页面结构规范 (Layout & Visual Consistency)
+详情页必须保持全站一致的莫兰迪/粉棕暖色视觉与排版层次：
+1. **容器规范**：
+   - 最外层使用 `<main className="page-shell py-12 sm:py-16">`。
+   - 内容主体居中收敛：`<div className="mx-auto max-w-3xl">`。
+2. **面包屑导航**：
+   - 必须位于顶部：`<nav className="text-sm text-brand-ink/50" aria-label="Breadcrumb">`，格式为 `BL Novel Recs / [短标题]`。
+3. **Hero 区域**：
+   - 眉标：`<p className="text-xs font-bold uppercase tracking-[0.14em] text-brand-ink/50">CROSS THE LINE · BL RECS</p>`。
+   - 主标题：`h1` 衬线大字（`font-serif text-[#2b1f2d]`）。
+   - 导读卡片：使用统一圆角卡片面板（`rounded-3xl border border-card-border bg-card-bg p-6 shadow-[var(--card-shadow)]`）包裹背景介绍。
+4. **快捷目录导航 (Table of Contents / Lineup)**：
+   - 在正文前必须提供小说列表快速锚点跳转框（如 `#novel-01`），含编号徽章、书名和作者信息。
+5. **小说卡片内容体系**：
+   - 顶部：圆形编号徽章（`bg-brand-blush`）、`h3` 标题、作者、分类标签 Pills（`border-[#f1c5d2]`）。
+   - 导读金句引文栏：左侧粉色竖线提示框（`border-l-2 border-brand-pinkdeep bg-brand-blush/30 pl-4 py-2 italic`）。
+   - 详实分析段落：优雅字间距与行高（`text-base leading-relaxed text-brand-ink/80`）。
+
+### 4. 必备交互与转化组件 (Essential Panels)
+1. **每部小说底部的【Want to read this one】引导条**：
+   - **必须**在每一部推荐小说的正文末尾放置跳转引导链接，点击平滑滚动到底部 `#find-it` 区域：
+     ```tsx
+     <div className="blogBookAction">
+       <a href="#find-it" className="findLink">
+         Want to read this one? We&apos;ll help you find it →
+       </a>
+     </div>
+     ```
+2. **页尾必须挂载 FinderPanel 组件**：
+   - 在所有小说介绍完毕后，**必须**引入并挂载 `<FinderPanel />`（该组件自带 `id="find-it"`）：
+     ```tsx
+     <div className="mt-14">
+       <FinderPanel />
+     </div>
+     ```
+3. **Keep Exploring 与回退链接**：
+   - 放置探索更多推荐列表的行动点（More BL Novel Recs / Browse Novels / Read Weekly Quotes）。
+   - 底部提供 `← Back to BL Novel Recs` 快捷返回链接。
+
 
