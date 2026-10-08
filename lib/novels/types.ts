@@ -29,6 +29,7 @@ export type ChapterInfo = {
   title: string;
   slug: string;
   excerpt?: string;
+  coverImage?: string;
   wordCount: number;
   readingMinutes: number;
   locked: boolean;
@@ -52,10 +53,11 @@ export type CurrentlyReviewingNovel = {
   latestPatreonChapterNumber?: number;
 };
 
-// 首页每本小说展示的章节数据（Patreon提前看 + 精修章节）
+// 首页每本小说展示的章节数据（Patreon提前看 + 精修章节 + 前5章正序）
 export type NovelHomepageChapters = {
   patreonChapters: LatestPolishedChapter[];
   polishedChapters: LatestPolishedChapter[];
+  firstChapters?: LatestPolishedChapter[];
 };
 
 // 首页每本 currentlyReviewing 书的板块数据（书 + 章节列表）
@@ -64,6 +66,7 @@ export type ReviewingNovelWithChapters = {
   chapters: LatestPolishedChapter[];
   patreonChapters?: LatestPolishedChapter[];
   polishedChapters?: LatestPolishedChapter[];
+  firstChapters?: LatestPolishedChapter[];
 };
 
 // 首页 第二屏 "最近精修章节" 数据结构
@@ -168,6 +171,7 @@ export type SanityChapter = {
   title: string;
   content: string;
   excerpt?: string;
+  coverImage?: SanityImageSource;
   wordCount: number;
   locked?: boolean;
   isPolished?: boolean;

@@ -109,12 +109,17 @@ export default async function HomePage() {
   const rawHeroNovel = await getCachedHeroFeaturedNovel();
   const heroSlug = rawHeroNovel?.slug ?? "";
 
+  // 首页小说展示上限为 3 部（包含 Hero 小说在内）：
+  // 目前已展示 2 部，未来若增加到第 3 部正常展示；超过 3 部后多出的小说不在首页完整展开，而是收纳在 Also Refining 链接栏。
+  const maxHomepageNovels = 3;
+  const reviewingLimit = rawHeroNovel ? maxHomepageNovels - 1 : maxHomepageNovels;
+
   // Fetch all data concurrently: hero chapters + other reviewing novels + latest quote
   const [heroChapters, reviewingResult, latestQuote] = await Promise.all([
     heroSlug
       ? getNovelHomepageChapters(heroSlug)
-      : Promise.resolve({ patreonChapters: [], polishedChapters: [] }),
-    getReviewingNovelsWithChapters(heroSlug, 2),
+      : Promise.resolve({ patreonChapters: [], polishedChapters: [], firstChapters: [] }),
+    getReviewingNovelsWithChapters(heroSlug, reviewingLimit),
     getLatestWeeklyQuote(),
   ]);
 
@@ -150,17 +155,19 @@ export default async function HomePage() {
             novel={heroNovel}
             patreonChapters={heroChapters.patreonChapters}
             polishedChapters={heroChapters.polishedChapters}
+            firstChapters={heroChapters.firstChapters}
             showOverview={false}
           />
         )}
 
         {/* All other refining novels — same NovelSection, with overview strip */}
-        {reviewingSections.map(({ novel, patreonChapters, polishedChapters }) => (
+        {reviewingSections.map(({ novel, patreonChapters, polishedChapters, firstChapters }) => (
           <NovelSection
             key={novel._id}
             novel={novel}
             patreonChapters={patreonChapters}
             polishedChapters={polishedChapters}
+            firstChapters={firstChapters}
             showOverview={true}
           />
         ))}

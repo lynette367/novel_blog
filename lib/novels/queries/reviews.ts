@@ -47,13 +47,14 @@ export const getReviewingNovelsWithChapters = cache(
 
       const sections = await Promise.all(
         sectionNovels.map(async (raw): Promise<ReviewingNovelWithChapters> => {
-          const { patreonChapters, polishedChapters } = await getNovelHomepageChapters(raw.slug);
+          const { patreonChapters, polishedChapters, firstChapters } = await getNovelHomepageChapters(raw.slug);
           const novel = transformReviewingNovel(raw, patreonChapters);
           return {
             novel,
             chapters: [...patreonChapters, ...polishedChapters],
             patreonChapters,
             polishedChapters,
+            firstChapters,
           };
         })
       );

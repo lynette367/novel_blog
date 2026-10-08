@@ -156,27 +156,31 @@ export const getLatestPolishedChaptersForNovel = cache(
   }
 );
 
-// 获取指定小说的首页展示章节（Patreon提前看最多5章 + 精修章节最多5章）
+// 获取指定小说的首页展示章节（Patreon提前看最多5章 + 精修章节最多5章 + 初始章节1-5）
 export const getNovelHomepageChapters = cache(
   async (novelSlug: string): Promise<NovelHomepageChapters> => {
     // 1. Patreon 独占提前看章节：已在 Patreon 发布但网站尚未精修
     const patreonQuery = `*[_type == "chapter" && novel->slug.current == $novelSlug && patreonPublished == true && (isPolished == false || !defined(isPolished))] | order(number desc)[0...5] ${POLISHED_CHAPTER_PROJECTION}`;
-    // 2. 本站精修章节：已完成精修
+    // 2. 本站精修章节：已完成精修（倒序最新）
     const polishedQuery = `*[_type == "chapter" && novel->slug.current == $novelSlug && isPolished == true] | order(number desc)[0...5] ${POLISHED_CHAPTER_PROJECTION}`;
+    // 3. 初始章节 1-5：按章节序号正序排列
+    const firstChaptersQuery = `*[_type == "chapter" && novel->slug.current == $novelSlug && number >= 1] | order(number asc)[0...5] ${POLISHED_CHAPTER_PROJECTION}`;
 
     try {
-      const [patreonRaw, polishedRaw] = await Promise.all([
+      const [patreonRaw, polishedRaw, firstRaw] = await Promise.all([
         client.fetch<RawChapter[]>(patreonQuery, { novelSlug }),
         client.fetch<RawChapter[]>(polishedQuery, { novelSlug }),
+        client.fetch<RawChapter[]>(firstChaptersQuery, { novelSlug }),
       ]);
 
       return {
         patreonChapters: (patreonRaw || []).map(mapChapter),
         polishedChapters: (polishedRaw || []).map(mapChapter),
+        firstChapters: (firstRaw || []).map(mapChapter),
       };
     } catch (error) {
       console.error(`Failed to fetch homepage chapters for novel ${novelSlug}:`, error);
-      return { patreonChapters: [], polishedChapters: [] };
+      return { patreonChapters: [], polishedChapters: [], firstChapters: [] };
     }
   }
 );

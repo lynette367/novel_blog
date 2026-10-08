@@ -1,10 +1,21 @@
 import Link from "next/link";
 import Image from "next/image";
 import type { LatestPolishedChapter } from "@/lib/novels";
+import { FirstChaptersList } from "@/components/first-chapters-list";
+
+// 首页目前已有的两部小说白名单：左侧 Human Refined 暂时按照章节 1-5 顺序排列
+// 未来若新增 refining novel，不在该名单中，左侧自动保持使用 latest-polished-grid.tsx 倒序列表
+export const INITIAL_ORDER_NOVEL_SLUGS = new Set([
+  "big_brother",
+  "transmigrated_into_the_villains_sickly_childhood_friend",
+  "transmigrated-villain-childhood-friend",
+]);
 
 type NovelChapterGridProps = {
+  novelSlug?: string;
   patreonChapters?: LatestPolishedChapter[];
   polishedChapters?: LatestPolishedChapter[];
+  firstChapters?: LatestPolishedChapter[];
   chapters?: LatestPolishedChapter[]; // 兼容旧属性
 };
 
@@ -65,14 +76,11 @@ function ChapterListItem({
       {/* Info */}
       <div className="flex flex-col flex-1 min-w-0 justify-center">
         <div className="flex items-center gap-2 flex-wrap mb-1">
-          <span
-            className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide ${isPatreon
-              ? "text-[#d66b85] bg-[#fde2e8] border border-[#f8bccb]/60"
-              : "text-[#3f6777] bg-white border border-[#b8d9ff]"
-              }`}
-          >
-            {isPatreon ? "🔒 Patreon" : "✨ Free"}
-          </span>
+          {isPatreon && (
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide text-[#d66b85] bg-[#fde2e8] border border-[#f8bccb]/60">
+              🔒 Patreon
+            </span>
+          )}
           <span className="text-[11px] text-[#9c8560]">{relativeTime}</span>
         </div>
 
@@ -107,7 +115,7 @@ export function PolishedChapterCard({ ch }: { ch: LatestPolishedChapter }) {
   return <ChapterListItem ch={ch} variant="polished" />;
 }
 
-// ── 一组章节的纯列表（分割线代替卡片边框，不再横向滚动）──────────────────────────
+// ── 一组章节的纯列表（分割线代替卡片边框）──────────────────────────
 function ChapterList({
   items,
   variant,
@@ -118,7 +126,10 @@ function ChapterList({
   if (!items || items.length === 0) return null;
 
   return (
-    <div className="flex flex-col divide-y divide-[#f0e6d2]">
+    <div
+      className={`flex flex-col divide-y ${variant === "patreon" ? "divide-[#fce8ef]" : "divide-[#f4ece3]"
+        }`}
+    >
       {items.map((ch) => (
         <ChapterListItem key={ch._id} ch={ch} variant={variant} />
       ))}
@@ -126,10 +137,12 @@ function ChapterList({
   );
 }
 
-// ── 综合小说章节列表（拆分 Patreon 和 精修两个板块）──────────────────────────────
+// ── 综合小说章节列表（一左一右两个 Volume：左 Free Refined，右 Patreon Premium）──
 export function NovelChapterGrid({
+  novelSlug,
   patreonChapters = [],
   polishedChapters = [],
+  firstChapters = [],
   chapters,
 }: NovelChapterGridProps) {
   // 如果直接传了 chapters（兼容模式），拆分为 Patreon 和 Refined
@@ -143,8 +156,15 @@ export function NovelChapterGrid({
       ? polishedChapters.slice(0, 5)
       : (chapters?.filter((c) => !c.isPatreonOnly).slice(0, 5) ?? []);
 
+  // 判断是否属于当前首页已有的两部小说：左侧暂时展示章节 1-5 顺序排列
+  // 若未来新增 refining novel，不在白名单中，左侧仍然使用 ChapterList (latest-polished-grid 倒序章节列表)
+  const isInitialNovel = Boolean(novelSlug && INITIAL_ORDER_NOVEL_SLUGS.has(novelSlug));
+  const hasFirstChapters = firstChapters.length > 0;
+  const showFirstChaptersOrder = isInitialNovel && hasFirstChapters;
+
+  const hasLeftChapters = showFirstChaptersOrder || effectivePolishedChapters.length > 0;
   const hasAnyChapters =
-    effectivePatreonChapters.length > 0 || effectivePolishedChapters.length > 0;
+    effectivePatreonChapters.length > 0 || hasLeftChapters;
 
   if (!hasAnyChapters) {
     return (
@@ -154,41 +174,47 @@ export function NovelChapterGrid({
     );
   }
 
+  const isTwoColumns = hasLeftChapters && effectivePatreonChapters.length > 0;
+
   return (
-    <div className="space-y-6">
-      {/* ── 板块一：Patreon 提前看章节（最多 5 章）── */}
-      {effectivePatreonChapters.length > 0 && (
-        <div>
-          <div className="flex items-center justify-between gap-2 mb-1 pb-2 border-b border-[#f7c6d9]/40">
+    <div
+      className={
+        isTwoColumns
+          ? "grid grid-cols-1 divide-y divide-[#f7c6d9]/40 md:divide-y-0 md:grid-cols-2 md:divide-x md:divide-[#f7c6d9]/40 items-start"
+          : "grid grid-cols-1 gap-6"
+      }
+    >
+      {/* ── 左侧栏目：Refined Chapters ── */}
+      {hasLeftChapters && (
+        <div className={isTwoColumns ? "pb-6 md:pb-0 md:pr-8 lg:pr-10" : ""}>
+          <div className="flex items-center justify-between gap-2 mb-3 pb-2 border-b border-[#f7c6d9]/40">
             <div className="flex items-center gap-2">
-              <span className="text-xs sm:text-sm font-semibold text-[#d66b85]">
-                Patreon Premium Chapters
-              </span>
+              <h3 className="text-xs sm:text-sm font-semibold text-[#5c4a42]">
+                Human Refined
+              </h3>
+            </div>
+          </div>
+
+          {showFirstChaptersOrder ? (
+            <FirstChaptersList chapters={firstChapters} novelSlug={novelSlug} />
+          ) : (
+            <ChapterList items={effectivePolishedChapters} variant="polished" />
+          )}
+        </div>
+      )}
+
+      {/* ── 右侧栏目：Patreon Chapters ── */}
+      {effectivePatreonChapters.length > 0 && (
+        <div className={isTwoColumns ? "pt-6 md:pt-0 md:pl-8 lg:pl-10" : ""}>
+          <div className="flex items-center justify-between gap-2 mb-3 pb-2 border-b border-[#f7c6d9]/40">
+            <div className="flex items-center gap-2">
+              <h3 className="text-xs sm:text-sm font-semibold text-[#d66b85]">
+                Support us on Patreon
+              </h3>
             </div>
           </div>
 
           <ChapterList items={effectivePatreonChapters} variant="patreon" />
-        </div>
-      )}
-
-      {/* ── 板块二：本站精修章节（最多 5 章）── */}
-      {effectivePolishedChapters.length > 0 && (
-        <div>
-          <div className="flex items-center justify-between gap-2 mb-1 pb-2 border-b border-[#f7c6d9]/40">
-            <div className="flex items-center gap-2">
-              <span className="text-xs sm:text-sm font-semibold text-[#5c4a42]">
-                Free Refined Chapters
-              </span>
-              <span className="text-[10px] font-bold text-[#3f6777] bg-white border border-[#b8d9ff] px-2 py-0.5 rounded-full uppercase tracking-wider">
-                Free
-              </span>
-            </div>
-            <span className="text-[11px] text-[#7d6f67] hidden sm:inline">
-              Human proofread &amp; polished
-            </span>
-          </div>
-
-          <ChapterList items={effectivePolishedChapters} variant="polished" />
         </div>
       )}
     </div>

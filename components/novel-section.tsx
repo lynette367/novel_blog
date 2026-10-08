@@ -6,6 +6,7 @@ type Props = {
   novel: CurrentlyReviewingNovel;
   patreonChapters?: LatestPolishedChapter[];
   polishedChapters?: LatestPolishedChapter[];
+  firstChapters?: LatestPolishedChapter[];
   /**
    * @deprecated The overview strip (mini cover + tags + excerpt + progress bar)
    * has been removed — every novel section now just shows the title + chapter
@@ -19,6 +20,7 @@ export function NovelSection({
   novel,
   patreonChapters = [],
   polishedChapters = [],
+  firstChapters = [],
 }: Props) {
   const novelUrl = `/novels/${novel.slug}` as any;
 
@@ -49,8 +51,10 @@ export function NovelSection({
 
       {/* Chapter list — no card wrapper, no overview strip above it */}
       <NovelChapterGrid
+        novelSlug={novel.slug}
         patreonChapters={patreonChapters}
         polishedChapters={polishedChapters}
+        firstChapters={firstChapters}
       />
     </section>
   );

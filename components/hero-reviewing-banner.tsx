@@ -12,10 +12,7 @@ export function HeroReviewingBanner({ novel }: Props) {
   }
 
   const novelUrl = `/novels/${novel.slug}` as any;
-  const readChapterNumber =
-    novel.reviewedUpToChapter || novel.latestPolishedChapterNumber || 1;
-  const latestChapterUrl =
-    `/novels/${novel.slug}/chapters/${readChapterNumber}` as any;
+  const firstChapterUrl = `/novels/${novel.slug}/chapters/1` as any;
 
   const percentage = Math.min(
     100,
@@ -26,7 +23,7 @@ export function HeroReviewingBanner({ novel }: Props) {
     <div className="relative flex flex-col justify-between">
       {/* Corner badge */}
       <div className="absolute top-0 right-0 bg-[#fde2e8] text-[#d66b85] border border-[#f8bccb] text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide shadow-sm z-10">
-        🔥 Featured · Refining
+        🔥 Refining
       </div>
 
       {/* Top row: cover + info */}
@@ -105,10 +102,10 @@ export function HeroReviewingBanner({ novel }: Props) {
       {/* CTA buttons */}
       <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-[#f7c6d9]/30">
         <Link
-          href={latestChapterUrl}
+          href={firstChapterUrl}
           className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-[#f4a7b9] hover:bg-[#e896a9] text-white rounded-full font-semibold text-sm transition-all shadow-[0_4px_12px_rgba(244,167,185,0.3)] hover:-translate-y-0.5 no-underline"
         >
-          Read Ch. {readChapterNumber} <span>→</span>
+          Read Ch. 1 <span>→</span>
         </Link>
         <Link
           href={novelUrl}

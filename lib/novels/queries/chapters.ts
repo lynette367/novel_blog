@@ -1,15 +1,16 @@
 import { cache } from "react";
 import { client } from "@/src/sanity/client";
 import type { ChapterInfo, ChapterContent, SanityChapter, SanityChapterFull } from "../types";
-import { ogImageUrl, minutesFromWordCount } from "../image-utils";
+import { ogImageUrl, coverThumbUrl, minutesFromWordCount } from "../image-utils";
 
-// 获取小说的所有章节列表（含字数 / 阅读时长 / 精修状态 / Patreon 状态）
+// 获取小说的所有章节列表（含字数 / 阅读时长 / 精修状态 / Patreon 状态 / 章节图）
 export const getNovelChapters = cache(async (slug: string): Promise<ChapterInfo[]> => {
   const query = `*[_type == "chapter" && novel->slug.current == $slug] | order(number asc) {
     _id,
     number,
     title,
     "excerpt": coalesce(seo.metaDescription, excerpt),
+    "coverImage": seo.ogImage,
     locked,
     isPolished,
     patreonPublished,
@@ -25,6 +26,7 @@ export const getNovelChapters = cache(async (slug: string): Promise<ChapterInfo[
       title: ch.title,
       slug: ch.number.toString(),
       excerpt: ch.excerpt || undefined,
+      coverImage: ch.coverImage ? coverThumbUrl(ch.coverImage) : undefined,
       wordCount: ch.wordCount,
       readingMinutes: minutesFromWordCount(ch.wordCount),
       locked: ch.locked || false,

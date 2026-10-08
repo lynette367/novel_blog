@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
@@ -246,14 +247,14 @@ export default async function NovelDetailPage({
 
           {/* Human TL donation callout */}
           <p className="text-sm text-[#7d6d5d] mb-6 pb-4 border-b border-[#f7c6d9]/50">
-            Tired of machine-translated (Raw MTL) chapters?{" "}
+            Tired of Raw MTL chapters?{" "}
             <Link
               href="https://ko-fi.com/crosstheline46370"
               className="text-[#8b7355] font-semibold underline underline-offset-2 hover:text-[#6d5d4b]"
             >
               Donate $20 on Ko-fi
             </Link>{" "}
-            and include the title in your message, and we&apos;ll get <em>{novel.title}</em> human proofread.
+            and include the title in your message, and we&apos;ll get <em>{novel.title}</em> human refined.
           </p>
 
           {chapters.length > 0 ? (
@@ -264,13 +265,23 @@ export default async function NovelDetailPage({
                     <div
                       key={chapter.number}
                       data-chapter={chapter.number}
-                      className="opacity-55 cursor-not-allowed grid grid-cols-1 sm:grid-cols-[80px_1fr] gap-4 items-center p-5 rounded-xl border-2 bg-[#f8fafc] border-[#cbd5e1]"
+                      className="opacity-55 cursor-not-allowed flex items-center gap-4 sm:gap-5 p-4 sm:p-5 rounded-xl border-2 bg-[#f8fafc] border-[#cbd5e1]"
                     >
-                      <div className="text-2xl font-semibold text-[#f4a7b9] text-center sm:text-left">
-                        Ch. {chapter.number}
-                      </div>
-                      <div className="flex flex-col gap-1">
-                        <div className="text-lg font-semibold text-[#2b1f2d]">{chapter.title}</div>
+                      {chapter.coverImage && (
+                        <div className="relative w-14 h-20 sm:w-16 sm:h-24 shrink-0 rounded-md overflow-hidden bg-gradient-to-br from-[#ffe3ef] to-[#fde2e8] opacity-60">
+                          <Image
+                            src={chapter.coverImage}
+                            alt={`Chapter ${chapter.number}: ${chapter.title}`}
+                            fill
+                            sizes="(max-width: 640px) 56px, 64px"
+                            style={{ objectFit: "cover" }}
+                          />
+                        </div>
+                      )}
+                      <div className="flex flex-col gap-1 flex-1 min-w-0">
+                        <div className="text-base sm:text-lg font-semibold text-[#2b1f2d]">
+                          Ch. {chapter.number}: {chapter.title}
+                        </div>
                         <div className="text-sm text-[#f4a7b9]">🔒 Coming Soon</div>
                       </div>
                     </div>
@@ -286,9 +297,9 @@ export default async function NovelDetailPage({
                     key={chapter.number}
                     href={`/novels/${slug}/chapters/${chapter.number}`}
                     data-chapter={chapter.number}
-                    className={`group relative overflow-hidden grid grid-cols-1 sm:grid-cols-[80px_1fr_auto] gap-4 items-center p-5 rounded-xl border transition-all hover:translate-x-2 hover:shadow-md no-underline text-inherit ${isHighlight
-                        ? "bg-gradient-to-r from-[#fff8fb] to-white border-[#f7c6d9] [border-left:4px_solid_#f4a7b9] shadow-sm"
-                        : "bg-[#f8fafc] border-2 border-[#cbd5e1]"
+                    className={`group relative overflow-hidden flex items-center gap-4 sm:gap-5 p-4 sm:p-5 rounded-xl border transition-all hover:translate-x-1.5 hover:shadow-md no-underline text-inherit ${isHighlight
+                      ? "bg-gradient-to-r from-[#fff8fb] to-white border-[#f7c6d9] [border-left:4px_solid_#f4a7b9] shadow-sm"
+                      : "bg-[#f8fafc] border-2 border-[#cbd5e1]"
                       }`}
                   >
                     {/* Corner tag */}
@@ -306,26 +317,39 @@ export default async function NovelDetailPage({
                       </div>
                     )}
 
-                    <div className="text-xl font-semibold text-[#c87f9b] text-center sm:text-left">
-                      Ch. {chapter.number}
-                    </div>
-
-                    <div className="flex flex-col gap-1">
-                      <div className="flex items-center gap-2 flex-wrap text-lg font-semibold text-[#2b1f2d]">
-                        <span>{chapter.title}</span>
+                    {/* Chapter image on the left (if present) */}
+                    {chapter.coverImage && (
+                      <div className="relative w-14 h-20 sm:w-16 sm:h-24 shrink-0 rounded-md overflow-hidden bg-gradient-to-br from-[#ffe3ef] to-[#fde2e8] shadow-xs">
+                        <Image
+                          src={chapter.coverImage}
+                          alt={`Chapter ${chapter.number}: ${chapter.title}`}
+                          fill
+                          sizes="(max-width: 640px) 56px, 64px"
+                          style={{ objectFit: "cover" }}
+                        />
                       </div>
+                    )}
+
+                    {/* Chapter info with Ch. x together with title */}
+                    <div className="flex flex-col flex-1 min-w-0 justify-center gap-1">
+                      <h3 className="font-serif font-semibold text-base sm:text-lg text-[#2b1f2d] leading-snug group-hover:text-[#f4a7b9] transition-colors line-clamp-2">
+                        Ch. {chapter.number}: {chapter.title}
+                      </h3>
+
                       {chapter.excerpt && (
-                        <div className="text-sm text-[#c87f9b] mt-0.5 leading-snug italic">
-                          {chapter.excerpt}
+                        <div className="text-xs sm:text-sm text-[#7d6f67] mt-0.5 leading-relaxed italic line-clamp-2">
+                          &ldquo;{chapter.excerpt}&rdquo;
                         </div>
                       )}
-                      <div className="flex gap-4 text-sm text-[#c87f9b] font-medium mt-1">
+
+                      <div className="flex gap-4 text-xs text-[#9c8560] font-medium mt-1">
                         <span>📖 Est. {chapter.readingMinutes} min</span>
                         <span>📝 {chapter.wordCount.toLocaleString()} words</span>
                       </div>
                     </div>
 
-                    <span className="hidden sm:block text-2xl text-[#f4a7b9] transition-transform group-hover:translate-x-1.5">
+                    {/* Arrow */}
+                    <span className="hidden sm:block text-2xl text-[#f4a7b9] transition-transform group-hover:translate-x-1.5 shrink-0 pr-1">
                       →
                     </span>
                   </Link>
