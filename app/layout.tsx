@@ -47,6 +47,17 @@ export const metadata: Metadata = {
     title: "Read Chinese Danmei & BL Web Novels Online in English",
     description: "Discover popular Chinese Danmei and Asian BL web novels in English with regular updates.",
   },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
 };
 
 export default function RootLayout({

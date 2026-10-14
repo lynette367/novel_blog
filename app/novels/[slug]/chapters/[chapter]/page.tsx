@@ -79,8 +79,6 @@ export async function generateMetadata({
 
   const ogImageAlt = novel.coverImageAlt || `${novel.title} - BL Danmei Novel Cover`;
 
-  const noIndex = chapterData.seo?.noIndex ?? false;
-
   const schemaData = {
     "@context": "https://schema.org",
     "@type": "Chapter",
@@ -109,7 +107,7 @@ export async function generateMetadata({
       canonical: canonicalUrl,
     },
     robots: {
-      index: !noIndex,
+      index: true,
       follow: true,
     },
     openGraph: {

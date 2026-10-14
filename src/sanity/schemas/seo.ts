@@ -27,12 +27,5 @@ export const seo = defineType({
       description: "Image displayed when shared on social media (1200x630px recommended) and inserted into the middle of chapter content.",
       options: { hotspot: true },
     }),
-    defineField({
-      name: "noIndex",
-      title: "Hide from Search Engines (noindex)",
-      type: "boolean",
-      description: "Check to prevent search engines from indexing this page.",
-      initialValue: false,
-    }),
   ],
 });

@@ -54,7 +54,6 @@ export const getChapterContent = cache(async (
     seo {
       metaTitle,
       metaDescription,
-      noIndex,
       ogImage
     }
   }`;
@@ -84,7 +83,6 @@ export const getChapterContent = cache(async (
         ? {
             metaTitle: chapter.seo.metaTitle,
             metaDescription: chapter.seo.metaDescription,
-            noIndex: chapter.seo.noIndex,
             ogImage: chapter.seo.ogImage
               ? ogImageUrl(chapter.seo.ogImage)
               : undefined,

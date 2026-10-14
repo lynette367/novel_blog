@@ -102,7 +102,6 @@ export type RecentProofread = {
 export type ChapterSeo = {
   metaTitle?: string;
   metaDescription?: string;
-  noIndex?: boolean;
   ogImage?: string;
 };
 
@@ -184,7 +183,6 @@ export type SanityChapterFull = SanityChapter & {
   seo?: {
     metaTitle?: string;
     metaDescription?: string;
-    noIndex?: boolean;
     ogImage?: SanityImageSource;
   };
 };
