@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+import { ContactForm } from "@/components/contact-form";
 import { absoluteUrl, SITE_NAME } from "@/lib/siteMetadata";
 
 export const metadata: Metadata = {
@@ -92,6 +93,19 @@ export default function ContactPage() {
               </div>
             </div>
           </div>
+        </section>
+
+        {/* Contact Form */}
+        <section id="send-message" className="mb-12 scroll-mt-24">
+          <div className="mb-6">
+            <h2 className="font-serif text-2xl font-normal text-[#2b1f2d] mb-2">
+              Send Us a Message
+            </h2>
+            <p className="text-[#f4a7b9] text-sm leading-relaxed">
+              Prefer not to open your mail app? Fill in the form below and it will land straight in our inbox.
+            </p>
+          </div>
+          <ContactForm />
         </section>
 
         {/* Divider */}

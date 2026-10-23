@@ -8,16 +8,16 @@ type HeaderProps = {
 type HeaderLink = {
   href: Route | { pathname: Route; hash?: string };
   label: string;
-  key: "home" | "novels" | "quotes" | "Lore" | "Recs";
+  key: "novels" | "quotes" | "Lore" | "Recs" | "contact";
   fragment?: boolean;
 };
 
 const navLinks: HeaderLink[] = [
-  { href: "/" as Route, label: "Home", key: "home" },
   { href: "/novels" as Route, label: "Novels", key: "novels" },
   { href: "/weekly-quotes" as Route, label: "Quotes", key: "quotes" },
   { href: "/lore/triad-ranks" as Route, label: "Lore", key: "Lore" },
   { href: "/bl-recs" as Route, label: "Recs", key: "Recs" },
+  { href: "/contact" as Route, label: "Contact", key: "contact" },
 ];
 
 export function SiteHeader({ activePath = "home" }: HeaderProps) {
@@ -26,7 +26,7 @@ export function SiteHeader({ activePath = "home" }: HeaderProps) {
       <div className="mx-auto max-w-6xl px-4 sm:px-6 py-4 flex justify-between items-center">
         <Link
           href="/"
-          className="text-xl font-semibold tracking-widest text-[#2b1f2d] font-serif no-underline hover:text-[#f4a7b9] transition-colors"
+          className="text-xl font-semibold tracking-widest text-brand-peachpink font-serif no-underline hover:underline underline-offset-4 decoration-2 transition-colors"
         >
           Cross The Line
         </Link>
