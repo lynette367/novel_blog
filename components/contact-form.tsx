@@ -36,7 +36,7 @@ export function ContactForm() {
 
     if (!ACCESS_KEY) {
       setStatus("error");
-      setErrorMessage("The contact form is not configured yet. Please email us directly.");
+      setErrorMessage("The contact form is not configured yet. Please try again later.");
       return;
     }
 
@@ -195,10 +195,7 @@ export function ContactForm() {
           role="alert"
           className="mt-5 rounded-xl border border-[#f4a7b9]/60 bg-[#fdf0f4] px-4 py-3 text-sm text-[#a2475f]"
         >
-          {errorMessage}{" "}
-          <a href="mailto:contact@crosstheline.press" className="font-semibold underline">
-            contact@crosstheline.press
-          </a>
+          {errorMessage}
         </p>
       )}
 

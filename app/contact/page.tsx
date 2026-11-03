@@ -42,59 +42,6 @@ export default function ContactPage() {
       </section>
 
       <main className="max-w-4xl mx-auto px-6 py-14">
-        {/* General Contact */}
-        <section className="mb-12">
-          <div className="mb-6">
-            <h2 className="font-serif text-2xl font-normal text-[#2b1f2d] mb-2">
-              General Inquiries &amp; Feedback
-            </h2>
-            <p className="text-[#f4a7b9] text-sm leading-relaxed">
-              Reach out to us directly via email for any inquiries, suggestions, or chapter typo reports.
-            </p>
-          </div>
-
-          {/* Contact cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-8">
-            {/* Email card */}
-            <div className="flex gap-4 p-5 bg-white border border-[#f7c6d9]/50 rounded-2xl transition-all hover:-translate-y-0.5 hover:shadow-md">
-              <div className="text-3xl flex-shrink-0 leading-none pt-0.5">✉️</div>
-              <div>
-                <h3 className="font-serif text-base font-normal text-[#2b1f2d] mb-1">
-                  Official Email
-                </h3>
-                <p className="text-[#f4a7b9] text-sm mb-2 leading-snug">
-                  For general questions, feedback, and collaboration
-                </p>
-                <a
-                  href="mailto:contact@crosstheline.press"
-                  className="text-sm font-semibold text-[#f4a7b9] no-underline hover:text-[#f4a7b9] hover:underline transition-colors"
-                >
-                  contact@crosstheline.press
-                </a>
-              </div>
-            </div>
-
-            {/* Report card */}
-            <div className="flex gap-4 p-5 bg-white border border-[#f7c6d9]/50 rounded-2xl transition-all hover:-translate-y-0.5 hover:shadow-md">
-              <div className="text-3xl flex-shrink-0 leading-none pt-0.5">🐛</div>
-              <div>
-                <h3 className="font-serif text-base font-normal text-[#2b1f2d] mb-1">
-                  Report an Issue / Typo
-                </h3>
-                <p className="text-[#f4a7b9] text-sm mb-2 leading-snug">
-                  Found a broken chapter link or typo? Let us know so we can fix it quickly.
-                </p>
-                <a
-                  href="mailto:contact@crosstheline.press?subject=Typo%20or%20Issue%20Report"
-                  className="text-sm font-semibold text-[#f4a7b9] no-underline hover:text-[#f4a7b9] hover:underline transition-colors"
-                >
-                  contact@crosstheline.press
-                </a>
-              </div>
-            </div>
-          </div>
-        </section>
-
         {/* Contact Form */}
         <section id="send-message" className="mb-12 scroll-mt-24">
           <div className="mb-6">
@@ -102,7 +49,7 @@ export default function ContactPage() {
               Send Us a Message
             </h2>
             <p className="text-[#f4a7b9] text-sm leading-relaxed">
-              Prefer not to open your mail app? Fill in the form below and it will land straight in our inbox.
+              Fill in the form below for any inquiries, feedback, or chapter typo reports, and it will land straight in our inbox.
             </p>
           </div>
           <ContactForm />
