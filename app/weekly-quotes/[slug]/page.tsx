@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import type { Metadata, Route } from "next";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
-import { absoluteUrl, SITE_NAME } from "@/lib/siteMetadata";
+import { absoluteUrl, SITE_NAME, SITE_URL } from "@/lib/siteMetadata";
 import {
   getAllWeeklyQuoteSlugs,
   getWeeklyQuoteBySlug,
@@ -93,7 +93,6 @@ export async function generateMetadata({
     };
   }
 
-  const seoTitle = `${quote.title} | ${SITE_NAME}`;
   const seoDescription =
     quote.seoDescription ||
     quote.insight ||
@@ -101,7 +100,7 @@ export async function generateMetadata({
   const canonicalUrl = absoluteUrl(`/weekly-quotes/${quote.slug}`);
 
   return {
-    title: seoTitle,
+    title: quote.title,
     description: seoDescription,
     keywords: [
       quote.novelTitle,
@@ -114,17 +113,25 @@ export async function generateMetadata({
       canonical: canonicalUrl,
     },
     openGraph: {
-      title: seoTitle,
+      title: quote.title,
       description: seoDescription,
       url: canonicalUrl,
       siteName: SITE_NAME,
       type: "article",
       publishedTime: quote.publishedAt,
+      images: [
+        {
+          url: `${SITE_URL}/assets/images/immigrating-to-the-jurassic.jpg`,
+          width: 1200,
+          height: 630,
+        },
+      ],
     },
     twitter: {
       card: "summary_large_image",
-      title: seoTitle,
+      title: quote.title,
       description: seoDescription,
+      images: [`${SITE_URL}/assets/images/immigrating-to-the-jurassic.jpg`],
     },
   };
 }

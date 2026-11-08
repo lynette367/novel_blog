@@ -13,7 +13,8 @@ const siteUrl = cleanTrailingSlash(process.env.NEXT_PUBLIC_SITE_URL ?? SITE_URL)
 
 const withOrigin = (path: string) => {
   const normalized = path.startsWith("/") ? path : `/${path}`;
-  return `${siteUrl}${normalized}`;
+  const withTrailing = normalized.endsWith("/") ? normalized : `${normalized}/`;
+  return `${siteUrl}${withTrailing}`;
 };
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -26,7 +27,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: withOrigin("/contact") },
     { url: withOrigin("/lore/triad-ranks") },
     { url: withOrigin(BL_RECS_PATH) },
-    { url: withOrigin("/weekly-quotes") },
   ];
 
   // BL Recs cluster pages

@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { ContactForm } from "@/components/contact-form";
-import { absoluteUrl, SITE_NAME } from "@/lib/siteMetadata";
+import { absoluteUrl, SITE_NAME, SITE_URL } from "@/lib/siteMetadata";
+
+const defaultOgImage = `${SITE_URL}/assets/images/immigrating-to-the-jurassic.jpg`;
 
 export const metadata: Metadata = {
   title: "Contact & About Us",
@@ -17,6 +19,14 @@ export const metadata: Metadata = {
       "Get in touch for general inquiries, feedback, typo reports, or learn more about our Chinese Danmei & BL web novel project policies.",
     url: absoluteUrl("/contact"),
     siteName: SITE_NAME,
+    images: [{ url: defaultOgImage, width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Contact & About Us",
+    description:
+      "Get in touch for general inquiries, feedback, typo reports, or learn more about our Chinese Danmei & BL web novel project policies.",
+    images: [defaultOgImage],
   },
 };
 

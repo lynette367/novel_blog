@@ -41,8 +41,11 @@ export async function generateMetadata(): Promise<Metadata> {
       url: absoluteUrl("/"),
       potentialAction: {
         "@type": "SearchAction",
-        target: absoluteUrl("/novels"),
-        "query-input": "required name=q",
+        target: {
+          "@type": "EntryPoint",
+          urlTemplate: `${absoluteUrl("/novels/")}?q={search_term_string}`,
+        },
+        "query-input": "required name=search_term_string",
       },
     },
     {

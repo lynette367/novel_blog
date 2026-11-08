@@ -14,9 +14,7 @@ const description =
   "Loved Heaven Official's Blessing (TGCF)? Discover 3 epic xianxia BL danmei novels featuring reincarnation, centuries of devotion, and fated love.";
 
 export const metadata: Metadata = {
-  title: {
-    absolute: `${title} | ${SITE_NAME}`,
-  },
+  title,
   description,
   alternates: {
     canonical: absoluteUrl(PATH),

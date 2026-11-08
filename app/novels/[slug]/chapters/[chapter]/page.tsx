@@ -99,6 +99,40 @@ export async function generateMetadata({
     },
   };
 
+  const chapterCanonicalUrl = canonicalUrl.endsWith("/") ? canonicalUrl : `${canonicalUrl}/`;
+  const novelUrl = absoluteUrl(`/novels/${slug}/`);
+
+  const breadcrumbData = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: absoluteUrl("/"),
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Novels",
+        item: absoluteUrl("/novels/"),
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: novel.title,
+        item: novelUrl,
+      },
+      {
+        "@type": "ListItem",
+        position: 4,
+        name: chapterData.title,
+        item: chapterCanonicalUrl,
+      },
+    ],
+  };
+
   return {
     title: metaTitle,
     description: metaDescription,
@@ -134,7 +168,7 @@ export async function generateMetadata({
       images: ogImage ? [ogImage] : [],
     },
     other: {
-      "script:application/ld+json": JSON.stringify(schemaData),
+      "script:application/ld+json": JSON.stringify([schemaData, breadcrumbData]),
     },
   };
 }

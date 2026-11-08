@@ -190,5 +190,4 @@ export const tropeLinks = [
 export const FINDER = {
   price: "$20",
   payUrl: "https://ko-fi.com/crosstheline46370",
-  contactEmail: "contact@crosstheline.press",
 };

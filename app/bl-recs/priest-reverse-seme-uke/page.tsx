@@ -80,7 +80,7 @@ const patterns = [
 ];
 
 export const metadata: Metadata = {
-  title: `${page.title} | ${SITE_NAME}`,
+  title: page.title,
   description: page.description,
   keywords: [
     "Priest danmei",
@@ -99,7 +99,7 @@ export const metadata: Metadata = {
     canonical: absoluteUrl(PATH),
   },
   openGraph: {
-    title: `${page.title} | ${SITE_NAME}`,
+    title: page.title,
     description: page.description,
     url: absoluteUrl(PATH),
     siteName: SITE_NAME,

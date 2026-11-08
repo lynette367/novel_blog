@@ -16,11 +16,13 @@ import {
   type EvidenceLevel,
   type HistoryClaim,
 } from "@/lib/lore/triad-history";
-import { absoluteUrl } from "@/lib/siteMetadata";
+import { absoluteUrl, SITE_URL } from "@/lib/siteMetadata";
 
 export const dynamic = "force-static";
 
 // ─── Metadata ────────────────────────────────────────────────────────────────
+
+const defaultOgImage = `${SITE_URL}/assets/images/immigrating-to-the-jurassic.jpg`;
 
 const PAGE_TITLE = "Hong Kong Triad Ranks Explained: History vs. the Novel | Wo Hing Society Lore";
 const PAGE_DESCRIPTION =
@@ -46,11 +48,13 @@ export const metadata: Metadata = {
     description: PAGE_DESCRIPTION,
     url: absoluteUrl("/lore/triad-ranks"),
     type: "article",
+    images: [{ url: defaultOgImage, width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image",
     title: PAGE_TITLE,
     description: PAGE_DESCRIPTION,
+    images: [defaultOgImage],
   },
 };
 

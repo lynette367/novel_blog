@@ -5,14 +5,12 @@ import { SITE_NAME, SITE_URL } from "@/lib/siteMetadata";
 
 const defaultDescription =
   "Your destination for high-quality Chinese Danmei and Asian BL web novels. Discover captivating stories, daily updates, and completed chapters in English.";
+const defaultOgImage = `${SITE_URL}/assets/images/immigrating-to-the-jurassic.jpg`;
 
-// 1. 正确配置 Viewport（Next.js 官方推荐写法，避免手动在 <head> 里写 meta 导致冲突）
+// 1. 正确配置 Viewport（支持无障碍手势缩放，提升 Lighthouse/移动端评分）
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  minimumScale: 1,
-  maximumScale: 1,
-  userScalable: false,
 };
 
 export const metadata: Metadata = {
@@ -41,11 +39,20 @@ export const metadata: Metadata = {
     title: "Read Chinese Danmei & BL Web Novels Online in English",
     description:
       "Discover popular Chinese Danmei and Asian BL web novels in English with regular updates.",
+    images: [
+      {
+        url: defaultOgImage,
+        width: 1200,
+        height: 630,
+        alt: `${SITE_NAME} - Read Chinese Danmei & BL Web Novels Online in English`,
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Read Chinese Danmei & BL Web Novels Online in English",
     description: "Discover popular Chinese Danmei and Asian BL web novels in English with regular updates.",
+    images: [defaultOgImage],
   },
   robots: {
     index: true,
