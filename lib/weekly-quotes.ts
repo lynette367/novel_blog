@@ -106,8 +106,8 @@ export const WEEKLY_QUOTES: WeeklyQuoteData[] = [
     chapter: "Chapter 3",
     insight:
       "The Kowloon Walled City runs on obligation. Chan Ka Nam carries a debt that no triad ledger could ever settle — one that was written the moment he chose to stay.",
-    targetChapterUrl: "/novels/transmigrated-villain-childhood-friend/chapters/3",
-    targetUrl: "/novels/transmigrated-villain-childhood-friend/chapters/3",
+    targetChapterUrl: "/novels/transmigrated_into_the_villains_sickly_childhood_friend/chapters/3",
+    targetUrl: "/novels/transmigrated_into_the_villains_sickly_childhood_friend/chapters/3",
     publishedAt: "2025-01-08T00:00:00.000Z",
   },
   {
@@ -119,8 +119,8 @@ export const WEEKLY_QUOTES: WeeklyQuoteData[] = [
     chapter: "Chapter 7",
     insight:
       "Kiu Man's illness is not merely physical. Every chapter layers another mask onto a protagonist who has been pretending so long he has almost forgotten what is real.",
-    targetChapterUrl: "/novels/transmigrated-villain-childhood-friend/chapters/7",
-    targetUrl: "/novels/transmigrated-villain-childhood-friend/chapters/7",
+    targetChapterUrl: "/novels/transmigrated_into_the_villains_sickly_childhood_friend/chapters/7",
+    targetUrl: "/novels/transmigrated_into_the_villains_sickly_childhood_friend/chapters/7",
     publishedAt: "2025-01-15T00:00:00.000Z",
   },
 ];

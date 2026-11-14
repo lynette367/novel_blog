@@ -8,7 +8,11 @@ import type {
   RecentProofread,
   RawNovelResult,
 } from "../types";
-import { transformReviewingNovel } from "../transform";
+import {
+  transformReviewingNovel,
+  cleanDescriptionText,
+  normalizeChapterTitle,
+} from "../transform";
 import { coverThumbUrl, minutesFromWordCount } from "../image-utils";
 
 // 共享的 GROQ projection，返回所有 reviewing/hero 小说所需字段
@@ -66,8 +70,8 @@ function mapChapter(ch: RawChapter): LatestPolishedChapter {
   return {
     _id: ch._id,
     chapterNumber: ch.chapterNumber,
-    chapterTitle: ch.chapterTitle,
-    excerpt: ch.excerpt || undefined,
+    chapterTitle: normalizeChapterTitle(ch.chapterTitle, ch.chapterNumber),
+    excerpt: cleanDescriptionText(ch.excerpt),
     updatedAt: ch._updatedAt || undefined,
     novelTitle: ch.novelTitle,
     novelSlug: ch.novelSlug,
@@ -224,8 +228,8 @@ export const getRecentlyProofreadChapter = cache(
         novelTitle: chapter.novelTitle,
         novelSlug: chapter.novelSlug,
         chapterNumber: chapter.number,
-        chapterTitle: chapter.title,
-        excerpt: chapter.excerpt || undefined,
+        chapterTitle: normalizeChapterTitle(chapter.title, chapter.number),
+        excerpt: cleanDescriptionText(chapter.excerpt),
         coverImage: chapter.coverImage ? coverThumbUrl(chapter.coverImage) : undefined,
         wordCount,
         readingMinutes: minutesFromWordCount(wordCount),

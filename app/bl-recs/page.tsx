@@ -98,7 +98,7 @@ export default function BLRecsPillarPage() {
                 >
                   <div className="min-w-0">
                     <p className="text-xs font-bold uppercase tracking-widest text-brand-ink/45">
-                      {cluster.count} novels
+                      {cluster.count} {cluster.count === 1 ? "novel" : "novels"}
                     </p>
                     <h3 className="mt-1 text-lg font-bold group-hover:text-brand-pinkdeep">
                       {cluster.title}

@@ -24,6 +24,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseRoutes: MetadataRoute.Sitemap = [
     { url: withOrigin("/") },
     { url: withOrigin("/novels") },
+    { url: withOrigin("/weekly-quotes") },
     { url: withOrigin("/contact") },
     { url: withOrigin("/lore/triad-ranks") },
     { url: withOrigin(BL_RECS_PATH) },

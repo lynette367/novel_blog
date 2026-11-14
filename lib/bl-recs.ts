@@ -172,6 +172,14 @@ export const clusters: RecCluster[] = [
     count: 3,
     tags: ["TGCF", "Xianxia", "Reincarnation", "Fated Love"],
   },
+  {
+    slug: "song-yuzhang-beautiful-fraud-romance",
+    title: "Song Yuzhang (宋玉章): A Beautiful Fraud Worth Reading",
+    summary:
+      "A Republic-era 万人迷 BL novel with a beautiful con man, razor-sharp enemies-to-lovers tension, and a choice that turns a guilty pleasure into an unforgettable story.",
+    count: 1,
+    tags: ["Republic Era", "万人迷", "Enemies to Lovers", "Con Artist", "Redeemed Antihero"],
+  },
 ];
 
 export const clusterPath = (slug: string) => `${BL_RECS_PATH}/${slug}`;

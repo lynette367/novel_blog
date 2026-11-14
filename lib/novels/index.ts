@@ -49,6 +49,7 @@ export {
 export {
   getLatestWeeklyQuote,
   getWeeklyQuoteBySlug,
+  getAllWeeklyQuotes,
   getAllWeeklyQuoteSlugs,
   FALLBACK_WEEKLY_QUOTE,
 } from "./queries/quotes";

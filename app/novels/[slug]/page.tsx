@@ -38,29 +38,12 @@ export async function generateMetadata({
     novel.seo?.metaTitle || `${novel.title} | Chinese Danmei & BL Novel in English`;
   const metaDescription =
     novel.seo?.metaDescription ||
+    novel.excerpt ||
     `Read ${novel.title} online in English. Complete Chinese Danmei & Asian BL web novel chapters updated regularly.`;
 
   const canonicalUrl = absoluteUrl(`/novels/${novel.slug}`);
   const ogImageUrl = novel.seo?.ogImage || novel.coverImage;
   const ogImageAlt = novel.coverImageAlt || `${novel.title} - BL Danmei Novel Cover`;
-
-  const chapters = await getNovelChapters(novel.slug);
-
-  const bookId = absoluteUrl(`/novels/${novel.slug}#book`);
-  const schemaData = {
-    "@context": "https://schema.org",
-    "@type": "Book",
-    "@id": bookId,
-    name: novel.title,
-    genre: ["BL", "Danmei", "Romance", "LGBT+ Fiction"],
-    inLanguage: "en",
-    numberOfPages: chapters.length,
-    wordCount: novel.totalWordCount || undefined,
-    description: novel.description ?? novel.excerpt,
-    isPartOf: {
-      "@id": absoluteUrl("/#website"),
-    },
-  };
 
   return {
     title: {
@@ -105,9 +88,6 @@ export async function generateMetadata({
       index: true,
       follow: true,
     },
-    other: {
-      "script:application/ld+json": JSON.stringify(schemaData),
-    },
   };
 }
 
@@ -129,6 +109,22 @@ export default async function NovelDetailPage({
     .map((paragraph) => paragraph.trim())
     .filter(Boolean);
   const chapters = await getNovelChapters(novel.slug);
+
+  const bookId = absoluteUrl(`/novels/${novel.slug}#book`);
+  const schemaData = {
+    "@context": "https://schema.org",
+    "@type": "Book",
+    "@id": bookId,
+    name: novel.title,
+    genre: ["BL", "Danmei", "Romance", "LGBT+ Fiction"],
+    inLanguage: "en",
+    numberOfPages: chapters.length,
+    wordCount: novel.totalWordCount || undefined,
+    description: novel.description ?? novel.excerpt,
+    isPartOf: {
+      "@id": absoluteUrl("/#website"),
+    },
+  };
 
   const breadcrumbData = {
     "@context": "https://schema.org",
@@ -159,7 +155,15 @@ export default async function NovelDetailPage({
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbData) }}
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(schemaData).replace(/</g, "\\u003c"),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbData).replace(/</g, "\\u003c"),
+        }}
       />
       <SiteHeader activePath="novels" />
 
@@ -280,7 +284,11 @@ export default async function NovelDetailPage({
                       )}
                       <div className="flex flex-col gap-1 flex-1 min-w-0">
                         <div className="text-base sm:text-lg font-semibold text-[#2b1f2d]">
-                          Ch. {chapter.number}: {chapter.title}
+                          {chapter.title.toLowerCase() === `chapter ${chapter.number}`
+                            ? chapter.title
+                            : chapter.title.toLowerCase().startsWith(`chapter ${chapter.number}:`)
+                            ? chapter.title
+                            : `Ch. ${chapter.number}: ${chapter.title}`}
                         </div>
                         <div className="text-sm text-[#f4a7b9]">🔒 Coming Soon</div>
                       </div>
@@ -333,7 +341,11 @@ export default async function NovelDetailPage({
                     {/* Chapter info with Ch. x together with title */}
                     <div className="flex flex-col flex-1 min-w-0 justify-center gap-1">
                       <h3 className="font-serif font-semibold text-base sm:text-lg text-[#2b1f2d] leading-snug group-hover:text-[#f4a7b9] transition-colors line-clamp-2">
-                        Ch. {chapter.number}: {chapter.title}
+                        {chapter.title.toLowerCase() === `chapter ${chapter.number}`
+                          ? chapter.title
+                          : chapter.title.toLowerCase().startsWith(`chapter ${chapter.number}:`)
+                          ? chapter.title
+                          : `Ch. ${chapter.number}: ${chapter.title}`}
                       </h3>
 
                       {chapter.excerpt && (

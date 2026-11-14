@@ -20,22 +20,6 @@ export async function generateMetadata(): Promise<Metadata> {
   const title = "Browse Chinese BL & Web Fiction";
   const description = `Explore our curated library of ${totalNovels} Chinese Danmei and Asian BL novels with ${totalChapters}+ chapters. Read completed stories in English.`;
 
-  const schemaData = {
-    "@context": "https://schema.org",
-    "@type": "CollectionPage",
-    "@id": absoluteUrl("/novels#collectionpage"),
-    "name": "Browse Chinese BL & Danmei Web Fiction",
-    "url": absoluteUrl(canonicalPath),
-    "description": description,
-    "mainEntityOfPage": {
-      "@type": "WebPage",
-      "@id": absoluteUrl(canonicalPath),
-    },
-    "isPartOf": {
-      "@id": absoluteUrl("/#website"),
-    },
-  };
-
   return {
     title,
     description,
@@ -65,23 +49,46 @@ export async function generateMetadata(): Promise<Metadata> {
       description,
       images: ogImage ? [ogImage] : [],
     },
-    other: {
-      "script:application/ld+json": JSON.stringify(schemaData),
-    },
   };
 }
 
 export default async function NovelsPage() {
   const novels = await getNovels();
+  const totalNovels = novels.length;
+  const totalChapters = novels.reduce((sum, n) => sum + (n.totalChapters || 0), 0);
+  const canonicalPath = "/novels";
+  const description = `Explore our curated library of ${totalNovels} Chinese Danmei and Asian BL novels with ${totalChapters}+ chapters. Read completed stories in English.`;
+
+  const schemaData = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "@id": absoluteUrl("/novels#collectionpage"),
+    name: "Browse Chinese BL & Danmei Web Fiction",
+    url: absoluteUrl(canonicalPath),
+    description,
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": absoluteUrl(canonicalPath),
+    },
+    isPartOf: {
+      "@id": absoluteUrl("/#website"),
+    },
+  };
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(schemaData).replace(/</g, "\\u003c"),
+        }}
+      />
       <SiteHeader activePath="novels" />
       <main className="page-shell py-8">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="font-serif text-2xl font-normal text-[#2b1f2d] tracking-wide">
+          <h1 className="font-serif text-2xl font-normal text-[#2b1f2d] tracking-wide">
             Explore Chinese Danmei &amp; BL Library
-          </h2>
+          </h1>
         </div>
         <FilterableNovelGrid novels={novels} />
       </main>

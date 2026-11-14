@@ -37,6 +37,32 @@ export async function generateStaticParams() {
   return params;
 }
 
+function buildChapterMetaDescription(
+  novelTitle: string,
+  chapterTitle: string,
+  contentHtml: string,
+  customDesc?: string
+): string {
+  if (customDesc) return customDesc;
+
+  const plainText = contentHtml
+    .replace(/<[^>]+>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  if (plainText) {
+    const prefix = `${novelTitle} — ${chapterTitle}: `;
+    const maxSnippetLen = Math.max(60, 155 - prefix.length);
+    const snippet =
+      plainText.length > maxSnippetLen
+        ? `${plainText.slice(0, maxSnippetLen - 1).trim()}…`
+        : plainText;
+    return `${prefix}${snippet}`;
+  }
+
+  return `Read ${chapterTitle} of ${novelTitle} online. High-quality Chinese Danmei & BL web novel chapter in English.`;
+}
+
 export async function generateMetadata({
   params,
 }: {
@@ -67,10 +93,12 @@ export async function generateMetadata({
     chapterData.seo?.metaTitle ||
     `${chapterData.title} - ${novel.title}`;
 
-  const metaDescription =
-    chapterData.seo?.metaDescription ||
-    novel.seo?.metaDescription ||
-    `Read ${chapterData.title} of ${novel.title} online. High-quality Chinese Danmei & BL web novel chapter in English.`;
+  const metaDescription = buildChapterMetaDescription(
+    novel.title,
+    chapterData.title,
+    chapterData.content,
+    chapterData.seo?.metaDescription
+  );
 
   const ogImage =
     chapterData.seo?.ogImage ||
@@ -78,60 +106,6 @@ export async function generateMetadata({
     novel.coverImage;
 
   const ogImageAlt = novel.coverImageAlt || `${novel.title} - BL Danmei Novel Cover`;
-
-  const schemaData = {
-    "@context": "https://schema.org",
-    "@type": "Chapter",
-    name: chapterData.title,
-    partOf: {
-      "@type": "Book",
-      "@id": absoluteUrl(`/novels/${novel.slug}#book`),
-      name: novel.title,
-      wordCount: novel.totalWordCount || undefined,
-    },
-    position: chapterNumber,
-    inLanguage: "en",
-    wordCount: chapterData.wordCount,
-    description: metaDescription,
-    url: canonicalUrl,
-    isPartOf: {
-      "@id": absoluteUrl("/#website"),
-    },
-  };
-
-  const chapterCanonicalUrl = canonicalUrl.endsWith("/") ? canonicalUrl : `${canonicalUrl}/`;
-  const novelUrl = absoluteUrl(`/novels/${slug}/`);
-
-  const breadcrumbData = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      {
-        "@type": "ListItem",
-        position: 1,
-        name: "Home",
-        item: absoluteUrl("/"),
-      },
-      {
-        "@type": "ListItem",
-        position: 2,
-        name: "Novels",
-        item: absoluteUrl("/novels/"),
-      },
-      {
-        "@type": "ListItem",
-        position: 3,
-        name: novel.title,
-        item: novelUrl,
-      },
-      {
-        "@type": "ListItem",
-        position: 4,
-        name: chapterData.title,
-        item: chapterCanonicalUrl,
-      },
-    ],
-  };
 
   return {
     title: metaTitle,
@@ -166,9 +140,6 @@ export async function generateMetadata({
       title: metaTitle,
       description: metaDescription,
       images: ogImage ? [ogImage] : [],
-    },
-    other: {
-      "script:application/ld+json": JSON.stringify([schemaData, breadcrumbData]),
     },
   };
 }
@@ -250,8 +221,76 @@ export default async function ChapterPage({
     fullContentHtml = [...firstHalf, imageHtml, ...secondHalf].join("\n");
   }
 
+  const canonicalUrl = absoluteUrl(`/novels/${slug}/chapters/${chapterNumber}`);
+  const chapterCanonicalUrl = canonicalUrl.endsWith("/") ? canonicalUrl : `${canonicalUrl}/`;
+  const novelUrl = absoluteUrl(`/novels/${slug}/`);
+
+  const metaDescription = buildChapterMetaDescription(
+    novel.title,
+    chapterData.title,
+    chapterData.content,
+    chapterData.seo?.metaDescription
+  );
+
+  const schemaData = {
+    "@context": "https://schema.org",
+    "@type": "Chapter",
+    name: chapterData.title,
+    partOf: {
+      "@type": "Book",
+      "@id": absoluteUrl(`/novels/${novel.slug}#book`),
+      name: novel.title,
+      wordCount: novel.totalWordCount || undefined,
+    },
+    position: chapterNumber,
+    inLanguage: "en",
+    wordCount: chapterData.wordCount,
+    description: metaDescription,
+    url: canonicalUrl,
+    isPartOf: {
+      "@id": absoluteUrl("/#website"),
+    },
+  };
+
+  const breadcrumbData = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: absoluteUrl("/"),
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Novels",
+        item: absoluteUrl("/novels/"),
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: novel.title,
+        item: novelUrl,
+      },
+      {
+        "@type": "ListItem",
+        position: 4,
+        name: chapterData.title,
+        item: chapterCanonicalUrl,
+      },
+    ],
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify([schemaData, breadcrumbData]).replace(/</g, "\\u003c"),
+        }}
+      />
       <ReadingProgress />
 
       {/* Top navigation */}

@@ -61,10 +61,10 @@ export function FilterableNovelGrid({ novels, initialTag = ALL_TAG }: Props) {
     activeTag === ALL_TAG
       ? novels
       : novels.filter((novel) =>
-          (novel.tags || []).some(
-            (tag) => tag.trim().toLowerCase() === activeTag.toLowerCase()
-          )
-        );
+        (novel.tags || []).some(
+          (tag) => tag.trim().toLowerCase() === activeTag.toLowerCase()
+        )
+      );
 
   return (
     <>
@@ -79,11 +79,10 @@ export function FilterableNovelGrid({ novels, initialTag = ALL_TAG }: Props) {
                 key={tag}
                 href={href}
                 onClick={(e) => handleTagClick(tag, e)}
-                className={`rounded-full px-4 py-1.5 text-xs font-semibold border transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[#f4a7b9] cursor-pointer ${
-                  isActive
+                className={`rounded-full px-4 py-1.5 text-xs font-semibold border transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[#f4a7b9] cursor-pointer ${isActive
                     ? "bg-[#f4a7b9] text-white border-transparent shadow-[0_4px_10px_rgba(244,167,185,0.3)]"
                     : "bg-white text-[#2b1f2d] border-[#f7c6d9] hover:bg-[#ffe3ef] hover:border-[#f4a7b9]/60"
-                }`}
+                  }`}
               >
                 {tag}
               </a>
@@ -92,14 +91,14 @@ export function FilterableNovelGrid({ novels, initialTag = ALL_TAG }: Props) {
         </div>
       </div>
 
-      {/* Novel List */}
-      <div className="flex flex-col divide-y divide-[#f0e6d2]">
+      {/* Novel Grid — 2 columns per row with divider lines */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 sm:gap-x-12">
         {filteredNovels.length > 0 ? (
           filteredNovels.map((novel) => (
             <NovelListItem key={novel.slug} novel={novel} />
           ))
         ) : (
-          <p className="text-center text-[#7d6f67] py-12">
+          <p className="col-span-full text-center text-[#9c857b] py-12">
             No novels found in this category.
           </p>
         )}
@@ -129,37 +128,37 @@ function NovelListItem({ novel }: { novel: Novel }) {
     <Link
       href={`/novels/${novel.slug}`}
       prefetch={false}
-      className="group flex gap-5 py-5 first:pt-0 last:pb-0 transition-colors duration-200 no-underline text-inherit hover:bg-[#faf6ee] -mx-3 px-3 rounded-md"
+      className="group flex gap-4 sm:gap-5 py-5 border-b border-[#f7c6d9]/60 transition-colors duration-200 no-underline text-inherit hover:bg-[#ffe3ef]/35 -mx-2 sm:-mx-3 px-2 sm:px-3 rounded-xl"
     >
       <div
-        className="w-20 h-28 sm:w-24 sm:h-32 flex-shrink-0 rounded-md bg-cover bg-center bg-[#f5f0e8]"
-        style={{ backgroundImage: `url('${novel.coverImage}')` }}
+        className="w-20 h-28 sm:w-24 sm:h-32 flex-shrink-0 rounded-lg bg-cover bg-center bg-[#fde2e8] border border-[#f7c6d9]/40 shadow-xs"
+        style={{ backgroundImage: novel.coverImage ? `url('${novel.coverImage}')` : undefined }}
         aria-label={`Cover image for ${novel.title} - English Translation`}
         title={`Read ${novel.title} English Translation`}
       />
 
       <div className="flex flex-col flex-1 min-w-0">
-        <div className="flex items-start justify-between gap-3">
-          <h3 className="font-serif text-lg sm:text-xl font-semibold text-[#2c3e50] leading-snug group-hover:text-[#8b7355] transition-colors">
+        <div className="flex items-start justify-between gap-2">
+          <h3 className="font-serif text-base sm:text-lg font-semibold text-[#2b1f2d] leading-snug group-hover:text-[#d66b85] transition-colors line-clamp-2">
             {novel.title}
           </h3>
           {novel.tags && novel.tags.length > 0 && (
-            <span className="shrink-0 text-[11px] font-bold uppercase tracking-wide text-[#8b7355] bg-[#f5f0e8] rounded-full px-2.5 py-1 whitespace-nowrap">
+            <span className="shrink-0 text-[11px] font-bold uppercase tracking-wide text-[#d66b85] bg-[#fde2e8] border border-[#f8bccb]/60 rounded-full px-2.5 py-0.5 whitespace-nowrap">
               {novel.tags[0]}
             </span>
           )}
         </div>
 
-        <p className="text-sm text-[#5d5d5d] mt-1.5 line-clamp-2 leading-relaxed">
+        <p className="text-xs sm:text-sm text-[#6d5e56] mt-1.5 line-clamp-2 leading-relaxed">
           {novel.excerpt}
         </p>
 
-        {novel.tags && novel.tags.length > 0 && (
+        {novel.tags && novel.tags.length > 1 && (
           <div className="flex flex-wrap gap-1.5 mt-2.5">
-            {novel.tags.slice(0, 4).map((tag) => (
+            {novel.tags.slice(1, 4).map((tag) => (
               <span
                 key={tag}
-                className="text-[11px] px-2 py-0.5 rounded-full bg-[#f5f0e8] text-[#8b7355] font-semibold"
+                className="text-[11px] px-2 py-0.5 rounded-full bg-[#fdf2f7] text-[#d66b85] border border-[#f7c6d9]/40 font-medium"
               >
                 {tag}
               </span>
@@ -167,9 +166,16 @@ function NovelListItem({ novel }: { novel: Novel }) {
           </div>
         )}
 
-        <span className="mt-2.5 sm:mt-auto sm:pt-2 text-sm font-semibold text-[#8b7355] group-hover:text-[#6d5d4b] transition-colors">
-          Read →
-        </span>
+        <div className="flex items-center justify-between mt-auto pt-2.5 text-xs">
+          {novel.totalChapters ? (
+            <span className="text-[#9c857b] font-medium">📚 {novel.totalChapters} chapters</span>
+          ) : (
+            <span />
+          )}
+          <span className="font-semibold text-[#f4a7b9] group-hover:text-[#d66b85] transition-colors">
+            Read →
+          </span>
+        </div>
       </div>
     </Link>
   );

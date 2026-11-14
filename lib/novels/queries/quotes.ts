@@ -21,6 +21,11 @@ export async function getWeeklyQuoteBySlug(
   return WEEKLY_QUOTES.find((q) => q.slug === slug) ?? null;
 }
 
+// Returns all quotes (newest first).
+export async function getAllWeeklyQuotes(): Promise<WeeklyQuoteData[]> {
+  return WEEKLY_QUOTES;
+}
+
 // Returns all slugs — used by generateStaticParams in the [slug] page.
 export async function getAllWeeklyQuoteSlugs(): Promise<string[]> {
   return WEEKLY_QUOTES.map((q) => q.slug);

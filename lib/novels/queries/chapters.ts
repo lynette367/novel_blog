@@ -2,6 +2,7 @@ import { cache } from "react";
 import { client } from "@/src/sanity/client";
 import type { ChapterInfo, ChapterContent, SanityChapter, SanityChapterFull } from "../types";
 import { ogImageUrl, coverThumbUrl, minutesFromWordCount } from "../image-utils";
+import { cleanDescriptionText, normalizeChapterTitle } from "../transform";
 
 // 获取小说的所有章节列表（含字数 / 阅读时长 / 精修状态 / Patreon 状态 / 章节图）
 export const getNovelChapters = cache(async (slug: string): Promise<ChapterInfo[]> => {
@@ -23,9 +24,9 @@ export const getNovelChapters = cache(async (slug: string): Promise<ChapterInfo[
     return chapters.map((ch) => ({
       _id: ch._id,
       number: ch.number,
-      title: ch.title,
+      title: normalizeChapterTitle(ch.title, ch.number),
       slug: ch.number.toString(),
-      excerpt: ch.excerpt || undefined,
+      excerpt: cleanDescriptionText(ch.excerpt),
       coverImage: ch.coverImage ? coverThumbUrl(ch.coverImage) : undefined,
       wordCount: ch.wordCount,
       readingMinutes: minutesFromWordCount(ch.wordCount),
@@ -73,7 +74,7 @@ export const getChapterContent = cache(async (
       .join("\n");
 
     return {
-      title: chapter.title,
+      title: normalizeChapterTitle(chapter.title, chapter.number),
       content: paragraphs,
       chapterNumber: chapter.number,
       wordCount: chapter.wordCount,
@@ -82,7 +83,7 @@ export const getChapterContent = cache(async (
       seo: chapter.seo
         ? {
             metaTitle: chapter.seo.metaTitle,
-            metaDescription: chapter.seo.metaDescription,
+            metaDescription: cleanDescriptionText(chapter.seo.metaDescription),
             ogImage: chapter.seo.ogImage
               ? ogImageUrl(chapter.seo.ogImage)
               : undefined,
