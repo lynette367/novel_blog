@@ -56,13 +56,13 @@ export async function generateMetadata(): Promise<Metadata> {
       siteName: SITE_NAME,
       images: heroImage
         ? [
-            {
-              url: heroImage,
-              width: 1200,
-              height: 630,
-              alt: heroImageAlt,
-            },
-          ]
+          {
+            url: heroImage,
+            width: 1200,
+            height: 630,
+            alt: heroImageAlt,
+          },
+        ]
         : [],
     },
     twitter: {
@@ -114,13 +114,13 @@ export default async function HomePage() {
       url: absoluteUrl("/"),
       ...(heroImage
         ? {
-            logo: {
-              "@type": "ImageObject",
-              url: heroImage,
-              width: 600,
-              height: 600,
-            },
-          }
+          logo: {
+            "@type": "ImageObject",
+            url: heroImage,
+            width: 600,
+            height: 600,
+          },
+        }
         : {}),
       description: siteConfig.description,
       sameAs,
@@ -260,12 +260,9 @@ export default async function HomePage() {
           >
             <div className="flex items-baseline justify-between gap-4 mb-6">
               <div>
-                <p className="text-xs uppercase tracking-[0.16em] font-semibold text-[#f4a7b9]">
-                  Latest Releases
-                </p>
                 <h2
                   id="recently-updated-heading"
-                  className="mt-1 font-serif text-xl sm:text-2xl font-normal text-[#2b1f2d]"
+                  className="mt-1 font-serif text-xl sm:text-2xl font-normal text-[#f4a7b9]"
                 >
                   Recently Updated
                 </h2>
@@ -278,7 +275,7 @@ export default async function HomePage() {
               </Link>
             </div>
 
-            <ul className="divide-y divide-[#f7c6d9]/60 list-none p-0 m-0">
+            <ul className="list-none p-0 m-0">
               {recentChapters.slice(0, 4).map((ch) => {
                 const formattedDate = formatUpdateDate(ch.updatedAt);
                 const chapterHref = `/novels/${ch.novelSlug}/chapters/${ch.chapterNumber}/` as Route;
@@ -322,14 +319,11 @@ export default async function HomePage() {
           aria-labelledby="explore-more-heading"
           className="py-10 sm:py-12 border-b border-[#f7c6d9]"
         >
-          <p className="text-xs uppercase tracking-[0.16em] font-semibold text-[#f4a7b9]">
-            Beyond the Chapters
-          </p>
           <h2
             id="explore-more-heading"
-            className="mt-1 font-serif text-xl sm:text-2xl font-normal text-[#2b1f2d] mb-6"
+            className="mt-1 font-serif text-xl sm:text-2xl font-normal text-[#f4a7b9] mb-6"
           >
-            Explore More
+            Beyond the Chapters
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-[#f7c6d9]/70">

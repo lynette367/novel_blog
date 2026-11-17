@@ -14,6 +14,47 @@ type NovelPageParams = {
   slug: string;
 };
 
+function ChapterThumbnail({
+  chapterNumber,
+  chapterTitle,
+  coverImage,
+  dimmed = false,
+}: {
+  chapterNumber: number;
+  chapterTitle: string;
+  coverImage?: string;
+  dimmed?: boolean;
+}) {
+  const dimClass = dimmed ? " opacity-60" : "";
+
+  if (coverImage) {
+    return (
+      <div
+        className={`relative w-12 h-16 sm:w-14 sm:h-20 shrink-0 rounded overflow-hidden bg-[#ffe3ef]${dimClass}`}
+      >
+        <Image
+          src={coverImage}
+          alt={`Chapter ${chapterNumber}: ${chapterTitle}`}
+          fill
+          sizes="(max-width: 640px) 48px, 56px"
+          style={{ objectFit: "cover" }}
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div
+      aria-hidden="true"
+      className={`w-12 h-16 sm:w-14 sm:h-20 shrink-0 rounded border border-[#f7c6d9]/60 bg-[#ffe3ef]/60 flex items-center justify-center${dimClass}`}
+    >
+      <span className="font-serif text-xl sm:text-2xl font-semibold text-[#f4a7b9] tabular-nums leading-none">
+        {String(chapterNumber).padStart(2, "0")}
+      </span>
+    </div>
+  );
+}
+
 export async function generateStaticParams() {
   const novels = await getNovels();
   return novels.map((novel) => ({ slug: novel.slug }));
@@ -168,8 +209,8 @@ export default async function NovelDetailPage({
       <SiteHeader activePath="novels" />
 
       <main className="page-shell py-8">
-        {/* Novel header — no card, just a bottom rule to separate from the chapter list */}
-        <section className="grid grid-cols-1 md:grid-cols-[280px_1fr] gap-8 mb-10 pb-8 border-b border-[#f7c6d9]/50">
+        {/* Novel header */}
+        <section className="grid grid-cols-1 md:grid-cols-[280px_1fr] gap-8 mb-6">
           {/* Cover image — fixed aspect ratio, top-aligned */}
           <div className="self-start">
             <div
@@ -222,35 +263,19 @@ export default async function NovelDetailPage({
               paragraphs={descriptionParagraphs}
               excerpt={novel.excerpt}
             />
-
-            {/* Category badge */}
-            {novel.tags && novel.tags.length > 0 && (
-              <div className="inline-block">
-                <span className="px-5 py-2 border-2 border-[#f4a7b9] rounded-full text-[#f4a7b9] font-semibold text-sm uppercase tracking-wide">
-                  {novel.tags[0]}
-                </span>
-              </div>
-            )}
           </div>
         </section>
 
         {/* Chapter list — no outer container, section flows directly on the page */}
         <section>
-          <div className="flex justify-between items-center mb-3 pb-4 border-b border-[#f7c6d9]">
-            <div>
-              <h2 className="font-serif text-2xl text-[#2b1f2d] font-normal tracking-wide">
-                Table of Contents
-              </h2>
-              {chapters.length > 0 ? (
-                <span className="text-[#f4a7b9] text-sm">
-                  {chapters.length} Chapters Available
-                </span>
-              ) : null}
-            </div>
+          <div className="mb-2">
+            <h2 className="font-serif text-2xl text-[#f4a7b9] font-normal tracking-wide">
+              Table of Contents
+            </h2>
           </div>
 
           {/* Human TL donation callout */}
-          <p className="text-sm text-[#7d6d5d] mb-6 pb-4 border-b border-[#f7c6d9]/50">
+          <p className="text-sm text-[#7d6d5d] mb-6">
             Tired of Raw MTL chapters?{" "}
             <Link
               href="https://ko-fi.com/crosstheline46370"
@@ -262,33 +287,31 @@ export default async function NovelDetailPage({
           </p>
 
           {chapters.length > 0 ? (
-            <div className="flex flex-col gap-3" id="chapterList">
+            <div className="divide-y divide-[#f7c6d9]/50" id="chapterList">
               {chapters.map((chapter) => {
+                const displayTitle =
+                  chapter.title.toLowerCase() === `chapter ${chapter.number}`
+                    ? chapter.title
+                    : chapter.title.toLowerCase().startsWith(`chapter ${chapter.number}:`)
+                    ? chapter.title
+                    : `Ch. ${chapter.number}: ${chapter.title}`;
+
                 if (chapter.locked) {
                   return (
                     <div
                       key={chapter.number}
                       data-chapter={chapter.number}
-                      className="opacity-55 cursor-not-allowed flex items-center gap-4 sm:gap-5 p-4 sm:p-5 rounded-xl border-2 bg-[#f8fafc] border-[#cbd5e1]"
+                      className="opacity-55 cursor-not-allowed flex items-center gap-4 sm:gap-5 py-4"
                     >
-                      {chapter.coverImage && (
-                        <div className="relative w-14 h-20 sm:w-16 sm:h-24 shrink-0 rounded-md overflow-hidden bg-gradient-to-br from-[#ffe3ef] to-[#fde2e8] opacity-60">
-                          <Image
-                            src={chapter.coverImage}
-                            alt={`Chapter ${chapter.number}: ${chapter.title}`}
-                            fill
-                            sizes="(max-width: 640px) 56px, 64px"
-                            style={{ objectFit: "cover" }}
-                          />
-                        </div>
-                      )}
+                      <ChapterThumbnail
+                        chapterNumber={chapter.number}
+                        chapterTitle={chapter.title}
+                        coverImage={chapter.coverImage}
+                        dimmed
+                      />
                       <div className="flex flex-col gap-1 flex-1 min-w-0">
                         <div className="text-base sm:text-lg font-semibold text-[#2b1f2d]">
-                          {chapter.title.toLowerCase() === `chapter ${chapter.number}`
-                            ? chapter.title
-                            : chapter.title.toLowerCase().startsWith(`chapter ${chapter.number}:`)
-                            ? chapter.title
-                            : `Ch. ${chapter.number}: ${chapter.title}`}
+                          {displayTitle}
                         </div>
                         <div className="text-sm text-[#f4a7b9]">🔒 Coming Soon</div>
                       </div>
@@ -298,55 +321,40 @@ export default async function NovelDetailPage({
 
                 const isHumanTl = chapter.isPolished;
                 const isCurrentChapterOnPatreon = !isHumanTl && chapter.patreonPublished === true;
-                const isHighlight = isHumanTl || isCurrentChapterOnPatreon;
 
                 return (
                   <Link
                     key={chapter.number}
                     href={`/novels/${slug}/chapters/${chapter.number}`}
                     data-chapter={chapter.number}
-                    className={`group relative overflow-hidden flex items-center gap-4 sm:gap-5 p-4 sm:p-5 rounded-xl border transition-all hover:translate-x-1.5 hover:shadow-md no-underline text-inherit ${isHighlight
-                      ? "bg-gradient-to-r from-[#fff8fb] to-white border-[#f7c6d9] [border-left:4px_solid_#f4a7b9] shadow-sm"
-                      : "bg-[#f8fafc] border-2 border-[#cbd5e1]"
-                      }`}
+                    className="group flex items-center gap-4 sm:gap-5 py-4 transition-colors no-underline text-inherit"
                   >
-                    {/* Corner tag */}
-                    {isHumanTl ? (
-                      <div className="absolute top-0 right-0 bg-[#f4a7b9] text-white text-xs font-bold px-3 py-0.5 rounded-bl-xl shadow-sm z-10">
-                        Human TL
-                      </div>
-                    ) : isCurrentChapterOnPatreon ? (
-                      <div className="absolute top-0 right-0 bg-[#f4a7b9] text-white text-xs font-bold px-3 py-0.5 rounded-bl-xl shadow-sm z-10">
-                        Patreon
-                      </div>
-                    ) : (
-                      <div className="absolute top-0 right-0 bg-gradient-to-r from-[#94a3b8] to-[#64748b] text-white text-xs font-bold px-3 py-0.5 rounded-bl-xl shadow-sm z-10">
-                        Raw MTL
-                      </div>
-                    )}
+                    <ChapterThumbnail
+                      chapterNumber={chapter.number}
+                      chapterTitle={chapter.title}
+                      coverImage={chapter.coverImage}
+                    />
 
-                    {/* Chapter image on the left (if present) */}
-                    {chapter.coverImage && (
-                      <div className="relative w-14 h-20 sm:w-16 sm:h-24 shrink-0 rounded-md overflow-hidden bg-gradient-to-br from-[#ffe3ef] to-[#fde2e8] shadow-xs">
-                        <Image
-                          src={chapter.coverImage}
-                          alt={`Chapter ${chapter.number}: ${chapter.title}`}
-                          fill
-                          sizes="(max-width: 640px) 56px, 64px"
-                          style={{ objectFit: "cover" }}
-                        />
-                      </div>
-                    )}
-
-                    {/* Chapter info with Ch. x together with title */}
+                    {/* Chapter info */}
                     <div className="flex flex-col flex-1 min-w-0 justify-center gap-1">
-                      <h3 className="font-serif font-semibold text-base sm:text-lg text-[#2b1f2d] leading-snug group-hover:text-[#f4a7b9] transition-colors line-clamp-2">
-                        {chapter.title.toLowerCase() === `chapter ${chapter.number}`
-                          ? chapter.title
-                          : chapter.title.toLowerCase().startsWith(`chapter ${chapter.number}:`)
-                          ? chapter.title
-                          : `Ch. ${chapter.number}: ${chapter.title}`}
-                      </h3>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <h3 className="font-serif font-semibold text-base sm:text-lg text-[#2b1f2d] leading-snug group-hover:text-[#f4a7b9] transition-colors">
+                          {displayTitle}
+                        </h3>
+                        {isHumanTl ? (
+                          <span className="bg-[#f4a7b9] text-white text-[11px] font-bold px-2 py-0.5 rounded-full">
+                            Human TL
+                          </span>
+                        ) : isCurrentChapterOnPatreon ? (
+                          <span className="bg-[#f4a7b9] text-white text-[11px] font-bold px-2 py-0.5 rounded-full">
+                            Patreon
+                          </span>
+                        ) : (
+                          <span className="text-[#94a3b8] text-[11px] font-semibold">
+                            Raw MTL
+                          </span>
+                        )}
+                      </div>
 
                       {chapter.excerpt && (
                         <div className="text-xs sm:text-sm text-[#7d6f67] mt-0.5 leading-relaxed italic line-clamp-2">
@@ -354,14 +362,14 @@ export default async function NovelDetailPage({
                         </div>
                       )}
 
-                      <div className="flex gap-4 text-xs text-[#9c8560] font-medium mt-1">
+                      <div className="flex gap-4 text-xs text-[#9c8560] font-medium mt-0.5">
                         <span>📖 Est. {chapter.readingMinutes} min</span>
                         <span>📝 {chapter.wordCount.toLocaleString()} words</span>
                       </div>
                     </div>
 
                     {/* Arrow */}
-                    <span className="hidden sm:block text-2xl text-[#f4a7b9] transition-transform group-hover:translate-x-1.5 shrink-0 pr-1">
+                    <span className="hidden sm:block text-xl text-[#f4a7b9] transition-transform group-hover:translate-x-1 shrink-0">
                       →
                     </span>
                   </Link>
