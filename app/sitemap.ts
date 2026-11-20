@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { getNovels, getNovelChapters, getAllWeeklyQuoteSlugs } from "@/lib/novels";
 import { SITE_URL } from "@/lib/siteMetadata";
 import { clusters, BL_RECS_PATH, clusterPath } from "@/lib/bl-recs";
+import { loreArticles, loreArticlePath } from "@/lib/lore/articles";
 export const dynamic = "force-static";
 // 无论来源是环境变量还是 SITE_URL 兜底值，统一去掉末尾斜杠，
 // 避免和下面 withOrigin 里补的前导斜杠拼接成双斜杠（//）。
@@ -26,9 +27,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: withOrigin("/novels") },
     { url: withOrigin("/weekly-quotes") },
     { url: withOrigin("/contact") },
-    { url: withOrigin("/lore/triad-ranks") },
     { url: withOrigin(BL_RECS_PATH) },
   ];
+
+  // Lore & Cultural Analysis cluster pages
+  const loreRoutes: MetadataRoute.Sitemap = loreArticles.map((article) => ({
+    url: withOrigin(loreArticlePath(article.slug)),
+  }));
 
   // BL Recs cluster pages
   const recsRoutes: MetadataRoute.Sitemap = clusters.map((cluster) => ({
@@ -57,5 +62,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   }
 
-  return [...baseRoutes, ...recsRoutes, ...quoteRoutes, ...novelRoutes];
+  return [...baseRoutes, ...loreRoutes, ...recsRoutes, ...quoteRoutes, ...novelRoutes];
 }

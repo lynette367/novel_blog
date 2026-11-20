@@ -275,7 +275,7 @@ export default async function HomePage() {
               </Link>
             </div>
 
-            <ul className="list-none p-0 m-0">
+            <ul className="divide-y divide-[#f7c6d9]/60 list-none p-0 m-0">
               {recentChapters.slice(0, 4).map((ch) => {
                 const formattedDate = formatUpdateDate(ch.updatedAt);
                 const chapterHref = `/novels/${ch.novelSlug}/chapters/${ch.chapterNumber}/` as Route;
@@ -327,7 +327,7 @@ export default async function HomePage() {
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-[#f7c6d9]/70">
-            {/* 1. Literary & Cultural Guides */}
+            {/* 1. Lore & Cultural Notes */}
             <div className="pb-6 md:pb-0 md:pr-8 lg:pr-12 flex flex-col justify-between">
               <div>
                 <h3 className="font-serif text-lg sm:text-xl font-normal text-[#2b1f2d]">
@@ -335,12 +335,27 @@ export default async function HomePage() {
                     href={"/lore/triad-ranks/" as Route}
                     className="no-underline text-inherit hover:text-[#f4a7b9] transition-colors"
                   >
-                    Literary &amp; Cultural Guides
+                    Lore &amp; Cultural Notes
                   </Link>
                 </h3>
                 <p className="mt-2 text-sm sm:text-base text-[#5a4a42] leading-relaxed">
-                  Explore the history, culture and literary context behind Chinese danmei.
+                  Sometimes, the smallest moments in danmei hold meanings you might miss without knowing the folklore behind them.
                 </p>
+                <ul className="mt-4 list-none p-0 m-0 space-y-2">
+                  <li>
+                    <Link
+                      href={"/lore/heaven-officials-blessing-merit-and-godhood/" as Route}
+                      className="group inline-flex items-baseline gap-2 text-sm text-[#2b1f2d] hover:text-[#f4a7b9] transition-colors no-underline"
+                    >
+                      <span aria-hidden="true" className="text-[#f4a7b9]">
+                        ·
+                      </span>
+                      <span className="font-serif underline-offset-4 group-hover:underline">
+                        Merit, Godhood, and Xie Lian: The Chinese Belief Behind Heaven Official&apos;s Blessing
+                      </span>
+                    </Link>
+                  </li>
+                </ul>
               </div>
               <div className="mt-4">
                 <Link

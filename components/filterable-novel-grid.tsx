@@ -91,11 +91,15 @@ export function FilterableNovelGrid({ novels, initialTag = ALL_TAG }: Props) {
         </div>
       </div>
 
-      {/* Novel Grid — 2 columns per row with divider lines */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 sm:gap-x-12">
+      {/* Novel Grid — 2 columns per row (newest at top-right, then top-left, row by row) */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 sm:grid-flow-row-dense gap-x-8 sm:gap-x-12">
         {filteredNovels.length > 0 ? (
-          filteredNovels.map((novel) => (
-            <NovelListItem key={novel.slug} novel={novel} />
+          filteredNovels.map((novel, index) => (
+            <NovelListItem
+              key={novel.slug}
+              novel={novel}
+              placementClass={index % 2 === 0 ? "sm:col-start-2" : "sm:col-start-1"}
+            />
           ))
         ) : (
           <p className="col-span-full text-center text-[#9c857b] py-12">
@@ -123,12 +127,18 @@ function getAllTags(novels: Novel[]): string[] {
   return [ALL_TAG, ...sorted];
 }
 
-function NovelListItem({ novel }: { novel: Novel }) {
+function NovelListItem({
+  novel,
+  placementClass = "",
+}: {
+  novel: Novel;
+  placementClass?: string;
+}) {
   return (
     <Link
       href={`/novels/${novel.slug}`}
       prefetch={false}
-      className="group flex gap-4 sm:gap-5 py-5 border-b border-[#f7c6d9]/60 transition-colors duration-200 no-underline text-inherit hover:bg-[#ffe3ef]/35 -mx-2 sm:-mx-3 px-2 sm:px-3 rounded-xl"
+      className={`group flex gap-4 sm:gap-5 py-5 border-b border-[#f7c6d9]/60 transition-colors duration-200 no-underline text-inherit hover:bg-[#ffe3ef]/35 -mx-2 sm:-mx-3 px-2 sm:px-3 rounded-xl ${placementClass}`}
     >
       <div
         className="w-20 h-28 sm:w-24 sm:h-32 flex-shrink-0 rounded-lg bg-cover bg-center bg-[#fde2e8] border border-[#f7c6d9]/40 shadow-xs"

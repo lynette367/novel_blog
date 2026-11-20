@@ -1,7 +1,12 @@
-import type { Metadata } from "next";
+import type { Metadata, Route } from "next";
 import Link from "next/link";
-import { SiteHeader } from "@/components/site-header";
-import { SiteFooter } from "@/components/site-footer";
+import {
+  LoreHero,
+  LorePageLayout,
+  LoreReaderNote,
+  LoreSectionHeading,
+  LoreToc,
+} from "@/components/lore/lore-article-components";
 import { TRIAD_RANKS, type TriadRank } from "@/lib/lore/triad-ranks";
 import {
   EVIDENCE_LEVELS,
@@ -324,12 +329,9 @@ function RankCard({ rank, index }: { rank: TriadRank; index: number }) {
 
           {/* Reading note — our interpretation, kept visually apart from the sourced claims */}
           {history && (
-            <section className={`rounded-lg px-4 py-3 ${
-              isGated ? "bg-[#f4a7b9]/8 border border-[#f4a7b9]/15" : "bg-[#fff9f2] border border-[#f7c6d9]/50"
-            }`}>
-              <p className={label}>Reading note</p>
-              <p className={`${body} mt-1.5`}>{history.reading_note}</p>
-            </section>
+            <LoreReaderNote title="Reading note" dark={isGated}>
+              {history.reading_note}
+            </LoreReaderNote>
           )}
 
           {/* Footer stamp */}
@@ -346,29 +348,7 @@ function RankCard({ rank, index }: { rank: TriadRank; index: number }) {
   );
 }
 
-// ─── Small shared pieces ──────────────────────────────────────────────────────
-
-function SectionHeading({
-  id,
-  kicker,
-  title,
-  children,
-}: {
-  id: string;
-  kicker: string;
-  title: string;
-  children?: React.ReactNode;
-}) {
-  return (
-    <div className="mb-6">
-      <p className="text-xs font-bold tracking-[0.2em] uppercase text-[#9c3f5d] mb-1">{kicker}</p>
-      <h2 id={id} className="font-serif text-2xl text-[#2b1f2d] font-normal mb-3 scroll-mt-24">
-        {title}
-      </h2>
-      {children && <div className="text-sm text-[#7d6f67] leading-relaxed max-w-2xl">{children}</div>}
-    </div>
-  );
-}
+// ─── Shared page navigation ───────────────────────────────────────────────────
 
 const PAGE_NAV = [
   { href: "#dossiers", label: "Rank dossiers" },
@@ -430,59 +410,32 @@ export default function TriadRanksPage() {
         }
       `}</style>
 
-      <SiteHeader activePath="lore" />
-
-      {/* ── Hero ── */}
-      <div className="bg-gradient-to-br from-[#2b1f2d] via-[#3a2030] to-[#2b1f2d] border-b border-[#f7c6d9]/20">
-        <div className="page-shell py-16 text-center">
-          <span className="inline-block text-[10px] font-bold tracking-[0.3em] uppercase text-[#f4a7b9]/60 mb-4">
-            和兴社 · Wo Hing Society · Classified Archive
-          </span>
-          <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl text-[#f7c6d9] font-normal leading-tight mb-4">
-            Hong Kong Triad Ranks<br />
-            <span className="text-[#f4a7b9] italic">&amp; Hierarchy Guide</span>
-          </h1>
-          <p className="text-[#f7c6d9]/60 text-sm sm:text-base max-w-xl mx-auto leading-relaxed mb-6">
-            The five ranks of the Wo Hing Society, set beside the real Hung Mun
-            tradition they come from and the Kowloon Walled City of the 1970s.
-            What history documents, what the societies claim, and where the
-            novel bends it.
-          </p>
-          <a
-            href="#dossiers"
-            className="inline-flex items-center gap-2 text-[#f4a7b9] border border-[#f4a7b9]/40 px-5 py-2 rounded-full text-sm font-semibold hover:bg-[#f4a7b9]/10 transition-colors"
-          >
-            Open the dossiers ↓
-          </a>
-        </div>
-      </div>
-
-      <main className="page-shell py-10">
-        {/* Breadcrumb */}
-        <nav className="flex flex-wrap gap-1.5 items-center text-xs text-[#f4a7b9]/60 mb-8" aria-label="Breadcrumb">
-          <Link href={"/" as any} className="hover:text-[#f4a7b9] transition-colors">Home</Link>
-          <span aria-hidden="true">›</span>
-          <span>Lore</span>
-          <span aria-hidden="true">›</span>
-          <span className="text-[#f4a7b9]" aria-current="page">Triad Ranks</span>
-        </nav>
-
+      <LorePageLayout
+        currentSlug="triad-ranks"
+        breadcrumbLabel="Triad Ranks"
+        hero={
+          <LoreHero
+            kicker="和兴社 · Wo Hing Society · Classified Archive"
+            title={
+              <>
+                Hong Kong Triad Ranks
+                <br />
+                <span className="text-[#f4a7b9] italic">
+                  &amp; Hierarchy Guide
+                </span>
+              </>
+            }
+            description="The five ranks of the Wo Hing Society, set beside the real Hung Mun tradition they come from and the Kowloon Walled City of the 1970s. What history documents, what the societies claim, and where the novel bends it."
+            cta={{ href: "#dossiers", label: "Open the dossiers ↓" }}
+          />
+        }
+      >
         {/* On-page navigation */}
-        <nav aria-label="On this page" className="flex flex-wrap gap-2 mb-10">
-          {PAGE_NAV.map((item) => (
-            <a
-              key={item.href}
-              href={item.href}
-              className="text-xs font-semibold text-[#9c3f5d] border border-[#f7c6d9] bg-[#fff9f2] px-3 py-1.5 rounded-full hover:bg-[#f7c6d9]/30 transition-colors"
-            >
-              {item.label}
-            </a>
-          ))}
-        </nav>
+        <LoreToc items={PAGE_NAV} variant="pills" />
 
         {/* How to read */}
         <section className="mb-12 pb-8 border-b border-[#f7c6d9]/30" aria-labelledby="how-to-read">
-          <SectionHeading id="how-to-read" kicker="Before you open a file" title="Two stories on one page">
+          <LoreSectionHeading id="how-to-read" kicker="Before you open a file" title="Two stories on one page">
             <p className="mb-3">
               Each rank below is explained twice: first as the real archetype from Hung Mun (triad)
               tradition and Hong Kong history, then as the novel&apos;s version. The Wo Hing Society
@@ -494,7 +447,7 @@ export default function TriadRanksPage() {
               Because the real history is full of legend, every statement in the historical layer is
               tagged with how far it can be trusted.
             </p>
-          </SectionHeading>
+          </LoreSectionHeading>
 
           <ul className="grid gap-3 sm:grid-cols-3">
             {(Object.keys(EVIDENCE_LEVELS) as EvidenceLevel[]).map((level) => (
@@ -512,11 +465,11 @@ export default function TriadRanksPage() {
 
         {/* Rank cards */}
         <section id="dossiers" aria-labelledby="dossier-heading" className="mb-16 scroll-mt-24">
-          <SectionHeading id="dossier-heading" kicker="The path to power" title="Wo Hing Society: five ranks">
+          <LoreSectionHeading id="dossier-heading" kicker="The path to power" title="Wo Hing Society: five ranks">
             Click a card to unseal it. Each one covers the real archetype, how it worked in Hong
             Kong, and the novel&apos;s version. The top two ranks are gated behind Patreon for their
             story content; the historical notes are open to everyone.
-          </SectionHeading>
+          </LoreSectionHeading>
           <div className="flex flex-col gap-3" role="list">
             {TRIAD_RANKS.map((rank, index) => (
               <div key={rank.id} role="listitem">
@@ -528,10 +481,10 @@ export default function TriadRanksPage() {
 
         {/* The numbers */}
         <section id="numbers" className="mb-16 scroll-mt-24" aria-labelledby="numbers-heading">
-          <SectionHeading id="numbers-heading" kicker="Ritual code" title="What the numbers mean">
+          <LoreSectionHeading id="numbers-heading" kicker="Ritual code" title="What the numbers mean">
             Triad offices carry numeric codes that all begin with 4. The five offices in this guide
             are marked with a diamond; the others appear in real lists but not in the dossiers above.
-          </SectionHeading>
+          </LoreSectionHeading>
 
           <div className="overflow-x-auto rounded-xl border border-[#f7c6d9]/50 bg-white">
             <table className="w-full text-sm text-left">
@@ -573,10 +526,10 @@ export default function TriadRanksPage() {
 
         {/* History vs fiction */}
         <section id="history-vs-fiction" className="mb-16 scroll-mt-24" aria-labelledby="history-vs-fiction-heading">
-          <SectionHeading id="history-vs-fiction-heading" kicker="Where the story departs" title="History vs. fiction: five differences">
+          <LoreSectionHeading id="history-vs-fiction-heading" kicker="Where the story departs" title="History vs. fiction: five differences">
             Triad fiction, this novel&apos;s genre included, compresses real history to keep a story
             readable. Here is what changes.
-          </SectionHeading>
+          </LoreSectionHeading>
 
           <div className="flex flex-col gap-4">
             {TRIAD_DIFFERENCES.map((d) => (
@@ -599,10 +552,10 @@ export default function TriadRanksPage() {
 
         {/* Walled City timeline */}
         <section id="walled-city" className="mb-16 scroll-mt-24" aria-labelledby="walled-city-heading">
-          <SectionHeading id="walled-city-heading" kicker="Setting the scene" title="From the Heaven and Earth Society to the Walled City">
+          <LoreSectionHeading id="walled-city-heading" kicker="Setting the scene" title="From the Heaven and Earth Society to the Walled City">
             The ranks above did not appear in 1970s Kowloon from nowhere. This is the chain of events
             behind them, with the same evidence tags.
-          </SectionHeading>
+          </LoreSectionHeading>
 
           <ol className="relative border-l-2 border-[#f7c6d9] ml-2 flex flex-col gap-8">
             {TRIAD_TIMELINE.map((entry) => (
@@ -624,9 +577,9 @@ export default function TriadRanksPage() {
 
         {/* Glossary */}
         <section id="glossary" className="mb-16 scroll-mt-24" aria-labelledby="glossary-heading">
-          <SectionHeading id="glossary-heading" kicker="Supporting terms" title="Glossary: other words you will meet">
+          <LoreSectionHeading id="glossary-heading" kicker="Supporting terms" title="Glossary: other words you will meet">
             Terms that appear around the five ranks, in real tradition and in Hong Kong fiction.
-          </SectionHeading>
+          </LoreSectionHeading>
 
           <dl className="grid gap-3 sm:grid-cols-2">
             {TRIAD_GLOSSARY.map((entry) => (
@@ -646,7 +599,7 @@ export default function TriadRanksPage() {
 
         {/* FAQ */}
         <section id="faq" className="mb-16 scroll-mt-24" aria-labelledby="faq-heading">
-          <SectionHeading id="faq-heading" kicker="Quick answers" title="Frequently asked questions" />
+          <LoreSectionHeading id="faq-heading" kicker="Quick answers" title="Frequently asked questions" />
 
           <div className="flex flex-col gap-2">
             {TRIAD_FAQ.map((item) => (
@@ -674,14 +627,14 @@ export default function TriadRanksPage() {
           </h2>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
-              href={"/chapter/1" as any}
+              href={"/chapter/1" as Route}
               id="cta-read-chapter-1"
               className="inline-flex items-center gap-2 text-sm font-semibold px-7 py-3 border-2 border-[#f4a7b9] text-[#f4a7b9] rounded-full hover:bg-[#f4a7b9] hover:text-white transition-all no-underline"
             >
               Start Reading from Chapter 1
             </Link>
             <Link
-              href={"/chapter/11" as any}
+              href={"/chapter/11" as Route}
               id="cta-jump-chapter-11"
               className="text-sm text-[#f4a7b9]/50 hover:text-[#f4a7b9] transition-colors no-underline flex items-center gap-2"
             >
@@ -695,7 +648,7 @@ export default function TriadRanksPage() {
 
         {/* Sources and notes */}
         <section id="sources" className="mt-12 pt-8 border-t border-[#f7c6d9]/30 scroll-mt-24" aria-labelledby="sources-heading">
-          <SectionHeading id="sources-heading" kicker="Archive notes" title="Sources and a note on fiction" />
+          <LoreSectionHeading id="sources-heading" kicker="Archive notes" title="Sources and a note on fiction" />
 
           <p className="text-sm text-[#7d6f67] leading-relaxed max-w-3xl mb-3">
             The Wo Hing Society and its Kowloon Walled City setting are fiction. Real triad societies
@@ -729,9 +682,7 @@ export default function TriadRanksPage() {
             ))}
           </ul>
         </section>
-      </main>
-
-      <SiteFooter />
+      </LorePageLayout>
     </>
   );
 }

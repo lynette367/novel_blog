@@ -22,7 +22,7 @@ const NOVEL_PROJECTION = `{
 }`;
 
 export const getNovels = cache(async (): Promise<Novel[]> => {
-  const query = `*[_type == "novel"] | order(publishedAt desc) ${NOVEL_PROJECTION}`;
+  const query = `*[_type == "novel"] | order(_createdAt desc, _id asc) ${NOVEL_PROJECTION}`;
   try {
     const novels = await client.fetch<SanityNovel[]>(query);
     return novels.map(transformNovel);

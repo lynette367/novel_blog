@@ -1,4 +1,5 @@
 import type { StructureBuilder } from "sanity/structure";
+import { EDITORIAL_IMAGE_CATEGORIES } from "./schemas/editorialImage";
 
 // Custom Sanity Studio Structure
 // Groups chapters under their corresponding novel
@@ -69,5 +70,56 @@ export const structure = (S: StructureBuilder) =>
             .id("weekly-quote-list")
             .title("All Weekly Quotes")
             .defaultOrdering([{ field: "publishedAt", direction: "desc" }])
+        ),
+      // Editorial Image Assets
+      S.listItem()
+        .id("editorialImages")
+        .title("Editorial Images")
+        .icon(() => "🖼️")
+        .child(
+          S.list()
+            .id("editorial-images-root")
+            .title("Editorial Image Assets")
+            .items([
+              S.listItem()
+                .id("editorial-images-all")
+                .title("All Editorial Images")
+                .icon(() => "🗂️")
+                .child(
+                  S.documentTypeList("editorialImage")
+                    .id("editorial-image-all")
+                    .title("All Editorial Images")
+                    .defaultOrdering([{ field: "_updatedAt", direction: "desc" }])
+                ),
+              S.listItem()
+                .id("editorial-images-by-category")
+                .title("By Category")
+                .icon(() => "🏷️")
+                .child(
+                  S.list()
+                    .id("editorial-images-category-list")
+                    .title("Editorial Images by Category")
+                    .items(
+                      EDITORIAL_IMAGE_CATEGORIES.map((cat) =>
+                        S.listItem()
+                          .id(`editorial-images-cat-${cat.value}`)
+                          .title(cat.title)
+                          .child(
+                            S.documentList()
+                              .id(`editorial-image-list-${cat.value}`)
+                              .title(cat.title)
+                              .schemaType("editorialImage")
+                              .filter(
+                                '_type == "editorialImage" && category == $category'
+                              )
+                              .params({ category: cat.value })
+                              .defaultOrdering([
+                                { field: "_updatedAt", direction: "desc" },
+                              ])
+                          )
+                      )
+                    )
+                ),
+            ])
         ),
     ]);
